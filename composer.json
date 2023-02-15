@@ -21,7 +21,9 @@
     }
   ],
   "require": {
-    "php": ">=8.2.0"
+    "php": ">=8.2.0",
+    "league/fractal": "*",
+    "monolog/monolog": "*"
   },
   "require-dev": {
     "illuminate/support": "5.5.*",

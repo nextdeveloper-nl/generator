@@ -6,3 +6,9 @@ Route::get('/', function () {
         'health'        => 'ok',
     ];
 });
+
+Route::prefix('generator')->group(function () {
+    Route::prefix('structure')->group(function () {
+        Route::get('/', 'Structure\StructureController@index');
+    });
+});

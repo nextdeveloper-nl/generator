@@ -10,7 +10,7 @@
  */
 
 return [
-    'directory' =>  [
+    'structure' =>  [
         'config',
         'docs',
         'resources' =>  [
@@ -37,16 +37,19 @@ return [
             ],
             'Events',
             'EventHandlers',
+            'Exceptions',
+            'Helpers',
             'Http'  =>  [
                 'Controllers',
                 'Transformers',
                 'Requests',
                 'Middlewares'
             ],
-            'Services',
-            'Policies',
+            'Initiators',
             'Jobs',
-            'Initiators'
+            'Notifications',
+            'Policies',
+            'Services',
         ],
         'tests',
         'workers'

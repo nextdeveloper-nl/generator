@@ -11,6 +11,7 @@
 namespace NextDeveloper\Generator;
 
 use GuzzleHttp\Client as GuzzleClient;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class CoreServiceProvider.
@@ -33,14 +34,13 @@ class GeneratorServiceProvider extends AbstractServiceProvider {
             __DIR__.'/../config/generator.php' => config_path('generator.php'),
         ], 'config');
 
-        $this->bootChannelRoutes();
-
         $this->loadViewsFrom($this->dir.'/../resources/views', 'Generator');
 
 //        $this->bootErrorHandler();
+        $this->bootChannelRoutes();
         $this->bootModelBindings();
-
         $this->bootEvents();
+        $this->bootLogger();
     }
 
     /**
@@ -54,6 +54,16 @@ class GeneratorServiceProvider extends AbstractServiceProvider {
 
         $this->mergeConfigFrom(__DIR__.'/../config/generator.php', 'generator');
         $this->customMergeConfigFrom(__DIR__.'/../config/relation.php', 'relation');
+    }
+
+    /**
+     * @return void
+     */
+    public function bootLogger() {
+//        $monolog = Log::getMonolog();
+//        $monolog->pushProcessor(new \Monolog\Processor\WebProcessor());
+//        $monolog->pushProcessor(new \Monolog\Processor\MemoryUsageProcessor());
+//        $monolog->pushProcessor(new \Monolog\Processor\MemoryPeakUsageProcessor());
     }
 
     /**
@@ -108,8 +118,7 @@ class GeneratorServiceProvider extends AbstractServiceProvider {
      */
     protected function registerRoutes() {
         if ( ! $this->app->routesAreCached()) {
-            $this->app['router']->prefix('v2')
-                ->middleware(['api', 'team-finder'])
+            $this->app['router']
                 ->namespace('NextDeveloper\Generator\Http\Controllers')
                 ->group(__DIR__.DIRECTORY_SEPARATOR.'Http'.DIRECTORY_SEPARATOR.'api.routes.php');
         }

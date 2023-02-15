@@ -14,6 +14,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use NextDeveloper\Generator\Services\Models\GeneratorService;
+use NextDeveloper\Generator\Services\Structure\StructureService;
 
 /**
  * Class FetchExchangeRatesCommand.
@@ -35,13 +36,23 @@ class GenerateStructureCommand extends Command {
      * @return int
      */
     public function handle() {
-        $this->line('To create the initial account for LEO. Please make sure that you complete the followings;');
+        $this->line('This command will create the initial structure for a basic module. Items below will be created automatically;');
+        $this->line('- Directory structure');
+        $this->line('- Basic composer.json file');
+        $this->line('- Service provider files');
+        $this->line('- Empty API route files');
+        $this->line('- Empty configuration files');
 
-        $table = 'accounts'; //$this->ask('What is the name of the table from the database ? Example: countries');
+        $this->line('WARNING: Please make sure that all permissions are given in the root folder. For example if you want to
+        create a directory in a library and the module of the root directory is not created. You may need to create depending on which
+        user you are using to run this application.');
 
-        $render = GeneratorService::generateModel('nextdeveloper/generator', $table);
+        $moduleName = $this->ask('Please tell me the module name in this fashion: Generator ....');
 
-        $this->info(print_r($render, true));
+        $libraryFolder = $this->ask('Please tell me the path that you store your library in. Please make sure that you 
+        provide the path in referance to the base path of this application. For example: ../../Libraries');
+
+        $result = StructureService::generateStructure($moduleName, $libraryFolder);
 
         return 1;
     }
