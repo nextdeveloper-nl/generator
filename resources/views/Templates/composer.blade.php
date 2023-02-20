@@ -1,0 +1,46 @@
+{
+    "name": "nextdeveloper/generator",
+    "description": "NextDeveloper Generator Package",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Harun Barış Bulut",
+            "email": "baris.bulut@plusclouds.com"
+        }
+    ],
+    "homepage": "https://github.com/nextdeveloper-nl/generator",
+    "support": {
+        "issues": "https://github.com/nextdeveloper-nl/generator/issues",
+        "source": "https://github.com/nextdeveloper-nl/generator"
+    },
+    "repositories": [
+    {
+    "type": "vcs",
+    "url": "git@github.com:nextdeveloper-nl/generator.git"
+    }
+    ],
+    "require": {
+    "php": ">=8.2.0",
+    "league/fractal": "*",
+    "monolog/monolog": "*"
+    },
+    "require-dev": {
+    "illuminate/support": "5.5.*",
+    "illuminate/database": "5.5.*",
+    "illuminate/validation": "5.5.*"
+    },
+    "autoload": {
+    "psr-4": {
+    "NextDeveloper\\Generator\\": "src/"
+    }
+    },
+    "extra": {
+    "laravel": {
+    "providers": [
+    "NextDeveloper\\Generator\\GeneratorServiceProvider"
+    ]
+    }
+    },
+    "suggest": {}
+}

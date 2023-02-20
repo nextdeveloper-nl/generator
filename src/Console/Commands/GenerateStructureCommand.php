@@ -47,6 +47,7 @@ class GenerateStructureCommand extends Command {
         create a directory in a library and the module of the root directory is not created. You may need to create depending on which
         user you are using to run this application.');
 
+        $namespace  =   $this->ask('Please write the namespace you are using for this module. Example: NextDeveloper');
         $moduleName = $this->ask('Please tell me the module name in this fashion: Generator ....');
 
         $libraryFolder = $this->ask('Please tell me the path that you store your library in. Please make sure that you 
