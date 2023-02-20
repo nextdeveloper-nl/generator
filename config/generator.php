@@ -58,5 +58,5 @@ return [
     'pagination'    =>  [
         //'perPage'   =>  0,    // This is the number of records we return by default. 0 for unlimited. Default is 20
         'perPage'   =>  20
-    ]
+    ],
 ];
