@@ -11,4 +11,8 @@ Route::prefix('generator')->group(function () {
     Route::prefix('structure')->group(function () {
         Route::get('/', 'Structure\StructureController@index');
     });
+
+    Route::prefix('model')->group(function () {
+        Route::get('/', 'Model\ModelController@index');
+    });
 });

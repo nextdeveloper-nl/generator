@@ -131,7 +131,7 @@ class GeneratorServiceProvider extends AbstractServiceProvider {
         if ($this->app->runningInConsole()) {
             $this->commands([
                 'NextDeveloper\Generator\Console\Commands\GenerateStructureCommand',
-                'NextDeveloper\Generator\Console\Commands\GenerateModelCommand'
+                'NextDeveloper\Generator\Console\Commands\GenerateDatabaseCommand'
             /*
                 'PlusClouds\Core\Console\Commands\FetchDisposableEmailDomainsCommand',
                 'PlusClouds\Core\Console\Commands\MigrateExchangeRatesCommand',

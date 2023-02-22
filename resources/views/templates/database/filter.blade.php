@@ -1,13 +1,3 @@
-<?php
-/**
- * This file is part of the PlusClouds.Account library.
- *
- * (c) Semih Turna <semih.turna@plusclouds.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace {{ $namespace }}\{{ $module }}\Database\Filters;
 
 class {{ $model }}QueryFilter
@@ -20,5 +10,15 @@ class {{ $model }}QueryFilter
     public function name($name)
     {
         return $this->builder->where('name', 'like', '%'.$name.'%');
+    }
+
+    //  if tintint -> boolean
+
+    public function isActive($bool)
+    {
+        if($bool)
+            return $this->builder->where('is_active', 1);
+        else
+            return $this->builder->where('is_active', 0);
     }
 }
