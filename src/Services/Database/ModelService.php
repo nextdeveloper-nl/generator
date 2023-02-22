@@ -11,7 +11,7 @@ class ModelService extends AbstractService
     /**
      * @throws TemplateNotFoundException
      */
-    public static function generateModel($namespace, $module, $model) {
+    public static function generate($namespace, $module, $model) {
         $columns = self::getColumns($model);
 
         $render = view('Generator::templates/database/model', [
@@ -25,7 +25,7 @@ class ModelService extends AbstractService
     }
 
     public static function generateFile($rootPath, $namespace, $module, $model) : bool{
-        $content = self::generateModel($namespace, $module, $model);
+        $content = self::generate($namespace, $module, $model);
 
         self::writeToFile($rootPath . '/src/Database/Models/' . ucfirst($model) . '.php', $content);
 

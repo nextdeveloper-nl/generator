@@ -1,5 +1,3 @@
-
-
 namespace {{ $namespace }}\{{ $module }}\Database\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;

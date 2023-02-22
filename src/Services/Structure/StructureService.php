@@ -2,6 +2,7 @@
 
 namespace NextDeveloper\Generator\Services\Structure;
 
+use Illuminate\Support\Str;
 use NextDeveloper\Generator\Services\AbstractService;
 
 class StructureService extends AbstractService
@@ -13,7 +14,7 @@ class StructureService extends AbstractService
      * @throws \Exception
      * @return void
      */
-    public static function generateStructure($moduleName, $root): bool {
+    public static function generateStructure($root): bool {
         $structure = config('generator.structure');
 
         $paths = self::generateDirectories($structure, '');
@@ -33,6 +34,101 @@ class StructureService extends AbstractService
         }
 
         return true;
+    }
+
+    public static function generateComposer($namespace, $module) {
+        $render = view('Generator::templates/composer', [
+            'namespace'     =>  $namespace,
+            'module'        =>  $module
+        ])->render();
+
+        return $render;
+    }
+
+    public static function generateComposerFile($namespace, $module, $root) {
+        $content = self::generateComposer($namespace, $module);
+
+        self::writeToFile($root . '/composer.json', $content, 'json');
+
+        return true;
+    }
+
+    public static function generateServiceProvider($namespace, $module) {
+        $render = view('Generator::templates/serviceprovider', [
+            'namespace'     =>  $namespace,
+            'module'        =>  $module
+        ])->render();
+
+        return $render;
+    }
+
+    public static function generateServiceProviderFile($rootPath, $namespace, $module): bool {
+        $content = self::generateServiceProvider($namespace, $module);
+
+        self::writeToFile($rootPath . '/src/' . ucfirst($module) . 'ServiceProvider.php', $content);
+
+        return true;
+    }
+
+    public static function generateAbstractServiceProvider($namespace, $module) {
+        $render = view('Generator::templates/abstractprovider', [
+            'namespace'     =>  $namespace,
+            'module'        =>  $module
+        ])->render();
+
+        return $render;
+    }
+
+    public static function generateAbstractServiceProviderFile($rootPath, $namespace, $module): bool {
+        $content = self::generateAbstractServiceProvider($namespace, $module);
+
+        self::writeToFile($rootPath . '/src/AbstractServiceProvider.php', $content);
+
+        return true;
+    }
+
+    public static function generateApiRoutes() {
+        $render = view('Generator::templates/http/apiroutes', [
+        ])->render();
+
+        return $render;
+    }
+
+    public static function generateApiRoutesFile($rootPath): bool {
+        $content = self::generateApiRoutes();
+
+        self::writeToFile($rootPath . '/src/Http/api.routes.php', $content);
+
+        return true;
+    }
+
+    public static function generateConfig() {
+        $render = view('Generator::templates/configs/config', [
+        ])->render();
+
+        return $render;
+    }
+
+    public static function generateModelBindingConfig() {
+        $render = view('Generator::templates/configs/config', [
+        ])->render();
+
+        return $render;
+    }
+
+    public static function generateRelationConfig() {
+        $render = view('Generator::templates/configs/config', [
+        ])->render();
+
+        return $render;
+    }
+
+    public static function generateConfigurationFiles($rootPath, $module): bool {
+        self::writeToFile($rootPath . '/config/' . strtolower($module) . '.php', self::generateConfig());
+        self::writeToFile($rootPath . '/config/model-binding.php', self::generateModelBindingConfig());
+        self::writeToFile($rootPath . '/config/relation.php', self::generateRelationConfig());
+
+        return false;
     }
 
     private static function generateDirectories($directory, $currentPath, $paths = []) {

@@ -1,13 +1,13 @@
 <?php
 
-namespace NextDeveloper\Generator\Http\Controllers\Model;
+namespace NextDeveloper\Generator\Http\Controllers\Http;
 
 use NextDeveloper\Generator\Common\AbstractController;
 use NextDeveloper\Generator\Services\Database\FilterService;
 use NextDeveloper\Generator\Services\Database\ModelService;
 use NextDeveloper\Generator\Services\Database\ObserverService;
 
-class ModelController extends AbstractController
+class HttpController extends AbstractController
 {
     public function index() {
         /*
@@ -17,9 +17,7 @@ class ModelController extends AbstractController
         $moduleName = 'Commons';
         $rootPath = '../NextDeveloper/' . $moduleName;
 
-        ModelService::generateFile($rootPath, 'NextDeveloper', $moduleName,'accounts');
-        ObserverService::generateFile($rootPath, 'NextDeveloper', $moduleName,'accounts');
-        FilterService::generateFile($rootPath, 'NextDeveloper', $moduleName,'accounts');
+//        ModelService::generateFile($rootPath, 'NextDeveloper', $moduleName,'accounts');
 
         return $this->withCompleted();
     }

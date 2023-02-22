@@ -3,6 +3,7 @@
 namespace NextDeveloper\Generator\Http\Controllers\Structure;
 
 use NextDeveloper\Generator\Common\AbstractController;
+use NextDeveloper\Generator\Services\Services\ServiceService;
 use NextDeveloper\Generator\Services\Structure\StructureService;
 
 class StructureController extends AbstractController
@@ -12,13 +13,16 @@ class StructureController extends AbstractController
          * FOR TESTING PURPOSES.
          * Will be converted to a request
          */
+        $namespace = 'NextDeveloper';
         $moduleName = 'Commons';
-        $rootPath = '../NextDeveloper/' . $moduleName;
+        $rootPath = '../' . $namespace . '/' . $moduleName;
+        $model = 'accounts';
 
-        $result = StructureService::generateStructure($moduleName, $rootPath);
 
-        if($result) {
-            return $this->withCompleted();
-        }
+        StructureService::generateStructure('NextDeveloper', $moduleName, $rootPath);
+        StructureService::generateComposerFile('NextDeveloper', $moduleName, $rootPath);
+        StructureService::generateServiceProviderFile($rootPath, $namespace, $moduleName, $model);
+
+        return $this->withCompleted();
     }
 }

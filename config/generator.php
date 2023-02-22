@@ -49,9 +49,15 @@ return [
             'Jobs',
             'Notifications',
             'Policies',
-            'Services',
+            'Services' => [
+                'AbstractServices'
+            ],
         ],
-        'tests',
+        'tests' => [
+            'Database'  =>  [
+                'Models',
+            ]
+        ],
         'workers'
     ],
 

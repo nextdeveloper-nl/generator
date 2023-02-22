@@ -35,6 +35,11 @@
       "NextDeveloper\\Generator\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "NextDeveloper\\Tests\\": "tests/"
+    }
+  },
   "extra": {
     "laravel": {
       "providers": [

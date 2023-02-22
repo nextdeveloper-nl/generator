@@ -50,6 +50,8 @@ class GenerateStructureCommand extends Command {
         $libraryFolder = $this->ask('Please tell me the path that you store your library in. Please make sure that you 
         provide the path in referance to the base path of this application. For example: ../../Libraries');
 
+        $libraryFolder = $libraryFolder . '/' . $moduleName;
+
         $result = StructureService::generateStructure($moduleName, $libraryFolder);
 
         return 1;

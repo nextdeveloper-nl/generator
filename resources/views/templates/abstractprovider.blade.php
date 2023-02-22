@@ -1,22 +1,8 @@
-<?php
-/**
- * This file is part of the PlusClouds.Core library.
- *
- * (c) Semih Turna <semih.turna@plusclouds.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
-namespace NextDeveloper\Generator;
+namespace {{ $namespace }}\{{ $module }};
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Arr;
 
-/**
- * Class AbstractServiceProvider
- * @package PlusClouds\Core
- */
 abstract class AbstractServiceProvider extends ServiceProvider
 {
 
@@ -24,6 +10,7 @@ abstract class AbstractServiceProvider extends ServiceProvider
      * @var bool|string
      */
     protected $dir;
+
 
     /**
      * AbstractServiceProvider constructor.
