@@ -5,6 +5,9 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};
 use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}Filter;
 
+use {{ $namespace }}\{{ $module }}\Events\{{ Str::plural($model) }}\{{ Str::plural($model) }}CreatedEvent;
+use {{ $namespace }}\{{ $module }}\Events\{{ Str::plural($model) }}\{{ Str::plural($model) }}CreatingEvent;
+
 /**
 * This class is responsible from managing the data for {{ $model }}
 *
@@ -32,6 +35,12 @@ class Abstract{{ $model }}Service {
     }
 
     public static function create(array $data) {
+        event( new {{ Str::plural($model) }}CreatingEvent() );
 
+        $model = {{ $model }}::create([
+
+        ]);
+
+        event( new {{ Str::plural($model) }}CreatedEvent($model) );
     }
 }

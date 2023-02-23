@@ -56,6 +56,11 @@ return [
         'tests' => [
             'Database'  =>  [
                 'Models',
+            ],
+            'Events'    =>  [
+                'Models',
+                'Http',
+                'Console'
             ]
         ],
         'workers'
@@ -65,4 +70,18 @@ return [
         //'perPage'   =>  0,    // This is the number of records we return by default. 0 for unlimited. Default is 20
         'perPage'   =>  20
     ],
+
+    'action-events' =>  [
+        'retrieved',
+        'created',
+        'creating',
+        'saving',
+        'saved',
+        'updating',
+        'updated',
+        'deleting',
+        'deleted',
+        'restoring',
+        'restored'
+    ]
 ];

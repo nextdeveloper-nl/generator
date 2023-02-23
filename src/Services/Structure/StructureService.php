@@ -20,20 +20,17 @@ class StructureService extends AbstractService
         $paths = self::generateDirectories($structure, '');
 
         foreach ($paths as $path) {
-            try {
-                mkdir(base_path($root . $path), 0777, true);
-            } catch (\ErrorException $exception) {
-                //  We are not throwing exception here because the user may forget
-                //  to add a new directory while generating it and may need to
-                //  regenerate again.
-
-                //  @TODO: Maybe later we can create a warning.
-                if($exception->getMessage() == 'mkdir(): File exists')
-                    continue;
-            }
+            self::createDirectory(base_path($root . $path));
         }
 
         return true;
+    }
+
+    public static function createEventFolderForModel($root, $model) {
+        $folder = Str::camel($model);
+        $folder = Str::ucfirst($folder);
+
+        self::createDirectory(base_path($root . '/src/Events/' . $folder));
     }
 
     public static function generateComposer($namespace, $module) {
@@ -142,5 +139,22 @@ class StructureService extends AbstractService
         }
 
         return $paths;
+    }
+
+    private static function createDirectory($directory) : ?bool {
+        dump($directory);
+        try {
+            mkdir($directory, 0777, true);
+        } catch (\ErrorException $exception) {
+            //  We are not throwing exception here because the user may forget
+            //  to add a new directory while generating it and may need to
+            //  regenerate again.
+
+            //  @TODO: Maybe later we can create a warning.
+            if($exception->getMessage() == 'mkdir(): File exists')
+                return false;
+        }
+
+        return true;
     }
 }

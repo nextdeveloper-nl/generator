@@ -7,6 +7,7 @@ use NextDeveloper\Generator\Common\AbstractController;
 use NextDeveloper\Generator\Services\Database\FilterService;
 use NextDeveloper\Generator\Services\Database\ModelService;
 use NextDeveloper\Generator\Services\Database\ObserverService;
+use NextDeveloper\Generator\Services\Events\EventsService;
 use NextDeveloper\Generator\Services\Services\ServiceService;
 use NextDeveloper\Generator\Services\Structure\StructureService;
 use NextDeveloper\Generator\Services\Test\ModelTestService;
@@ -32,9 +33,12 @@ class AllController extends AbstractController
         StructureService::generateAbstractServiceProviderFile($rootPath, $namespace, $moduleName);
         StructureService::generateApiRoutesFile($rootPath);
         StructureService::generateConfigurationFiles($rootPath, $moduleName);
+        StructureService::createEventFolderForModel($rootPath, $model);
 
         ServiceService::generateFile($rootPath, $namespace, $moduleName, $model);
         ServiceService::generateAbstractFile($rootPath, $namespace, $moduleName, $model);
+
+        EventsService::generateFiles($rootPath, $namespace, $moduleName, $model);
 
         ModelService::generateFile($rootPath, $namespace, $moduleName, $model);
         ModelTestService::generateTraitFile($rootPath, $namespace, $moduleName, $model);
