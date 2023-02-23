@@ -2,15 +2,17 @@ namespace {{ $namespace }}\{{ $module }}\Database\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
+use {{ $namespace }}\{{ $module }}\Database\Observers\{{ $model }}Observer;
 
 /**
  * Class {{ $model }}.
  *
  * @package {{ $namespace }}\{{ $module }}\Database\Models
  */
-class {{ $model }} extends AbstractModel
+class {{ $model }} extends Model
 {
-    use UuidId, SoftDeletes;
+    use SoftDeletes;
 
     /**
      * @var array
@@ -27,7 +29,7 @@ class {{ $model }} extends AbstractModel
     /**
      * @var array
      */
-    protected $appends = [,
+    protected $appends = [
         {{ $appends ?? '' }}
     ];
 

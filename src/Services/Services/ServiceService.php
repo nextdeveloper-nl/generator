@@ -38,7 +38,7 @@ class ServiceService extends AbstractService
     public static function generateAbstractFile($rootPath, $namespace, $module, $model): bool {
         $content = self::generateAbstract($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/src/Services/AbstractServices/' . ucfirst(Str::singular($model)) . 'Service.php', $content);
+        self::writeToFile($rootPath . '/src/Services/AbstractServices/Abstract' . ucfirst(Str::singular($model)) . 'Service.php', $content);
 
         return true;
     }

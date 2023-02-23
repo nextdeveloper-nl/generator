@@ -1,17 +1,19 @@
 namespace {{ $namespace }}\{{ $module }}\Tests\Database\Models;
 
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 use {{ $namespace }}\{{ $module }}\Services\AbstractServices\Abstract{{ $model }}Service;
 
 trait {{ $model }}TestTraits
 {
     /**
-    * A basic unit test example.
+    * Get test
     *
-    * @return void
+    * @return bool
     */
-    public function test_example()
+    public function test_get()
     {
-        $this->assertTrue(true);
+        $result = Abstract{{ $model }}Service::get();
+
+        $this->assertIsObject($result, Collection::class);
     }
 }

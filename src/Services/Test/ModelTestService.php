@@ -24,7 +24,7 @@ class ModelTestService extends AbstractService
     public static function generateFile($rootPath, $namespace, $module, $model) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile('tests/Unit/GeneratedModel' . Str::ucfirst(Str::singular($model)) . 'Tests.php', $content);
+        self::writeToFile('tests/Unit/GeneratedModel' . Str::ucfirst(Str::singular($model)) . 'Test.php', $content);
 
         return true;
     }

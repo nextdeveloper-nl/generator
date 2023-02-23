@@ -7,8 +7,16 @@ use Illuminate\Support\Facades\Auth;
  * Class {{ $model }}Observer
  * @package {{ $namespace }}\{{ $module }}\Database\Observers
  */
-class {{ $model }}Observer extends AbstractObserver
+class {{ $model }}Observer
 {
+    /**
+    * Triggered when a new record is retrieved.
+    *
+    * @param Model $model
+    */
+    public function retrieved(Model $model){
+
+    }
 
     /**
      * @param Model $model

@@ -2,6 +2,7 @@
 
 namespace NextDeveloper\Generator\Http\Controllers;
 
+use NextDeveloper\Commons\Services\AccountService;
 use NextDeveloper\Generator\Common\AbstractController;
 use NextDeveloper\Generator\Services\Database\FilterService;
 use NextDeveloper\Generator\Services\Database\ModelService;
@@ -22,6 +23,8 @@ class AllController extends AbstractController
         $moduleName = 'Commons';
         $rootPath = '../' . $namespace . '/' . $moduleName;
         $model = 'accounts';
+
+        //dd(AccountService::getAll());
 
         StructureService::generateStructure($rootPath);
         StructureService::generateComposerFile($namespace, $moduleName, $rootPath);

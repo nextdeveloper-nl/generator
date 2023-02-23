@@ -27,7 +27,7 @@ class ModelService extends AbstractService
     public static function generateFile($rootPath, $namespace, $module, $model) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/src/Database/Models/' . ucfirst($model) . '.php', $content);
+        self::writeToFile($rootPath . '/src/Database/Models/' . ucfirst(Str::singular($model)) . '.php', $content);
 
         return true;
     }
