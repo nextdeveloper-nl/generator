@@ -26,7 +26,7 @@ class ServiceService extends AbstractService
     public static function generateAbstract($namespace, $module, $model) {
         $columns = self::getColumns($model);
 
-        $events = config('generator.action-events');
+        $events = config('generator.action-events.events');
 
         $render = view('Generator::templates/services/abstract', [
             'namespace'     =>  $namespace,

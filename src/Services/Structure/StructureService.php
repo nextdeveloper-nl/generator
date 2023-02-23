@@ -31,6 +31,7 @@ class StructureService extends AbstractService
         $folder = Str::ucfirst($folder);
 
         self::createDirectory(base_path($root . '/src/Events/' . $folder));
+        self::createDirectory(base_path($root . '/src/EventHandlers/' . $folder));
     }
 
     public static function generateComposer($namespace, $module) {
@@ -142,7 +143,6 @@ class StructureService extends AbstractService
     }
 
     private static function createDirectory($directory) : ?bool {
-        dump($directory);
         try {
             mkdir($directory, 0777, true);
         } catch (\ErrorException $exception) {

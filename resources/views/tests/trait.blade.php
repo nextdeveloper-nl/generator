@@ -30,4 +30,46 @@ trait {{ $model }}TestTraits
 
         $this->assertIsObject($result, LengthAwarePaginator::class);
     }
+
+@foreach( $events as $event )
+    public function test_{{ $model }}_event_{{ $event }}_without_object()
+    {
+        @php
+        $modelName = Str::camel($model);
+        $modelName = Str::ucfirst($modelName);
+        $modelName = Str::plural($modelName);
+
+        $event = $modelName . '' . Str::ucfirst($event) . 'Event';
+        @endphp
+try {
+            event( new \{{ $namespace }}\{{ $module }}\Events\{{ str::plural($modelName) }}\{{ $event }}() );
+        } catch (\Exception $e) {
+            $this->assertFalse();
+        }
+
+        $this->assertTrue(true);
+    }
+@endforeach
+
+@foreach( $events as $event )
+    public function test_{{ $model }}_event_{{ $event }}_with_object()
+    {
+    @php
+        $modelName = Str::camel($model);
+        $modelName = Str::ucfirst($modelName);
+        $modelName = Str::plural($modelName);
+
+        $event = $modelName . '' . Str::ucfirst($event) . 'Event';
+    @endphp
+    try {
+    $model = \{{ $namespace }}\{{ $module }}\Database\Models\{{ $model }}::first();
+
+    event( new \{{ $namespace }}\{{ $module }}\Events\{{ str::plural($modelName) }}\{{ $event }}($model) );
+    } catch (\Exception $e) {
+    $this->assertFalse();
+    }
+
+    $this->assertTrue(true);
+    }
+@endforeach
 }

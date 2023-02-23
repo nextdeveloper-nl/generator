@@ -7,37 +7,35 @@ use NextDeveloper\Generator\Exceptions\TemplateNotFoundException;
 use NextDeveloper\Generator\Services\AbstractService;
 use NextDeveloper\Generator\Services\Structure\StructureService;
 
-class EventsService extends AbstractService
+class HandlersService extends AbstractService
 {
     /**
      * @throws TemplateNotFoundException
      */
-    public static function generate($namespace, $module, $model, $event) {
-        $columns = self::getColumns($model);
-
-        $render = view('Generator::templates/events/event', [
+    public static function generate($namespace, $module, $model, $handler) {
+        $render = view('Generator::templates/events/handlers', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
             'model'         =>  ucfirst(Str::singular($model)),
-            'event'         =>  $event
+            'handler'         =>  $handler
         ])->render();
 
         return $render;
     }
 
     public static function generateFiles($rootPath, $namespace, $module, $model) : bool{
-        $events = config('generator.action-events.events');
+        $handlers = config('generator.action-events.handlers');
 
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
 
-        foreach ($events as $event) {
-            $event = $modelName . '' . Str::ucfirst($event) . 'Event';
-            $content = self::generate($namespace, $module, $model, $event);
+        foreach ($handlers as $handler) {
+            $handler = $modelName . '' . Str::ucfirst($handler) . 'Event';
+            $content = self::generate($namespace, $module, $model, $handler);
 
             StructureService::createEventFolderForModel($rootPath, $model);
 
-            self::writeToFile($rootPath . '/src/Events/' . $modelName . '/' . $event . '.php', $content);
+            self::writeToFile($rootPath . '/src/EventHandlers/' . $modelName . '/' . $handler . '.php', $content);
         }
 
         return true;

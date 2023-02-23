@@ -72,16 +72,26 @@ return [
     ],
 
     'action-events' =>  [
-        'retrieved',
-        'created',
-        'creating',
-        'saving',
-        'saved',
-        'updating',
-        'updated',
-        'deleting',
-        'deleted',
-        'restoring',
-        'restored'
+        'events'    =>  [
+            'retrieved',
+            'created',
+            'creating',
+            'saving',
+            'saved',
+            'updating',
+            'updated',
+            'deleting',
+            'deleted',
+            'restoring',
+            'restored'
+        ],
+        'handlers'  =>  [
+            'creating',
+            'created',
+            'updating',
+            'updated',
+            'deleting',
+            'deleted'
+        ]
     ]
 ];

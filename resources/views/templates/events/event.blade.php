@@ -1,7 +1,8 @@
 
-namespace {{ $namespace }}\{{ $module }}\Events\{{ $model }}s;
+namespace {{ $namespace }}\{{ $module }}\Events\{{ Str::plural($model) }};
 
 use Illuminate\Queue\SerializesModels;
+use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};
 
 /**
  * Class {{ $event }}

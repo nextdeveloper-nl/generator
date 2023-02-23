@@ -36,7 +36,9 @@ class ModelTestService extends AbstractService
             'namespace'     =>  $namespace,
             'module'        =>  $module,
             'model'         =>  ucfirst(Str::singular($model)),
-            'columns'       =>  $columns
+            'columns'       =>  $columns,
+            'events'        =>  config('generator.action-events.events'),
+            'handlers'      =>  config('generator.action-events.handlers')
         ])->render();
 
         return $render;
