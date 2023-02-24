@@ -46,7 +46,7 @@ class {{ $model }} extends Model
      * @var array
      */
     protected $dates = [
-
+        {{ $dates ?? '' }}
     ];
 
     /**
