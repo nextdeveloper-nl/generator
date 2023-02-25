@@ -93,5 +93,7 @@ return [
             'deleting',
             'deleted'
         ]
-    ]
+    ],
+
+    'enableBroadcast'   =>  true
 ];

@@ -43,9 +43,9 @@ class {{ $model }}QueryFilter
            $operator = '=';
         } else {
             $value = substr($value, 1);
-    }
+        }
 
-       return $this->builder->where('balance', $operator, $value);
+        return $this->builder->where('balance', $operator, $value);
     }
 
     public function credit($value)
