@@ -44,14 +44,22 @@ class ModelService extends AbstractService
         $casts = [];
 
         foreach ($columns as $column) {
-            $type = preg_replace('/\([0-9]+\)/', '', $column->Type); // remove character limit (e.g: varchar(30) to varchar)
+            /*  The regular expression removes the character limits and what comes after the datatype.
+                e.g: varchar(30) to varchar
+                     decimal(13,4) to decimal
+                     bigint unsigned to bigint
+             */ 
+            $type = preg_replace('/\(\s*\d+((\s*,\s*)\d+)?\s*\)|\s+[a-zA-Z]+/i', '', $column->Type); 
+           
             switch ($type) {
                 case 'boolean':
                 case 'tinyint':
                     $casts[$column->Field] = 'boolean';
                     break;
-                case 'double':
+                case 'decimal':
                 case 'float':
+                case 'double':
+                case 'real':
                     $casts[$column->Field] = 'double';
                     break;
                 case 'int':
@@ -69,6 +77,8 @@ class ModelService extends AbstractService
                     $casts[$column->Field] = 'datetime';
                     break;
                 case 'text':
+                case 'mediumtext':
+                case 'longtext':
                 case 'varchar':
                 case 'char':
                     $casts[$column->Field] = 'string';
@@ -76,7 +86,7 @@ class ModelService extends AbstractService
             }
             
         }
-        
+
         return $casts;
     }
 
@@ -84,7 +94,12 @@ class ModelService extends AbstractService
         $dates = [];
 
         foreach ($columns as $column) {
-            $type = preg_replace('/\([0-9]+\)/', '', $column->Type); // remove character limit (e.g: varchar(30) to varchar)
+            /*  The regular expression removes the character limits and what comes after the datatype.
+                e.g: varchar(30) to varchar
+                     decimal(13,4) to decimal
+                     bigint unsigned to bigint
+             */ 
+            $type = preg_replace('/\(\s*\d+((\s*,\s*)\d+)?\s*\)|\s+[a-zA-Z]+/i', '', $column->Type);
             switch ($type) {
                 case 'date':
                 case 'datetime':
