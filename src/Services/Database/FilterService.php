@@ -40,10 +40,18 @@ class FilterService extends AbstractService
         $filterTextFields = [];
 
         foreach ($columns as $column) {
-            $type = preg_replace('/\([0-9]+\)/', '', $column->Type); // remove character limit (e.g: varchar(30) to varchar)
+            /*  The regular expression removes the character limits and what comes after the datatype.
+                e.g: varchar(30) to varchar
+                     decimal(13,4) to decimal
+                     bigint unsigned to bigint
+             */ 
+            $type = preg_replace('/\(\s*\d+((\s*,\s*)\d+)?\s*\)|\s+[a-zA-Z]+/i', '', $column->Type);
             switch ($type) {
                 case 'text':
+                case 'mediumtext':
+                case 'longtext':
                 case 'varchar':
+                case 'char':
                     $filterTextFields[] = $column->Field;
                     break;
             }
@@ -57,10 +65,17 @@ class FilterService extends AbstractService
         $filterNumberFields = [];
 
         foreach ($columns as $column) {
-            $type = preg_replace('/\([0-9]+\)/', '', $column->Type); // remove character limit (e.g: varchar(30) to varchar)
+            /*  The regular expression removes the character limits and what comes after the datatype.
+                e.g: varchar(30) to varchar
+                     decimal(13,4) to decimal
+                     bigint unsigned to bigint
+             */ 
+            $type = preg_replace('/\(\s*\d+((\s*,\s*)\d+)?\s*\)|\s+[a-zA-Z]+/i', '', $column->Type);
             switch ($type) {
-                case 'double':
+                case 'decimal':
                 case 'float':
+                case 'double':
+                case 'real':
                 case 'int':
                 case 'integer':
                 case 'bigint':
