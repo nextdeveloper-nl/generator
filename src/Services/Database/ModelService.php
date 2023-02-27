@@ -54,6 +54,7 @@ class ModelService extends AbstractService
                 case 'float':
                     $casts[$column->Field] = 'double';
                     break;
+                case 'int':
                 case 'integer':
                 case 'bigint':
                 case 'mediumint':
