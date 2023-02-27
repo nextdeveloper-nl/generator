@@ -1,41 +1,25 @@
 namespace {{ $namespace }}\{{ $module }}\Database\Filters;
 
+use Illuminate\Database\Eloquent\Builder;
+
 class {{ $model }}QueryFilter
 {
-    public function name($name)
-    {
-        return $this->builder->where('name', 'like', '%'.$name.'%');
-    }
 
     /**
-    * @return \Illuminate\Database\Eloquent\Builder
+    * @var Builder
     */
-    public function my()
+    protected $builder;
+
+@foreach( $filterTextFields as $field )
+    public function {{ $field }}($value)
     {
-       return $this->builder->where('representative_user_id', getAUUser()->id_ref);
+        return $this->builder->where('{{$field}}', 'like', '%' . $value . '%');
     }
 
-    public function id($id)
-    {
-       return $this->builder->where('id_ref', 'like', '%'.$id.'%');
-    }
+@endforeach
 
-    public function phone($value)
-    {
-       return $this->builder->where('phone', 'like', '%' . $value . '%');
-    }
-
-    public function email($value)
-    {
-      return $this->builder->where('user_email', 'like', '%' . $value . '%');
-    }
-
-    public function phoneNumber($value)
-    {
-      return $this->builder->where('phone_number', 'like', '%' . $value . '%');
-    }
-
-    public function balance($value)
+@foreach( $filterNumberFields as $field )
+    public function {{ $field }}($value)
     {
         $operator = substr($value, 0, 1);
 
@@ -45,47 +29,9 @@ class {{ $model }}QueryFilter
             $value = substr($value, 1);
         }
 
-        return $this->builder->where('balance', $operator, $value);
+        return $this->builder->where('{{$field}}', $operator, $value);
     }
 
-    public function credit($value)
-    {
-        $operator = substr($value, 0, 1);
-
-        if ($operator != '<' || $operator != '>') {
-            $operator = '=';
-        } else {
-            $value = substr($value, 1);
-        }
-
-        return $this->builder->where('credit', $operator, $value);
-    }
-
-    public function creditScore($value)
-    {
-        $operator = substr($value, 0, 1);
-
-        if ($operator != '<' || $operator != '>') {
-            $operator = '=';
-        } else {
-            $value = substr($value, 1);
-        }
-
-        return $this->builder->where('credit_score', $operator, $value);
-    }
-
-    public function accountType($value)
-    {
-    return $this->builder->where('account_type', 'like', '%' . $value . '%');
-    }
-
-    public function representativeUserName($value)
-    {
-    return $this->builder->where('representative_user_name', 'like', '%' . $value . '%');
-    }
-
-    public function representativeAccountName($value)
-    {
-    return $this->builder->where('representative_account_name', 'like', '%' . $value . '%');
-    }
+@endforeach
+    
 }
