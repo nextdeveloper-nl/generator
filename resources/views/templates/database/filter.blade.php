@@ -9,16 +9,15 @@ class {{ $model }}QueryFilter
     * @var Builder
     */
     protected $builder;
-
 @foreach( $filterTextFields as $field )
     @php
     $fieldName = Str::camel($field);
     @endphp
-public function {{ $fieldName }}($value)
+
+    public function {{ $fieldName }}($value)
     {
         return $this->builder->where('{{$fieldName}}', 'like', '%' . $value . '%');
     }
-
 @endforeach
 
 @foreach( $filterNumberFields as $field )
@@ -39,5 +38,20 @@ public function {{ $fieldName }}($value)
     }
 
 @endforeach
-    
+
+@foreach( $filterDateFields as $field )
+    @php
+    $fieldName = Str::camel($field);
+    @endphp
+public function {{$fieldName}}Start($date) 
+    {
+        return $this->builder->where( '{{$fieldName}}', '>=', $date );
+    }
+
+    public function {{$fieldName}}End($date) 
+    {
+        return $this->builder->where( '{{$fieldName}}', '<=', $date );
+    }
+
+@endforeach
 }

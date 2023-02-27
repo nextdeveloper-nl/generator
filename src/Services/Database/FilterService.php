@@ -15,6 +15,7 @@ class FilterService extends AbstractService
         $columns = self::getColumns($model);
         $filterTextFields = self::generateFilterTextFields($columns);
         $filterNumberFields = self::generateFilterNumberFields($columns);
+        $filterDateFields = self::generateFilterDateFields($columns);
 
         $render = view('Generator::templates/database/filter', [
             'namespace'          =>  $namespace,
@@ -22,7 +23,8 @@ class FilterService extends AbstractService
             'model'              =>  ucfirst(Str::singular($model)),
             'columns'            =>  $columns,
             'filterTextFields'   =>  $filterTextFields,
-            'filterNumberFields' =>  $filterNumberFields
+            'filterNumberFields' =>  $filterNumberFields,
+            'filterDateFields'   =>  $filterDateFields
         ])->render();
 
         return $render;
@@ -86,5 +88,28 @@ class FilterService extends AbstractService
             }        
         }
         return $filterNumberFields;
+    }
+
+    public static function generateFilterDateFields($columns) {
+        $filterDateFields = [];
+
+        foreach ($columns as $column) {
+            /*  The regular expression removes the character limits and what comes after the datatype.
+                e.g: varchar(30) to varchar
+                     decimal(13,4) to decimal
+                     bigint unsigned to bigint
+             */ 
+            $type = preg_replace('/\(\s*\d+((\s*,\s*)\d+)?\s*\)|\s+[a-zA-Z]+/i', '', $column->Type);
+            switch ($type) {
+                case 'date':
+                case 'datetime':
+                case 'timestamp':
+                case 'immutable_date':
+                case 'immutable_datetime':
+                    $filterDateFields[] = $column->Field;
+                    break;
+            }        
+        }
+        return $filterDateFields;
     }
 }
