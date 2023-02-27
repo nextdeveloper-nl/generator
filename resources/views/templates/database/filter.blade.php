@@ -11,15 +11,21 @@ class {{ $model }}QueryFilter
     protected $builder;
 
 @foreach( $filterTextFields as $field )
-    public function {{ $field }}($value)
+    @php
+    $fieldName = Str::camel($field);
+    @endphp
+public function {{ $fieldName }}($value)
     {
-        return $this->builder->where('{{$field}}', 'like', '%' . $value . '%');
+        return $this->builder->where('{{$fieldName}}', 'like', '%' . $value . '%');
     }
 
 @endforeach
 
 @foreach( $filterNumberFields as $field )
-    public function {{ $field }}($value)
+    @php
+    $fieldName = Str::camel($field);
+    @endphp
+public function {{ $fieldName }}($value)
     {
         $operator = substr($value, 0, 1);
 
@@ -29,7 +35,7 @@ class {{ $model }}QueryFilter
             $value = substr($value, 1);
         }
 
-        return $this->builder->where('{{$field}}', $operator, $value);
+        return $this->builder->where('{{$fieldName}}', $operator, $value);
     }
 
 @endforeach
