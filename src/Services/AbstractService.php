@@ -21,6 +21,16 @@ class AbstractService
         return $maxKeyLength;
     }
 
+    public static function cleanColumnType($columnType){
+        /*  The regular expression removes the character limits and what comes after the datatype.
+            e.g: varchar(30) to varchar
+                decimal(13,4) to decimal
+                bigint unsigned to bigint
+        */ 
+        $type = preg_replace('/\(\s*\d+((\s*,\s*)\d+)?\s*\)|\s+[a-zA-Z]+/i', '', $columnType);
+        return $type;
+    }
+
     public static function objectArrayToString(?array $array): string {
         if (!$array) {
             return '';

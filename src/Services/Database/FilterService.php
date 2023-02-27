@@ -42,13 +42,8 @@ class FilterService extends AbstractService
         $filterTextFields = [];
 
         foreach ($columns as $column) {
-            /*  The regular expression removes the character limits and what comes after the datatype.
-                e.g: varchar(30) to varchar
-                     decimal(13,4) to decimal
-                     bigint unsigned to bigint
-             */ 
-            $type = preg_replace('/\(\s*\d+((\s*,\s*)\d+)?\s*\)|\s+[a-zA-Z]+/i', '', $column->Type);
-            switch ($type) {
+            $columnType = self::cleanColumnType($column->Type);
+            switch ($columnType) {
                 case 'text':
                 case 'mediumtext':
                 case 'longtext':
@@ -67,13 +62,8 @@ class FilterService extends AbstractService
         $filterNumberFields = [];
 
         foreach ($columns as $column) {
-            /*  The regular expression removes the character limits and what comes after the datatype.
-                e.g: varchar(30) to varchar
-                     decimal(13,4) to decimal
-                     bigint unsigned to bigint
-             */ 
-            $type = preg_replace('/\(\s*\d+((\s*,\s*)\d+)?\s*\)|\s+[a-zA-Z]+/i', '', $column->Type);
-            switch ($type) {
+            $columnType = self::cleanColumnType($column->Type);
+            switch ($columnType) {
                 case 'decimal':
                 case 'float':
                 case 'double':
@@ -94,13 +84,8 @@ class FilterService extends AbstractService
         $filterDateFields = [];
 
         foreach ($columns as $column) {
-            /*  The regular expression removes the character limits and what comes after the datatype.
-                e.g: varchar(30) to varchar
-                     decimal(13,4) to decimal
-                     bigint unsigned to bigint
-             */ 
-            $type = preg_replace('/\(\s*\d+((\s*,\s*)\d+)?\s*\)|\s+[a-zA-Z]+/i', '', $column->Type);
-            switch ($type) {
+            $columnType = self::cleanColumnType($column->Type);
+            switch ($columnType) {
                 case 'date':
                 case 'datetime':
                 case 'timestamp':

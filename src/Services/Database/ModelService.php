@@ -44,14 +44,8 @@ class ModelService extends AbstractService
         $casts = [];
 
         foreach ($columns as $column) {
-            /*  The regular expression removes the character limits and what comes after the datatype.
-                e.g: varchar(30) to varchar
-                     decimal(13,4) to decimal
-                     bigint unsigned to bigint
-             */ 
-            $type = preg_replace('/\(\s*\d+((\s*,\s*)\d+)?\s*\)|\s+[a-zA-Z]+/i', '', $column->Type); 
-           
-            switch ($type) {
+            $columnType = self::cleanColumnType($column->Type); 
+            switch ($columnType) {
                 case 'boolean':
                 case 'tinyint':
                     $casts[$column->Field] = 'boolean';
@@ -94,13 +88,8 @@ class ModelService extends AbstractService
         $dates = [];
 
         foreach ($columns as $column) {
-            /*  The regular expression removes the character limits and what comes after the datatype.
-                e.g: varchar(30) to varchar
-                     decimal(13,4) to decimal
-                     bigint unsigned to bigint
-             */ 
-            $type = preg_replace('/\(\s*\d+((\s*,\s*)\d+)?\s*\)|\s+[a-zA-Z]+/i', '', $column->Type);
-            switch ($type) {
+            $columnType = self::cleanColumnType($column->Type);
+            switch ($columnType) {
                 case 'date':
                 case 'datetime':
                 case 'timestamp':
