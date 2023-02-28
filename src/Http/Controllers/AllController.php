@@ -7,6 +7,7 @@ use NextDeveloper\Generator\Common\AbstractController;
 use NextDeveloper\Generator\Services\Database\FilterService;
 use NextDeveloper\Generator\Services\Database\ModelService;
 use NextDeveloper\Generator\Services\Database\ObserverService;
+use NextDeveloper\Generator\Services\Database\RequestService;
 use NextDeveloper\Generator\Services\Events\EventsService;
 use NextDeveloper\Generator\Services\Events\HandlersService;
 use NextDeveloper\Generator\Services\Services\ServiceService;
@@ -48,6 +49,8 @@ class AllController extends AbstractController
         
         ObserverService::generateFile($rootPath, $namespace, $moduleName, $model);
         FilterService::generateFile($rootPath, $namespace, $moduleName, $model);
+
+        RequestService::generateFile($rootPath, $namespace, $moduleName, $model);
 
         ServiceService::generateFile($rootPath, $namespace, $moduleName, $model);
         ServiceService::generateAbstractFile($rootPath, $namespace, $moduleName, $model);

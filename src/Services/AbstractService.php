@@ -2,6 +2,7 @@
 
 namespace NextDeveloper\Generator\Services;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -31,7 +32,7 @@ class AbstractService
         return $type;
     }
 
-    public static function objectArrayToString(?array $array): string {
+    public static function objectArrayToString(?array $array, $tabAmount): string {
         if (!$array) {
             return '';
         }
@@ -40,13 +41,15 @@ class AbstractService
         $isFirstElement = true;
         $maxKeyLength = self::getMaxKeyLength($array);
 
+        $tabs = Str::repeat("\t", $tabAmount);
+
         foreach ($array as $key => $value) {
             $key_padding = str_repeat(' ',  $maxKeyLength - strlen($key));
             if($isFirstElement == true){
                 $result .= sprintf("'%s'%s => '%s',\n", $key, $key_padding, $value);
             }
             else{
-                $result .= sprintf("\t\t'%s'%s => '%s',\n", $key, $key_padding, $value);
+                $result .= sprintf($tabs."'%s'%s => '%s',\n", $key, $key_padding, $value);
             }   
             $isFirstElement = false;  
         }

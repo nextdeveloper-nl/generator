@@ -18,12 +18,13 @@ class ModelService extends AbstractService
         $casts = self::generateCastsArray($columns);
         $dates = self::generateDatesArray($columns);
         $fullTextFields = self::generateFullTextFieldsArray($model);
+        $tabAmount = 2;
 
         $render = view('Generator::templates/database/model', [
             'namespace'         =>  $namespace,
             'module'            =>  $module,
             'model'             =>  ucfirst(Str::singular($model)),
-            'casts'             =>  self::objectArrayToString($casts),
+            'casts'             =>  self::objectArrayToString($casts,$tabAmount),
             'dates'             =>  self::arrayToString($dates),
             'fullTextFields'    =>  self::arrayToString($fullTextFields),
             'perPage'           =>  config('generator.pagination.perPage')
