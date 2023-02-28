@@ -43,54 +43,66 @@ class RequestService extends AbstractService
 
     public static function generateRulesArray($columns) {
         $rules = [];
+        $disgardedFields = ['created_at', 'deleted_at', 'updated_at', 'id'];
 
         foreach ($columns as $column) {
             $columnType = self::cleanColumnType($column->Type); 
-            $type = $column->Type;
-            $fieldName = $column->Field;
+            $columnDefaultValue = $column->Default;
             $nullable = $column->Null === 'YES';
-            $required = $nullable ? 'nullable' : 'required';
+            $required = $nullable ? 'nullable|' : 'required|';
+            $fieldName = $column->Field;
 
-            $rules[$fieldName] = $required;
+            $type = $column->Type;
 
-            switch ($columnType) {
-                case 'boolean':
-                case 'tinyint':
-                    $rules[$fieldName] .= '|boolean';
-                    break;
-                case 'decimal':
-                case 'float':
-                case 'double':
-                case 'real':
-                    $rules[$fieldName] .= '|numeric';
-                    break;
-                case 'int':
-                case 'integer':
-                case 'bigint':
-                case 'mediumint':
-                case 'smallint':
-                    $rules[$fieldName] .= '|integer';
-                    break;
-                case 'date':
-                case 'datetime':
-                case 'timestamp':
-                case 'immutable_date':
-                case 'immutable_datetime':
-                    $rules[$fieldName] .= '|date';
-                    break;
-                case 'text':
-                case 'mediumtext':
-                case 'longtext':
-                case 'varchar':
-                case 'char':
-                    $lengthRegex = '/\((?<max>\d+)\)/';
-                    preg_match($lengthRegex, $type, $matches);
+            if (!in_array($fieldName, $disgardedFields) && stripos($fieldName, 'id_ref') === false){
 
-                    $rules[$fieldName] .= '|string'; // Is this necessary when we have the max rule?
-                    $rules[$fieldName] .= '|max:' . $matches['max'];
+                $rules[$fieldName] = '';
+                if($columnDefaultValue == null){
+                    $rules[$fieldName] = $required;
+                }
+                    
+
+                switch ($columnType) {
+                    case 'boolean':
+                    case 'tinyint':
+                        $rules[$fieldName] .= 'boolean|';
+                        break;
+                    case 'decimal':
+                    case 'float':
+                    case 'double':
+                    case 'real':
+                        $rules[$fieldName] .= 'numeric|';
+                        break;
+                    case 'int':
+                    case 'integer':
+                    case 'bigint':
+                    case 'mediumint':
+                    case 'smallint':
+                        $rules[$fieldName] .= 'integer|';
+                        break;
+                    case 'date':
+                    case 'datetime':
+                    case 'timestamp':
+                    case 'immutable_date':
+                    case 'immutable_datetime':
+                        $rules[$fieldName] .= 'date|';
+                        break;
+                    case 'text':
+                    case 'mediumtext':
+                    case 'longtext':
+                    case 'varchar':
+                    case 'char':
+                        $lengthRegex = '/\((?<max>\d+)\)/';
+                        preg_match($lengthRegex, $type, $matches);
+
+                        $rules[$fieldName] .= 'string|'; // Is this necessary when we have the max rule?
+                        $rules[$fieldName] .= 'max:' . $matches['max'].'|';
+                }
+
+                if (Str::endsWith($rules[$fieldName], '|')) {
+                    $rules[$fieldName] = substr($rules[$fieldName], 0, -1);
+                }
             }
-
-            
             
         }
 
