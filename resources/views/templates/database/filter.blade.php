@@ -2,9 +2,12 @@ namespace {{ $namespace }}\{{ $module }}\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * This class automatically puts where clause on database so that use can filter
+ * data returned from the query.
+ */
 class {{ $model }}QueryFilter
 {
-
     /**
     * @var Builder
     */
@@ -36,7 +39,6 @@ public function {{ $fieldName }}($value)
 
         return $this->builder->where('{{$fieldName}}', $operator, $value);
     }
-
 @endforeach
 
 @foreach( $filterDateFields as $field )
