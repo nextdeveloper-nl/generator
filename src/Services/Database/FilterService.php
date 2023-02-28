@@ -16,6 +16,7 @@ class FilterService extends AbstractService
         $filterTextFields = self::generateFilterTextFields($columns);
         $filterNumberFields = self::generateFilterNumberFields($columns);
         $filterDateFields = self::generateFilterDateFields($columns);
+        $idRefFields = self::generateIdRefFields($columns);
 
         $render = view('Generator::templates/database/filter', [
             'namespace'          =>  $namespace,
@@ -24,7 +25,8 @@ class FilterService extends AbstractService
             'columns'            =>  $columns,
             'filterTextFields'   =>  $filterTextFields,
             'filterNumberFields' =>  $filterNumberFields,
-            'filterDateFields'   =>  $filterDateFields
+            'filterDateFields'   =>  $filterDateFields,
+            'idRefFields'        =>  $idRefFields
         ])->render();
 
         return $render;
@@ -38,19 +40,28 @@ class FilterService extends AbstractService
         return true;
     }
 
+    public static function isIdField($fieldName) {
+        $idFields = ['id', 'id_ref'];
+        return (in_array($fieldName, $idFields) || substr($fieldName, -3) === '_id');
+    }
+
     public static function generateFilterTextFields($columns) {
         $filterTextFields = [];
 
         foreach ($columns as $column) {
             $columnType = self::cleanColumnType($column->Type);
-            switch ($columnType) {
-                case 'text':
-                case 'mediumtext':
-                case 'longtext':
-                case 'varchar':
-                case 'char':
-                    $filterTextFields[] = $column->Field;
-                    break;
+            $columnField = $column->Field;
+
+            if(!self::isIdField($columnField)){
+                switch ($columnType) {
+                    case 'text':
+                    case 'mediumtext':
+                    case 'longtext':
+                    case 'varchar':
+                    case 'char':
+                        $filterTextFields[] = $column->Field;
+                        break;
+                }
             }
             
         }
@@ -63,19 +74,24 @@ class FilterService extends AbstractService
 
         foreach ($columns as $column) {
             $columnType = self::cleanColumnType($column->Type);
-            switch ($columnType) {
-                case 'decimal':
-                case 'float':
-                case 'double':
-                case 'real':
-                case 'int':
-                case 'integer':
-                case 'bigint':
-                case 'mediumint':
-                case 'smallint':
-                    $filterNumberFields[] = $column->Field;
-                    break;
-            }        
+            $columnField = $column->Field;
+
+            if(!self::isIdField($columnField)){
+                switch ($columnType) {
+                    case 'decimal':
+                    case 'float':
+                    case 'double':
+                    case 'real':
+                    case 'int':
+                    case 'integer':
+                    case 'bigint':
+                    case 'mediumint':
+                    case 'smallint':
+                        $filterNumberFields[] = $column->Field;
+                        break;
+                } 
+            }
+                   
         }
         return $filterNumberFields;
     }
@@ -85,16 +101,34 @@ class FilterService extends AbstractService
 
         foreach ($columns as $column) {
             $columnType = self::cleanColumnType($column->Type);
-            switch ($columnType) {
-                case 'date':
-                case 'datetime':
-                case 'timestamp':
-                case 'immutable_date':
-                case 'immutable_datetime':
-                    $filterDateFields[] = $column->Field;
-                    break;
-            }        
+            $columnField = $column->Field;
+
+            if(!self::isIdField($columnField)){
+                switch ($columnType) {
+                    case 'date':
+                    case 'datetime':
+                    case 'timestamp':
+                    case 'immutable_date':
+                    case 'immutable_datetime':
+                        $filterDateFields[] = $column->Field;
+                        break;
+                }   
+            }     
         }
         return $filterDateFields;
+    }
+
+    public static function generateIdRefFields($columns) {
+        $idRefFields = [];
+        $disgardedFields = ['id', 'id_ref'];
+
+        foreach ($columns as $column) {
+            $columnField = $column->Field;
+            
+            if(!in_array($columnField, $disgardedFields) && self::isIdField($columnField)){
+                $idRefFields[] = $column->Field;             
+            }     
+        }
+        return $idRefFields;
     }
 }
