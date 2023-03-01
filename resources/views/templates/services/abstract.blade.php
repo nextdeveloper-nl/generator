@@ -3,7 +3,7 @@ namespace {{ $namespace }}\{{ $module }}\Services\AbstractServices;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};
-use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}Filter;
+use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}QueryFilter;
 
 use {{ $namespace }}\{{ $module }}\Events\{{ Str::plural($model) }}\{{ Str::plural($model) }}CreatedEvent;
 use {{ $namespace }}\{{ $module }}\Events\{{ Str::plural($model) }}\{{ Str::plural($model) }}CreatingEvent;

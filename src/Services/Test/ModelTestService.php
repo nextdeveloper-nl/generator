@@ -3,8 +3,8 @@
 namespace NextDeveloper\Generator\Services\Test;
 
 use Illuminate\Support\Str;
-use NextDeveloper\Generator\Exceptions\TemplateNotFoundException;
 use NextDeveloper\Generator\Services\AbstractService;
+use NextDeveloper\Generator\Services\Database\FilterService;
 
 class ModelTestService extends AbstractService
 {
@@ -37,6 +37,9 @@ class ModelTestService extends AbstractService
             'module'        =>  $module,
             'model'         =>  ucfirst(Str::singular($model)),
             'columns'       =>  $columns,
+            'filterTextFields'   =>  FilterService::generateFilterTextFields($columns),
+            'filterNumberFields' =>  FilterService::generateFilterNumberFields($columns),
+            'filterDateFields'   =>  FilterService::generateFilterDateFields($columns),
             'events'        =>  config('generator.action-events.events'),
             'handlers'      =>  config('generator.action-events.handlers')
         ])->render();

@@ -16,7 +16,7 @@ use NextDeveloper\Generator\Services\Database\ModelService;
 /**
  * Class FetchExchangeRatesCommand.
  *
- * @package PlusClouds\Core\Console\Commands
+ * @package  NextDeveloper\Commons\Console\Commands
  */
 class GenerateDatabaseCommand extends Command {
     /**

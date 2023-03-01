@@ -12,7 +12,8 @@ use {{ $namespace }}\{{ $module }}\Database\Observers\{{ $model }}Observer;
  */
 class {{ $model }} extends Model
 {
-    use SoftDeletes;
+    @if($has_deleted) use SoftDeletes;
+    @endif
 
     /**
      * @var array

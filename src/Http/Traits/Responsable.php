@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Trait Responsable
- * @package PlusClouds\Core\Http\Traits\Response
+ * @package  NextDeveloper\Commons\Http\Traits\Response
  */
 trait Responsable
 {

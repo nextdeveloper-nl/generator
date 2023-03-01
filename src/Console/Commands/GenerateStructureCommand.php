@@ -16,7 +16,7 @@ use NextDeveloper\Generator\Services\Structure\StructureService;
 /**
  * Class FetchExchangeRatesCommand.
  *
- * @package PlusClouds\Core\Console\Commands
+ * @package  NextDeveloper\Commons\Console\Commands
  */
 class GenerateStructureCommand extends Command {
     /**

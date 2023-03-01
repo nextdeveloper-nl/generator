@@ -12,6 +12,17 @@ class AbstractService
         return DB::select( DB::raw("SHOW COLUMNS FROM " . $model));
     }
 
+    public static function hasColumn($column, $model) {
+        $columns = self::getColumns($model);
+
+        foreach ($columns as $col) {
+            if($col->Field == $column)
+                return true;
+        }
+
+        return false;
+    }
+
     public static function getMaxKeyLength($array){
         $maxKeyLength = 0;
 

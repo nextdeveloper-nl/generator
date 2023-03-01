@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
  * This class automatically puts where clause on database so that use can filter
  * data returned from the query.
  */
-class {{ $model }}QueryFilter
+class {{ $model }}QueryFilter extends AbstractQueryFilter
 {
     /**
     * @var Builder

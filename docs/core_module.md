@@ -119,7 +119,7 @@ Queue and Query loggers is defined here. Also monolog handler, a third party ope
 ##### 6.2.4. Notifications
 Sending notifications are handled in here. For each notification channel, a directory is should be created to handle any notification related development. Each channel should be placed under PlusClouds\${ModuleName}\Common\Notifications\Channels\${ChannelName} namespace. Everything related to the implementation of a specific channel should be implemented within the same namespace. 
 ##### 6.2.5. Registry
-Used as state saver, information serializer and deserializer. In this part, we are serializing different types of data in JSON format and writing them to files to store application related information. In the case of need, a registry file can be read and deserialized to recover or continue execution of an application/data/information. Each registry driver element to store data should be named as ${Method}.php such as, File.php or Database.php. In each registry driver class should implement IDriver (namespace PlusClouds\Core\Common\Registry\Drivers\IDriver) and should extend AbstractSerializer (PlusClouds\Core\Common\Registry\Drivers\AbstractSerializer). Each driver class should also have a config variable to access the config\{ModuleName}.php. To set any configuration related variables, Config\{ModuleName}.php file should be used and should be called to set related variables in registry classes. The following implementation can be followed as a blueprint;
+Used as state saver, information serializer and deserializer. In this part, we are serializing different types of data in JSON format and writing them to files to store application related information. In the case of need, a registry file can be read and deserialized to recover or continue execution of an application/data/information. Each registry driver element to store data should be named as ${Method}.php such as, File.php or Database.php. In each registry driver class should implement IDriver (namespace  NextDeveloper\Commons\Common\Registry\Drivers\IDriver) and should extend AbstractSerializer ( NextDeveloper\Commons\Common\Registry\Drivers\AbstractSerializer). Each driver class should also have a config variable to access the config\{ModuleName}.php. To set any configuration related variables, Config\{ModuleName}.php file should be used and should be called to set related variables in registry classes. The following implementation can be followed as a blueprint;
 
 ```
 <?php
@@ -162,7 +162,7 @@ class ${Example} extends AbstractSerializer implements IDriver
 ```
 
 ##### 6.2.6. Services
-All common core services and related interfaces are placed in here. Essentially development of common services and their events should be done under this directory. Each service related implementation should be encapsulated under PlusClouds\${ModuleName}\Common\Services\${ServiceName}. Related events to a service should be placed under Events folder and should be encapsulated under  PlusClouds\${ModuleName}\Common\Services\${ServiceName}\Events namespace. Implemented events should extend AbstractEvent (PlusClouds\Core\Events\AbstractEvent).
+All common core services and related interfaces are placed in here. Essentially development of common services and their events should be done under this directory. Each service related implementation should be encapsulated under PlusClouds\${ModuleName}\Common\Services\${ServiceName}. Related events to a service should be placed under Events folder and should be encapsulated under  PlusClouds\${ModuleName}\Common\Services\${ServiceName}\Events namespace. Implemented events should extend AbstractEvent ( NextDeveloper\Commons\Events\AbstractEvent).
 
 #### 6.3. Console
 All requests related to console operations go here to be handled by Handlers for console commands and custom queries. Each custom console command is encapsulated under \PlusClouds\${ModuleName}\Console\Commands namespace and each command class should be named with ${CommandPurpose}Command.php. For developing custom commands, each class should extend Command (Illuminate\Console\Command) class. Examples about writing commands can be found in; https://laravel.com/docs/5.5/artisan#writing-commands
@@ -225,7 +225,7 @@ Holds the database schemas and predefined set of database related actions. A mor
 Each database table has a corresponding model, that is used to interact with that table. Implemented models should extend AbstractModel and should be encapsulated under the PlusClouds\${ModuleName}\Database\Models namespace.
 
 ##### 6.4.5. Observers
-Observers are event listeners for database related actions. When a change occur in the database, related event is fired in the system. Observers check these changes to execute set of actions. Each observer should extend AbstractObserver (PlusClouds\Core\Database\Observers\AbstractObserver) and should be encapsulated under PlusClouds\${ModuleName}\Database\Observers. Each observer class implementation should follow the following naming schema; ${Model}Observer.php. Thus, each observer implementation should use an existing model defined under PlusClouds\${ModuleName}\Database\Models.
+Observers are event listeners for database related actions. When a change occur in the database, related event is fired in the system. Observers check these changes to execute set of actions. Each observer should extend AbstractObserver ( NextDeveloper\Commons\Database\Observers\AbstractObserver) and should be encapsulated under PlusClouds\${ModuleName}\Database\Observers. Each observer class implementation should follow the following naming schema; ${Model}Observer.php. Thus, each observer implementation should use an existing model defined under PlusClouds\${ModuleName}\Database\Models.
 
 ##### 6.4.6. Seeders
 Seeders are used to insert data to the database. When executed, it can create and fill already defined database with some random or not so random values. A seeder class should extend Seeder (Illuminate\Database\Seeder) and should be encapsulated under PlusClouds\${ModuleName}\Database\Seeders namespace.
@@ -234,7 +234,7 @@ Seeders are used to insert data to the database. When executed, it can create an
 Every database related trait is defined here. Traits are a way to reuse methods of independent classes in different scopes via "use" keyword. Each trait is encapsulated under PlusClouds\${ModuleName}\Database\Traits and should be named with ${ModelName}Trait.php. 
 
 #### 6.5. Events
-All events and handlers are implemented here. When an event occurs, handler sends a log file. Each event should extend AbstractEvent (PlusClouds\Core\Events\AbstractEvent) and should be encapsulated under PlusClouds\${ModuleName}\Events namespace. Each Event class and file should be named as ${EventName}Event. The following code segment could be used as a guideline for future implementations (For ${EventName}Event.php file);
+All events and handlers are implemented here. When an event occurs, handler sends a log file. Each event should extend AbstractEvent ( NextDeveloper\Commons\Events\AbstractEvent) and should be encapsulated under PlusClouds\${ModuleName}\Events namespace. Each Event class and file should be named as ${EventName}Event. The following code segment could be used as a guideline for future implementations (For ${EventName}Event.php file);
 
 ```
 <?php
@@ -323,7 +323,7 @@ class ${Name}Helper {
 Contains controllers, middlewares and requests. All of the logic to handle http requests are done in this directory.
 
 ##### 6.8.1. Controllers
-Controllers are located here. Each controller group a related request handling logic into a class and encapsulated under PlusClouds\${ModuleName}\Http\Controllers namespace. Each implemented controller should reflect what it is controlling and should be named as ${Purpose}Controller. Furthermore, controllers should extend AbstractController (PlusClouds\Core\Http\Controllers\AbstractController). Implemented Traits in AbstractController should also be examined before beginning to define a new controller to avoid duplicated function implementations. Further details about controllers can be found in; https://laravel.com/docs/controllers . However, as this link explains Laravel controllers, it should not be considered fully correct for our standards. 
+Controllers are located here. Each controller group a related request handling logic into a class and encapsulated under PlusClouds\${ModuleName}\Http\Controllers namespace. Each implemented controller should reflect what it is controlling and should be named as ${Purpose}Controller. Furthermore, controllers should extend AbstractController ( NextDeveloper\Commons\Http\Controllers\AbstractController). Implemented Traits in AbstractController should also be examined before beginning to define a new controller to avoid duplicated function implementations. Further details about controllers can be found in; https://laravel.com/docs/controllers . However, as this link explains Laravel controllers, it should not be considered fully correct for our standards. 
 
 ##### 6.8.2. Middleware
 Middleware checks are handled here. Middlewares provide a convenient mechanism for filtering incoming HTTP requests. For more information about Middlewares please check; https://laravel.com/docs/middleware . Each middleware class should have handle method with at least two parameters and should be encapsulated under PlusClouds\${ModuleName}\Http\Middleware namespace. Each Middleware class and file should also contain Middleware suffix such that each should be named as ${MiddlewarePurpose}Middleware. Additionally middlewares should use Closure and Illuminate\Http\Requests. The following code snippet can be used as a guideline to develop middlewares to perform some task before the request is handled by the application;
@@ -389,18 +389,18 @@ class ${MiddlewarePurpose}Middleware
 ```
 
 ##### 6.8.3. Requests
-Http requests are handled here. Each request related to an endpoint should be handled within its own folder and should be encapsulated under PlusClouds\${ModuleName}\Http\Requests\${Endpoint} namespace. Each request should also extend AbstractFormRequest (PlusClouds\Core\Http\Requests\AbstractFormRequest). Each request should also implement rules and authorize methods. Additionally, each request should be named in a way that both the endpoint and operation should be mentioned in the name with a request suffix. The following snippet can be used as a guideline;
+Http requests are handled here. Each request related to an endpoint should be handled within its own folder and should be encapsulated under PlusClouds\${ModuleName}\Http\Requests\${Endpoint} namespace. Each request should also extend AbstractFormRequest ( NextDeveloper\Commons\Http\Requests\AbstractFormRequest). Each request should also implement rules and authorize methods. Additionally, each request should be named in a way that both the endpoint and operation should be mentioned in the name with a request suffix. The following snippet can be used as a guideline;
 
 ```
 <?php
 namespace PlusClouds\${ModuleName}\Http\Requests\${Endpoint};
 
-use PlusClouds\Core\Http\Requests\AbstractFormRequest;
+use  NextDeveloper\Commons\Http\Requests\AbstractFormRequest;
 
 /**
  * Class ${Endpoint}${Operation}Request.
  *
- * @package PlusClouds\Core\Http\Requests
+ * @package  NextDeveloper\Commons\Http\Requests
  */
 class ${Endpoint}${Operation}Request extends AbstractFormRequest
 {
@@ -428,7 +428,7 @@ class ${Endpoint}${Operation}Request extends AbstractFormRequest
 Contains traits related to incoming http requests. Traits are collection of reusable methods that are accessible in multiple classes. Re-usable functions that are called with use keyword and work like object methods inside the caller. More information about traits can be found in; https://www.w3schools.com/php/php_oop_traits.asp . Each trait implementation regarding set of actions should be clear from the file name and each trait should be named as ${Behavior}Trait and encapsulated under PlusClouds\${ModuleName}\Http\Traits namespace.
 
 ##### 6.8.5. Transformers
-Each implemented transformer should be encapsulated under PlusClouds\${ModuleName}\Http\Transformers and should extend AbstractTransformer (PlusClouds\Core\Http\Transformers\AbstractTransformer). The following code snippet can be used as a guideline to create a new transformer;
+Each implemented transformer should be encapsulated under PlusClouds\${ModuleName}\Http\Transformers and should extend AbstractTransformer ( NextDeveloper\Commons\Http\Transformers\AbstractTransformer). The following code snippet can be used as a guideline to create a new transformer;
 
 ```
 <?php
@@ -452,7 +452,7 @@ class ${Name}Transformer extends AbstractTransformer
 All api routes are defined here. For further information about defining routes and handling http requests, please visit; https://laravel.com/docs/routing
 
 #### 6.9. Jobs
-Queueable scheduled jobs are placed here. A job related to a group should be contained in its own folder and should be encapsulated under PlusClouds\${ModuleName}\Jobs\ ${Group} namespace. A job implementation should also extend AbstractJob (PlusClouds\Core\Jobs\AbstractJob) and should implement ShouldQueue interface. The following code snippet can be used as a guideline;
+Queueable scheduled jobs are placed here. A job related to a group should be contained in its own folder and should be encapsulated under PlusClouds\${ModuleName}\Jobs\ ${Group} namespace. A job implementation should also extend AbstractJob ( NextDeveloper\Commons\Jobs\AbstractJob) and should implement ShouldQueue interface. The following code snippet can be used as a guideline;
 
 ```
 <?php
@@ -460,7 +460,7 @@ namespace App\Jobs;
  
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use PlusClouds\Core\Jobs\AbstractJob;
+use  NextDeveloper\Commons\Jobs\AbstractJob;
  
 class ${Group}${Operation}Job extends AbstractJob implements ShouldQueue
 {

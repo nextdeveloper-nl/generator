@@ -15,7 +15,7 @@ use Illuminate\Support\Arr;
 
 /**
  * Class AbstractServiceProvider
- * @package PlusClouds\Core
+ * @package  NextDeveloper\Commons
  */
 abstract class AbstractServiceProvider extends ServiceProvider
 {

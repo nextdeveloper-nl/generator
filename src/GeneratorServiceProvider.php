@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Log;
 /**
  * Class CoreServiceProvider.
  *
- * @package PlusClouds\Core
+ * @package  NextDeveloper\Commons
  */
 class GeneratorServiceProvider extends AbstractServiceProvider {
     /**
@@ -133,11 +133,11 @@ class GeneratorServiceProvider extends AbstractServiceProvider {
                 'NextDeveloper\Generator\Console\Commands\GenerateStructureCommand',
                 'NextDeveloper\Generator\Console\Commands\GenerateDatabaseCommand'
             /*
-                'PlusClouds\Core\Console\Commands\FetchDisposableEmailDomainsCommand',
-                'PlusClouds\Core\Console\Commands\MigrateExchangeRatesCommand',
-                'PlusClouds\Core\Console\Commands\FetchExchangeRatesCommand',
-                'PlusClouds\Core\Console\Commands\ObfuscateAccountDataCommand',
-                // 'PlusClouds\Core\Common\Cache\ResponseCache\Commands\ClearCommand',
+                ' NextDeveloper\Commons\Console\Commands\FetchDisposableEmailDomainsCommand',
+                ' NextDeveloper\Commons\Console\Commands\MigrateExchangeRatesCommand',
+                ' NextDeveloper\Commons\Console\Commands\FetchExchangeRatesCommand',
+                ' NextDeveloper\Commons\Console\Commands\ObfuscateAccountDataCommand',
+                // ' NextDeveloper\Commons\Common\Cache\ResponseCache\Commands\ClearCommand',
                 */
             ]);
         }

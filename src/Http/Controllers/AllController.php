@@ -25,7 +25,7 @@ class AllController extends AbstractController
         $namespace = 'NextDeveloper';
         $moduleName = 'Commons';
         $rootPath = '../' . $namespace . '/' . $moduleName;
-        $model = 'accounts';
+        $model = 'countries';
 
         //dd(AccountService::getAll());
 

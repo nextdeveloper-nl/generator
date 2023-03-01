@@ -23,6 +23,9 @@ class ModelService extends AbstractService
         $render = view('Generator::templates/database/model', [
             'namespace'         =>  $namespace,
             'module'            =>  $module,
+            'has_created'       =>  self::hasColumn('created_at', $model),
+            'has_updated'       =>  self::hasColumn('updated_at', $model),
+            'has_deleted'       =>  self::hasColumn('deleted_at', $model),
             'model'             =>  ucfirst(Str::singular($model)),
             'casts'             =>  self::objectArrayToString($casts,$tabAmount),
             'dates'             =>  self::arrayToString($dates),
