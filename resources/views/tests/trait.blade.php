@@ -115,7 +115,7 @@ try {
     @endphp
     try {
             $request = new Request([
-            '{{ str_replace('-', '_', Str::kebab($field)) }}'  =>  '1'
+                '{{ str_replace('-', '_', Str::kebab($field)) }}'  =>  '1'
             ]);
 
             $filter = new CountryQueryFilter($request);
@@ -141,7 +141,7 @@ try {
     @endphp
     try {
             $request = new Request([
-            '{{ str_replace('-', '_', Str::kebab($field)) }}Start'  =>  now()
+                '{{ str_replace('-', '_', Str::kebab($field)) }}Start'  =>  now()
             ]);
 
             $filter = new CountryQueryFilter($request);

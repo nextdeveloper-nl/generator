@@ -68,32 +68,16 @@ class StructureService extends AbstractService
         return true;
     }
 
-    public static function generateAbstractServiceProvider($namespace, $module) {
-        $render = view('Generator::templates/abstractprovider', [
-            'namespace'     =>  $namespace,
-            'module'        =>  $module
+    public static function generateApiRoutes($moduleName) {
+        $render = view('Generator::templates/http/apiroutescommon', [
+            'module'    =>  $moduleName
         ])->render();
 
         return $render;
     }
 
-    public static function generateAbstractServiceProviderFile($rootPath, $namespace, $module): bool {
-        $content = self::generateAbstractServiceProvider($namespace, $module);
-
-        self::writeToFile($rootPath . '/src/AbstractServiceProvider.php', $content);
-
-        return true;
-    }
-
-    public static function generateApiRoutes() {
-        $render = view('Generator::templates/http/apiroutes', [
-        ])->render();
-
-        return $render;
-    }
-
-    public static function generateApiRoutesFile($rootPath): bool {
-        $content = self::generateApiRoutes();
+    public static function generateApiRoutesFile($rootPath, $namespace, $moduleName): bool {
+        $content = self::generateApiRoutes($moduleName);
 
         self::writeToFile($rootPath . '/src/Http/api.routes.php', $content);
 
@@ -140,21 +124,5 @@ class StructureService extends AbstractService
         }
 
         return $paths;
-    }
-
-    private static function createDirectory($directory) : ?bool {
-        try {
-            mkdir($directory, 0777, true);
-        } catch (\ErrorException $exception) {
-            //  We are not throwing exception here because the user may forget
-            //  to add a new directory while generating it and may need to
-            //  regenerate again.
-
-            //  @TODO: Maybe later we can create a warning.
-            if($exception->getMessage() == 'mkdir(): File exists')
-                return false;
-        }
-
-        return true;
     }
 }

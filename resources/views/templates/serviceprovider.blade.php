@@ -3,7 +3,7 @@ namespace {{ $namespace }}\{{ $module }};
 
 use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Support\Facades\Log;
-use {{ $namespace }}\{{ $module }}\AbstractServiceProvider;
+use NextDeveloper\Commons\AbstractServiceProvider;
 
 /**
  * Class {{ $module }}ServiceProvider

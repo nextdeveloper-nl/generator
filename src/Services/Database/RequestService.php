@@ -113,20 +113,4 @@ class RequestService extends AbstractService
         $folder = ucfirst(Str::singular($model));
         self::createDirectory(base_path($root . '/src/Http/Requests/' . $folder));
     }
-
-    private static function createDirectory($directory) : ?bool {
-        try {
-            mkdir($directory, 0777, true);
-        } catch (\ErrorException $exception) {
-            //  We are not throwing exception here because the user may forget
-            //  to add a new directory while generating it and may need to
-            //  regenerate again.
-
-            //  @TODO: Maybe later we can create a warning.
-            if($exception->getMessage() == 'mkdir(): File exists')
-                return false;
-        }
-
-        return true;
-    }
 }

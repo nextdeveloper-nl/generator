@@ -16,14 +16,14 @@ use {{ $namespace }}\{{ $module }}\Events\{{ Str::plural($model) }}\{{ Str::plur
 * @package {{ $namespace }}\{{ $module }}\Database\Models
 */
 class Abstract{{ $model }}Service {
-    public static function get({{ $model }}Filter $filter = null, bool $enablePaginate = true, $page = 0) : ?Collection {
+    public static function get({{ $model }}QueryFilter $filter = null, bool $enablePaginate = true, $page = 0) : ?Collection {
         if($filter)
             return {{ $model }}::filter($filter)->get();
         else
             return {{ $model }}::get();
     }
 
-    public static function getPaginated({{ $model }}Filter $filter = null, bool $enablePaginate = true, $page = 0) : ?LengthAwarePaginator {
+    public static function getPaginated({{ $model }}QueryFilter $filter = null, bool $enablePaginate = true, $page = 0) : ?LengthAwarePaginator {
         if($filter)
             return {{ $model }}::filter($filter)->paginate();
         else

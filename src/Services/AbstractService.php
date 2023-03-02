@@ -103,4 +103,26 @@ class AbstractService
 
         file_put_contents(base_path($file), $content);
     }
+
+    /**
+     * Used to create directory which is not stated in structure array
+     *
+     * @param $directory
+     * @return bool|null
+     */
+    public static function createDirectory($directory) : ?bool {
+        try {
+            mkdir($directory, 0777, true);
+        } catch (\ErrorException $exception) {
+            //  We are not throwing exception here because the user may forget
+            //  to add a new directory while generating it and may need to
+            //  regenerate again.
+
+            //  @TODO: Maybe later we can create a warning.
+            if($exception->getMessage() == 'mkdir(): File exists')
+                return false;
+        }
+
+        return true;
+    }
 }

@@ -118,7 +118,10 @@ trait Responsable
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function withCollection($data, $transformer, $resourceKey = null, Cursor $cursor = null, array $meta = [], array $headers = []) {
+    public function withCollection($data, $transformer = null, $resourceKey = null, Cursor $cursor = null, array $meta = [], array $headers = []) {
+        if($transformer == null) {
+            dd(class_basename($data));
+        }
         $resource = new Collection( $data, $transformer, $resourceKey );
         $resource->setMeta( $meta );
 
@@ -424,5 +427,10 @@ trait Responsable
         return $this->setStatusCode( Response::HTTP_SERVICE_UNAVAILABLE )
             ->withError( $message, 'ERROR-SERVICE-UNAVAILABLE', $errors, $headers );
     }
+}
 
+class ResponsableFactory {
+    public static function makeResponse($data, $transformer = null, $resourceKey = null, Cursor $cursor = null, array $meta = [], array $headers = []) {
+        dd($data);
+    }
 }

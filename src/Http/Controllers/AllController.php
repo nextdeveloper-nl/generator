@@ -10,6 +10,8 @@ use NextDeveloper\Generator\Services\Database\ObserverService;
 use NextDeveloper\Generator\Services\Database\RequestService;
 use NextDeveloper\Generator\Services\Events\EventsService;
 use NextDeveloper\Generator\Services\Events\HandlersService;
+use NextDeveloper\Generator\Services\Http\ApiRoutesService;
+use NextDeveloper\Generator\Services\Http\ControllerService;
 use NextDeveloper\Generator\Services\Services\ServiceService;
 use NextDeveloper\Generator\Services\Structure\StructureService;
 use NextDeveloper\Generator\Services\Test\ModelTestService;
@@ -32,8 +34,7 @@ class AllController extends AbstractController
         StructureService::generateStructure($rootPath);
         StructureService::generateComposerFile($namespace, $moduleName, $rootPath);
         StructureService::generateServiceProviderFile($rootPath, $namespace, $moduleName);
-        StructureService::generateAbstractServiceProviderFile($rootPath, $namespace, $moduleName);
-        StructureService::generateApiRoutesFile($rootPath);
+        StructureService::generateApiRoutesFile($rootPath, $namespace, $moduleName);
         StructureService::generateConfigurationFiles($rootPath, $moduleName);
         StructureService::createEventFolderForModel($rootPath, $model);
 
@@ -54,6 +55,9 @@ class AllController extends AbstractController
 
         ServiceService::generateFile($rootPath, $namespace, $moduleName, $model);
         ServiceService::generateAbstractFile($rootPath, $namespace, $moduleName, $model);
+
+        ControllerService::generateFile($rootPath, $namespace, $moduleName, $model);
+        ApiRoutesService::appendToRoutes($rootPath, $namespace, $moduleName, $model);
 
         return $this->withCompleted();
     }
