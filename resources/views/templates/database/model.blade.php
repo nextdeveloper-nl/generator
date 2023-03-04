@@ -1,8 +1,10 @@
 namespace {{ $namespace }}\{{ $module }}\Database\Models;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
+@if($has_deleted)use Illuminate\Database\Eloquent\SoftDeletes;
+@endif
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
+use NextDeveloper\Commons\Database\Traits\Filterable;
 use {{ $namespace }}\{{ $module }}\Database\Observers\{{ $model }}Observer;
 
 /**
@@ -12,6 +14,7 @@ use {{ $namespace }}\{{ $module }}\Database\Observers\{{ $model }}Observer;
  */
 class {{ $model }} extends Model
 {
+    use Filterable;
     @if($has_deleted) use SoftDeletes;
     @endif
 

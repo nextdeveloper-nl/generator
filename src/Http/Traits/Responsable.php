@@ -430,7 +430,22 @@ trait Responsable
 }
 
 class ResponsableFactory {
-    public static function makeResponse($data, $transformer = null, $resourceKey = null, Cursor $cursor = null, array $meta = [], array $headers = []) {
-        dd($data);
+    public static function makeResponse($controller, $data, $transformer = null, $resourceKey = null, Cursor $cursor = null, array $meta = [], array $headers = []) {
+        $returnType = class_basename($data);
+
+        $returnObject = get_class($data[0]);
+
+        $exploded = explode('\\', $returnObject);
+
+        $transformer = $exploded[0] . '\\' . $exploded[1] . '\\Http\\Transformers\\' . $exploded[4] . 'Transformer';
+
+        switch ($returnType) {
+            case 'Collection':
+                return $controller->withCollection($data, app( $transformer ));
+                break;
+            case 'LengthAwarePaginator':
+                return $controller->withPaginator($data, app( $transformer ));
+                break;
+        }
     }
 }

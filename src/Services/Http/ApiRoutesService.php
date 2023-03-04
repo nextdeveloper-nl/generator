@@ -14,7 +14,7 @@ class ApiRoutesService extends AbstractService
     public static function generate($namespace, $module, $model) {
         $columns = self::getColumns($model);
 
-        $render = view('Generator::templates/http/apiroutescommon', [
+        $render = view('Generator::templates/http/apiroutesmodel', [
             'namespace'          =>  $namespace,
             'module'             =>  $module,
             'model'              =>  ucfirst(Str::singular($model)),
@@ -26,8 +26,12 @@ class ApiRoutesService extends AbstractService
 
     public static function appendToRoutes($rootPath, $namespace, $module, $model) : bool{
         $content = self::generate($namespace, $module, $model);
+        $fileContent = self::readFile($rootPath . '/src/Http/api.routes.php');
 
-        //self::writeToFile($rootPath . '/src/Http/Controllers/api.routes.php', $content);
+        $fileContent = str_replace('//!APPENDHERE', $content, $fileContent);
+        $fileContent = trim(str_replace('<?php', '', $fileContent));
+
+        self::writeToFile($rootPath . '/src/Http/api.routes.php', $fileContent);
 
         return true;
     }

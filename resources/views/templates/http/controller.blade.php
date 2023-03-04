@@ -20,9 +20,8 @@ class {{ $model }}Controller extends AbstractController
     * @return \Illuminate\Http\JsonResponse
     */
     public function index({{ $model }}QueryFilter $filter, Request $request) {
-        $isPaginationRequested = $request->has('paginate');
-        $data = {{ $model }}Service::get($filter, $isPaginationRequested);
+        $data = {{ $model }}Service::get($filter, $request->all());
 
-        return ResponsableFactory::makeResponse($data);
+        return ResponsableFactory::makeResponse($this, $data);
     }
 }

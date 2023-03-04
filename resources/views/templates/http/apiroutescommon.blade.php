@@ -1,3 +1,3 @@
-Route::get('/{{ strtolower($module) }}', function () {
+Route::prefix('{{ strtolower($module) }}')->group(function() {
     //!APPENDHERE
 });

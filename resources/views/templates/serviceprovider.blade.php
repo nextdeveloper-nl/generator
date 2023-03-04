@@ -23,7 +23,7 @@ class {{ $module }}ServiceProvider extends AbstractServiceProvider {
      */
     public function boot() {
         $this->publishes([
-            __DIR__.'/../config/{{ strtolower($module) }}.php' => config_path('strtolower($module).php'),
+            __DIR__.'/../config/{{ strtolower($module) }}.php' => config_path('{{ strtolower($module) }}.php'),
         ], 'config');
 
         $this->loadViewsFrom($this->dir.'/../resources/views', '{{ $module }}');
@@ -106,7 +106,7 @@ class {{ $module }}ServiceProvider extends AbstractServiceProvider {
     protected function registerRoutes() {
         if ( ! $this->app->routesAreCached()) {
             $this->app['router']
-                ->namespace('NextDeveloper\Generator\Http\Controllers')
+                ->namespace('{{ $namespace }}\{{ $module }}\Http\Controllers')
                 ->group(__DIR__.DIRECTORY_SEPARATOR.'Http'.DIRECTORY_SEPARATOR.'api.routes.php');
         }
     }

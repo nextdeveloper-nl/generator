@@ -43,6 +43,15 @@ class AbstractService
         return $type;
     }
 
+    public static function isColumnExists($column, $columns) : bool {
+        foreach ($columns as $col) {
+            if($col->Field == $column)
+                return true;
+        }
+
+        return false;
+    }
+
     public static function objectArrayToString(?array $array, $tabAmount): string {
         if (!$array) {
             return '';
@@ -102,6 +111,10 @@ class AbstractService
         $content = htmlspecialchars_decode($content);
 
         file_put_contents(base_path($file), $content);
+    }
+
+    public static function readFile($file) {
+        return file_get_contents(base_path($file));
     }
 
     /**

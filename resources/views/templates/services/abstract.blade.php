@@ -16,18 +16,36 @@ use {{ $namespace }}\{{ $module }}\Events\{{ Str::plural($model) }}\{{ Str::plur
 * @package {{ $namespace }}\{{ $module }}\Database\Models
 */
 class Abstract{{ $model }}Service {
-    public static function get({{ $model }}QueryFilter $filter = null, bool $enablePaginate = true, $page = 0) : ?Collection {
-        if($filter)
-            return {{ $model }}::filter($filter)->get();
+    public static function get({{ $model }}QueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator {
+        $enablePaginate = array_key_exists('paginate', $params);
+
+        $perPage = config('commons.pagination.per_page');
+
+        if($perPage == null)
+            $perPage = 20;
+
+        if(array_key_exists('per_page', $params)) {
+            $perPage = intval($params['per_page']);
+
+            if($perPage == 0)
+                $perPage = 20;
+        }
+
+        if(array_key_exists('orderBy', $params)) {
+            $filter->orderBy($params['orderBy']);
+        }
+
+        $model = {{ $model }}::filter($filter);
+
+        if($model && $enablePaginate)
+            return $model->paginate($perPage);
+        else
+            return $model->get();
+
+        if(!$model && $enablePaginate)
+            return {{ $model }}::paginate($perPage);
         else
             return {{ $model }}::get();
-    }
-
-    public static function getPaginated({{ $model }}QueryFilter $filter = null, bool $enablePaginate = true, $page = 0) : ?LengthAwarePaginator {
-        if($filter)
-            return {{ $model }}::filter($filter)->paginate();
-        else
-            return {{ $model }}::paginate();
     }
 
     public static function getAll() {
