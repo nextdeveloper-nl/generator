@@ -92,7 +92,7 @@ class StructureService extends AbstractService
     }
 
     public static function generateModelBindingConfig() {
-        $render = view('Generator::templates/configs/config', [
+        $render = view('Generator::templates/configs/modelbinding', [
         ])->render();
 
         return $render;

@@ -12,6 +12,7 @@ use NextDeveloper\Generator\Services\Events\EventsService;
 use NextDeveloper\Generator\Services\Events\HandlersService;
 use NextDeveloper\Generator\Services\Http\ApiRoutesService;
 use NextDeveloper\Generator\Services\Http\ControllerService;
+use NextDeveloper\Generator\Services\Http\HttpConfigurationService;
 use NextDeveloper\Generator\Services\Http\TransformerService;
 use NextDeveloper\Generator\Services\Services\ServiceService;
 use NextDeveloper\Generator\Services\Structure\StructureService;
@@ -59,6 +60,7 @@ class AllController extends AbstractController
 
         ControllerService::generateFile($rootPath, $namespace, $moduleName, $model);
         ApiRoutesService::appendToRoutes($rootPath, $namespace, $moduleName, $model);
+        HttpConfigurationService::appendToModelBinding($rootPath, $namespace, $moduleName, $model);
 
         TransformerService::generateFile($rootPath, $namespace, $moduleName, $model);
 

@@ -1,6 +1,8 @@
 namespace {{ $namespace }}\{{ $module }}\Tests\Database\Models;
 
 use Tests\TestCase;
+use GuzzleHttp\Client;
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}QueryFilter;
 use {{ $namespace }}\{{ $module }}\Services\AbstractServices\Abstract{{ $model }}Service;
@@ -9,6 +11,34 @@ use League\Fractal\Resource\Collection;
 
 trait {{ $model }}TestTraits
 {
+    public $http;
+
+    /**
+    *   Creating the Guzzle object
+    */
+    public function setupGuzzle()
+    {
+        $this->http = new Client([
+            'base_uri'  =>  '127.0.0.1:8000'
+        ]);
+    }
+
+    /**
+    *   Destroying the Guzzle object
+    */
+    public function destroyGuzzle()
+    {
+        $this->http = null;
+    }
+
+    public function test_http_{{ strtolower($model) }}_get()
+    {
+        $this->setupGuzzle();
+        $response = $this->http->request('GET', '/{{ strtolower($module) }}/{{ strtolower($model) }}');
+
+        $this->assertEquals($response->getStatusCode(), Response::HTTP_OK);
+    }
+
     /**
     * Get test
     *
@@ -30,7 +60,9 @@ trait {{ $model }}TestTraits
 
     public function test_{{ strtolower($model) }}_get_paginated()
     {
-        $result = Abstract{{ $model }}Service::getPaginated();
+        $result = Abstract{{ $model }}Service::get(null, [
+            'paginated' =>  'true'
+        ]);
 
         $this->assertIsObject($result, LengthAwarePaginator::class);
     }

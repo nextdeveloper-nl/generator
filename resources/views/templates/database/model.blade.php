@@ -6,6 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Database\Traits\Filterable;
 use {{ $namespace }}\{{ $module }}\Database\Observers\{{ $model }}Observer;
+use NextDeveloper\Commons\Database\Traits\UuidId;
 
 /**
  * Class {{ $model }}.
@@ -14,7 +15,7 @@ use {{ $namespace }}\{{ $module }}\Database\Observers\{{ $model }}Observer;
  */
 class {{ $model }} extends Model
 {
-    use Filterable;
+    use Filterable, UuidId;
     @if($has_deleted) use SoftDeletes;
     @endif
 

@@ -6,6 +6,7 @@ use NextDeveloper\Generator\Http\Traits\ResponsableFactory;
 use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}QueryFilter;
 use {{ $namespace }}\{{ $module }}\Http\Transformers\{{ $model }}Transformer;
 use {{ $namespace }}\{{ $module }}\Services\{{ $model }}Service;
+use {{ $namespace }}\{{ $module }}\Http\Requests\{{ $model }}\{{ $model }}CreateRequest;
 
 class {{ $model }}Controller extends AbstractController
 {
@@ -23,5 +24,32 @@ class {{ $model }}Controller extends AbstractController
         $data = {{ $model }}Service::get($filter, $request->all());
 
         return ResponsableFactory::makeResponse($this, $data);
+    }
+
+    /**
+    * This method receives ID for the related model and returns the item to the client.
+    *
+    * @param ${{ Str::camel($model) }}Id
+    * @return mixed|null
+    * @throws \Laravel\Octane\Exceptions\DdException
+    */
+    public function show($ref) {
+        //  Here we are not using Laravel Route Model Binding. Please check routeBinding.md file in NextDeveloper Platform Project
+        $model = {{ $model }}Service::getByRef($ref);
+
+        return ResponsableFactory::makeResponse($this, $model);
+    }
+
+    /**
+    * This method created Country object on database.
+    *
+    * @param CountryCreateRequest $request
+    * @return mixed|null
+    * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
+    */
+    public function store(CountryCreateRequest $request) {
+        $model = CountryService::create($request->validated());
+
+        return ResponsableFactory::makeResponse($this, $model);
     }
 }

@@ -11,12 +11,14 @@
 namespace NextDeveloper\Generator\Http\Traits;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model;
 use League\Fractal\Manager;
 use League\Fractal\Pagination\Cursor;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use Symfony\Component\HttpFoundation\Response;
+use function PHPUnit\Framework\isInstanceOf;
 
 /**
  * Trait Responsable
@@ -432,8 +434,16 @@ trait Responsable
 class ResponsableFactory {
     public static function makeResponse($controller, $data, $transformer = null, $resourceKey = null, Cursor $cursor = null, array $meta = [], array $headers = []) {
         $returnType = class_basename($data);
+        $returnObject = null;
 
-        $returnObject = get_class($data[0]);
+        if($data instanceof Model) {
+            //  Here if are getting an model directly, this means that we need to return an item.
+            //  That is why we are checking if the data received is an instance of a model or not.
+            $returnType = 'Item';
+            $returnObject = get_class($data);
+        } else {
+            $returnObject = get_class($data[0]);
+        }
 
         $exploded = explode('\\', $returnObject);
 
@@ -442,10 +452,10 @@ class ResponsableFactory {
         switch ($returnType) {
             case 'Collection':
                 return $controller->withCollection($data, app( $transformer ));
-                break;
             case 'LengthAwarePaginator':
                 return $controller->withPaginator($data, app( $transformer ));
-                break;
+            case 'Item':
+                return $controller->withItem($data, app( $transformer ));
         }
     }
 }

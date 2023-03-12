@@ -1,6 +1,8 @@
 namespace {{ $namespace }}\{{ $module }}\Http\Requests\{{ $model }};
 
-class {{ $model }}{{ $requestType }}Request
+use NextDeveloper\Commons\Http\Requests\AbstractFormRequest;
+
+class {{ $model }}{{ $requestType }}Request extends AbstractFormRequest
 {
 
     /**
