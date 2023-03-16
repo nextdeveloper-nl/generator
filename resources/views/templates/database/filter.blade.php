@@ -41,6 +41,16 @@ public function {{ $fieldName }}($value)
     }
     
 @endforeach
+@foreach( $filterBooleanFields as $field )
+    @php
+    $fieldName = Str::camel($field);
+    @endphp
+public function {{ $fieldName }}()
+    {
+        return $this->builder->where('{{$field}}', true);
+    }
+    
+@endforeach
 @foreach( $filterDateFields as $field )
     @php
     $fieldName = Str::camel($field);
