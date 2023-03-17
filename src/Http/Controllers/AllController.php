@@ -26,16 +26,17 @@ class AllController extends AbstractController
 
         $namespace = $request->query('namespace');
         $moduleName = $request->query('moduleName');
-        $modelsArray = explode(',', $request->query('models'));
-        
         $rootPath = '../' . $namespace . '/' . $moduleName;
+    
+        StructureService::generateStructure($rootPath);
+        StructureService::generateComposerFile($namespace, $moduleName, $rootPath);
+        StructureService::generateServiceProviderFile($rootPath, $namespace, $moduleName);
+        StructureService::generateApiRoutesFile($rootPath, $namespace, $moduleName);
+        StructureService::generateConfigurationFiles($rootPath, $moduleName);
+
+        $modelsArray = explode(',', $request->query('models'));
 
         foreach ($modelsArray as $model) {
-            StructureService::generateStructure($rootPath);
-            StructureService::generateComposerFile($namespace, $moduleName, $rootPath);
-            StructureService::generateServiceProviderFile($rootPath, $namespace, $moduleName);
-            StructureService::generateApiRoutesFile($rootPath, $namespace, $moduleName);
-            StructureService::generateConfigurationFiles($rootPath, $moduleName);
             StructureService::createEventFolderForModel($rootPath, $model);
 
             ServiceService::generateFile($rootPath, $namespace, $moduleName, $model);
