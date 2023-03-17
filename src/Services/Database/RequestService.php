@@ -96,7 +96,9 @@ class RequestService extends AbstractService
                         preg_match($lengthRegex, $type, $matches);
 
                         $rules[$fieldName] .= 'string|'; // Is this necessary when we have the max rule?
-                        $rules[$fieldName] .= 'max:' . $matches['max'].'|';
+                        if (isset($matches['max'])) {
+                            $rules[$fieldName] .= 'max:' . $matches['max'].'|';
+                        }
                 }
 
                 if (Str::endsWith($rules[$fieldName], '|')) {
