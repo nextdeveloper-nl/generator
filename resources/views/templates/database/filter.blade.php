@@ -19,7 +19,7 @@ class {{ $model }}QueryFilter extends AbstractQueryFilter
 
     public function {{ $fieldName }}($value)
     {
-        return $this->builder->where('{{$fieldName}}', 'like', '%' . $value . '%');
+        return $this->builder->where('{{$field}}', 'like', '%' . $value . '%');
     }
 @endforeach
 
@@ -37,13 +37,16 @@ public function {{ $fieldName }}($value)
             $value = substr($value, 1);
         }
 
-        return $this->builder->where('{{$fieldName}}', $operator, $value);
+        return $this->builder->where('{{$field}}', $operator, $value);
     }
     
 @endforeach
 @foreach( $filterBooleanFields as $field )
     @php
     $fieldName = Str::camel($field);
+    if (strpos($field, 'is_') !== false) {
+        $fieldName = str_replace('is_', '', $field);
+    }
     @endphp
 public function {{ $fieldName }}()
     {
@@ -57,12 +60,12 @@ public function {{ $fieldName }}()
     @endphp
 public function {{$fieldName}}Start($date) 
     {
-        return $this->builder->where( '{{$fieldName}}', '>=', $date );
+        return $this->builder->where( '{{$field}}', '>=', $date );
     }
 
     public function {{$fieldName}}End($date) 
     {
-        return $this->builder->where( '{{$fieldName}}', '<=', $date );
+        return $this->builder->where( '{{$field}}', '<=', $date );
     }
 
 @endforeach
@@ -77,7 +80,7 @@ public function {{$functionName}}($value)
         ${{$fieldName}} = {{$modelName}}::where('id_ref', $value)->first();
 
         if(${{$fieldName}}) {
-            return $this->builder->where('{{$functionName}}', '=', ${{$fieldName}}->id);
+            return $this->builder->where('{{$field}}', '=', ${{$fieldName}}->id);
         }
     }
 
