@@ -21,7 +21,7 @@ class RequestService extends AbstractService
         $render = view('Generator::templates/http/request', [
             'namespace'         =>  $namespace,
             'module'            =>  $module,
-            'model'             =>  ucfirst(Str::singular($model)),
+            'model'             =>  ucfirst(Str::camel(Str::singular($model))),
             'requestType'       =>  $requestType,
             'rules'             =>  self::objectArrayToString($rules, $tabAmount),
             'perPage'           =>  config('generator.pagination.perPage')
@@ -35,8 +35,8 @@ class RequestService extends AbstractService
         $contentCreateRequest = self::generate($namespace, $module, $model, 'Create');
         $contentUpdateRequest = self::generate($namespace, $module, $model, 'Update');
     
-        self::writeToFile($rootPath . '/src/Http/Requests/'.ucfirst(Str::singular($model)).'/'. ucfirst(Str::singular($model)) . 'CreateRequest.php', $contentCreateRequest);
-        self::writeToFile($rootPath . '/src/Http/Requests/'.ucfirst(Str::singular($model)).'/'. ucfirst(Str::singular($model)) . 'UpdateRequest.php', $contentUpdateRequest);
+        self::writeToFile($rootPath . '/src/Http/Requests/'.ucfirst(Str::camel(Str::singular($model))).'/'. ucfirst(Str::camel(Str::singular($model))) . 'CreateRequest.php', $contentCreateRequest);
+        self::writeToFile($rootPath . '/src/Http/Requests/'.ucfirst(Str::camel(Str::singular($model))).'/'. ucfirst(Str::camel(Str::singular($model))) . 'UpdateRequest.php', $contentUpdateRequest);
 
         return true;
     }
@@ -112,7 +112,7 @@ class RequestService extends AbstractService
     }
 
     public static function createModelFolderForRequest($root, $model) {
-        $folder = ucfirst(Str::singular($model));
+        $folder = ucfirst(Str::camel(Str::singular($model)));
         self::createDirectory(base_path($root . '/src/Http/Requests/' . $folder));
     }
 }

@@ -17,7 +17,7 @@ class ObserverService extends AbstractService
         $render = view('Generator::templates/database/observer', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::singular($model))
+            'model'         =>  ucfirst(Str::camel(Str::singular($model)))
         ])->render();
 
         return $render;
@@ -26,7 +26,7 @@ class ObserverService extends AbstractService
     public static function generateFile($rootPath, $namespace, $module, $model) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/src/Database/Observers/' . ucfirst(Str::singular($model)) . 'Observer.php', $content);
+        self::writeToFile($rootPath . '/src/Database/Observers/' . ucfirst(Str::camel(Str::singular($model))) . 'Observer.php', $content);
 
         return true;
     }

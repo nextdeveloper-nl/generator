@@ -17,7 +17,7 @@ class ServiceService extends AbstractService
         $render = view('Generator::templates/services/service', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::singular($model))
+            'model'         =>  ucfirst(Str::camel(Str::singular($model)))
         ])->render();
 
         return $render;
@@ -31,7 +31,7 @@ class ServiceService extends AbstractService
         $render = view('Generator::templates/services/abstract', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::singular($model))
+            'model'         =>  ucfirst(Str::camel(Str::singular($model)))
         ])->render();
 
         return $render;
@@ -40,7 +40,7 @@ class ServiceService extends AbstractService
     public static function generateAbstractFile($rootPath, $namespace, $module, $model): bool {
         $content = self::generateAbstract($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/src/Services/AbstractServices/Abstract' . ucfirst(Str::singular($model)) . 'Service.php', $content);
+        self::writeToFile($rootPath . '/src/Services/AbstractServices/Abstract' . ucfirst(Str::camel(Str::singular($model))) . 'Service.php', $content);
 
         return true;
     }
@@ -48,7 +48,7 @@ class ServiceService extends AbstractService
     public static function generateFile($rootPath, $namespace, $module, $model) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/src/Services/' . ucfirst(Str::singular($model)) . 'Service.php', $content);
+        self::writeToFile($rootPath . '/src/Services/' . ucfirst(Str::camel(Str::singular($model))) . 'Service.php', $content);
 
         return true;
     }

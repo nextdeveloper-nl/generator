@@ -26,7 +26,7 @@ class ModelService extends AbstractService
             'has_created'       =>  self::hasColumn('created_at', $model),
             'has_updated'       =>  self::hasColumn('updated_at', $model),
             'has_deleted'       =>  self::hasColumn('deleted_at', $model),
-            'model'             =>  ucfirst(Str::singular($model)),
+            'model'             =>  ucfirst(Str::camel(Str::singular($model))),
             'casts'             =>  self::objectArrayToString($casts,$tabAmount),
             'dates'             =>  self::arrayToString($dates),
             'fullTextFields'    =>  self::arrayToString($fullTextFields),
@@ -39,7 +39,7 @@ class ModelService extends AbstractService
     public static function generateFile($rootPath, $namespace, $module, $model) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/src/Database/Models/' . ucfirst(Str::singular($model)) . '.php', $content);
+        self::writeToFile($rootPath . '/src/Database/Models/' . ucfirst(Str::camel(Str::singular($model))) . '.php', $content);
 
         return true;
     }

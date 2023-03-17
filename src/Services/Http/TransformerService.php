@@ -17,7 +17,7 @@ class TransformerService extends AbstractService
         $render = view('Generator::templates/http/transformer', [
             'namespace'          =>  $namespace,
             'module'             =>  $module,
-            'model'              =>  ucfirst(Str::singular($model)),
+            'model'              =>  ucfirst(Str::camel(Str::singular($model))),
             'columns'            =>  $columns,
             'returnData'         =>  self::buildData($columns, $model)
         ])->render();
@@ -28,7 +28,7 @@ class TransformerService extends AbstractService
     public static function generateFile($rootPath, $namespace, $module, $model) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/src/Http/Transformers/' . ucfirst(Str::singular($model)) . 'Transformer.php', $content);
+        self::writeToFile($rootPath . '/src/Http/Transformers/' . ucfirst(Str::camel(Str::singular($model))) . 'Transformer.php', $content);
 
         return true;
     }

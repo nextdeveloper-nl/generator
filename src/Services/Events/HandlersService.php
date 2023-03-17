@@ -16,8 +16,8 @@ class HandlersService extends AbstractService
         $render = view('Generator::templates/events/handlers', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::singular($model)),
-            'handler'         =>  $handler
+            'model'         =>  ucfirst(Str::camel(Str::singular($model))),
+            'handler'       =>  $handler
         ])->render();
 
         return $render;

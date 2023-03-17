@@ -18,7 +18,7 @@ class EventsService extends AbstractService
         $render = view('Generator::templates/events/event', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::singular($model)),
+            'model'         =>  ucfirst(Str::camel(Str::singular($model))),
             'event'         =>  $event
         ])->render();
 

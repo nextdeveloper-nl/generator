@@ -14,7 +14,7 @@ class ModelTestService extends AbstractService
         $render = view('Generator::tests/test', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::singular($model)),
+            'model'         =>  ucfirst(Str::camel(Str::singular($model))),
             'columns'       =>  $columns
         ])->render();
 
@@ -24,7 +24,7 @@ class ModelTestService extends AbstractService
     public static function generateFile($rootPath, $namespace, $module, $model) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile('tests/Unit/GeneratedModel' . Str::ucfirst(Str::singular($model)) . 'Test.php', $content);
+        self::writeToFile('tests/Unit/GeneratedModel' . Str::ucfirst(Str::camel(Str::singular($model))) . 'Test.php', $content);
 
         return true;
     }
@@ -35,7 +35,7 @@ class ModelTestService extends AbstractService
         $render = view('Generator::tests/trait', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::singular($model)),
+            'model'         =>  ucfirst(Str::camel(Str::singular($model))),
             'columns'       =>  $columns,
             'filterTextFields'   =>  FilterService::generateFilterTextFields($columns),
             'filterNumberFields' =>  FilterService::generateFilterNumberFields($columns),
@@ -50,7 +50,7 @@ class ModelTestService extends AbstractService
     public static function generateTraitFile($rootPath, $namespace, $module, $model) : bool{
         $content = self::generateTrait($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/tests/Database/Models/' . ucfirst(Str::singular($model)) . 'TestTraits.php', $content);
+        self::writeToFile($rootPath . '/tests/Database/Models/' . ucfirst(Str::camel(Str::singular($model))) . 'TestTraits.php', $content);
 
         return true;
     }

@@ -17,7 +17,7 @@ class ApiRoutesService extends AbstractService
         $render = view('Generator::templates/http/apiroutesmodel', [
             'namespace'          =>  $namespace,
             'module'             =>  $module,
-            'model'              =>  ucfirst(Str::singular($model)),
+            'model'              =>  ucfirst(Str::camel(Str::singular($model))),
             'columns'            =>  $columns
         ])->render();
 

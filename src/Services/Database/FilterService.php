@@ -22,7 +22,7 @@ class FilterService extends AbstractService
         $render = view('Generator::templates/database/filter', [
             'namespace'           =>  $namespace,
             'module'              =>  $module,
-            'model'               =>  ucfirst(Str::singular($model)),
+            'model'               =>  ucfirst(Str::camel(Str::singular($model))),
             'columns'             =>  $columns,
             'filterTextFields'    =>  $filterTextFields,
             'filterNumberFields'  =>  $filterNumberFields,
@@ -37,7 +37,7 @@ class FilterService extends AbstractService
     public static function generateFile($rootPath, $namespace, $module, $model) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/src/Database/Filters/' . ucfirst(Str::singular($model)) . 'QueryFilter.php', $content);
+        self::writeToFile($rootPath . '/src/Database/Filters/' . ucfirst(Str::camel(Str::singular($model))) . 'QueryFilter.php', $content);
 
         return true;
     }
