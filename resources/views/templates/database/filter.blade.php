@@ -44,9 +44,6 @@ public function {{ $fieldName }}($value)
 @foreach( $filterBooleanFields as $field )
     @php
     $fieldName = Str::camel($field);
-    if (strpos($field, 'is_') !== false) {
-        $fieldName = str_replace('is_', '', $field);
-    }
     @endphp
 public function {{ $fieldName }}()
     {
