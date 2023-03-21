@@ -27,7 +27,7 @@ class Abstract{{ $model }}Service {
         * Please let me know if you have any other idea about this; baris.bulut@nextdeveloper.com
         */
         if($filter == null)
-            $filter = new CountryQueryFilter(new Request());
+            $filter = new {{ $model }}QueryFilter(new Request());
 
         $perPage = config('commons.pagination.per_page');
 
@@ -68,18 +68,18 @@ class Abstract{{ $model }}Service {
     * @param $ref
     * @return mixed
     */
-    public static function getByRef($ref) : ?Country {
-        return Country::findByRef($ref);
+    public static function getByRef($ref) : ?{{ $model }} {
+        return {{ $model }}::findByRef($ref);
     }
 
     /**
     * This method returns the model by lookint at its id
     *
     * @param $id
-    * @return Country|null
+    * @return {{ $model }}|null
     */
-    public static function getById($id) : ?Country {
-        return Country::where('id', $id)->first();
+    public static function getById($id) : ?{{ $model }} {
+        return {{ $model }}::where('id', $id)->first();
     }
 
     /**
@@ -95,7 +95,7 @@ class Abstract{{ $model }}Service {
         event( new {{ Str::plural($model) }}CreatingEvent() );
 
         try {
-            $model = Country::create([
+            $model = {{ $model }}::create([
 
             ]);
         } catch(\Exception $e) {

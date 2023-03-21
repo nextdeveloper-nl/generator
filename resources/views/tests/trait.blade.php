@@ -124,9 +124,9 @@ try {
                 '{{ str_replace('-', '_', Str::kebab($field)) }}'  =>  'a'
             ]);
 
-            $filter = new CountryQueryFilter($request);
+            $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\Country::filter($filter)->first();
+            $model = \NextDeveloper\Commons\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -150,9 +150,9 @@ try {
                 '{{ str_replace('-', '_', Str::kebab($field)) }}'  =>  '1'
             ]);
 
-            $filter = new CountryQueryFilter($request);
+            $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\Country::filter($filter)->first();
+            $model = \NextDeveloper\Commons\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -176,9 +176,9 @@ try {
                 '{{ str_replace('-', '_', Str::kebab($field)) }}Start'  =>  now()
             ]);
 
-            $filter = new CountryQueryFilter($request);
+            $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\Country::filter($filter)->first();
+            $model = \NextDeveloper\Commons\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -202,9 +202,9 @@ try {
                 '{{ str_replace('-', '_', Str::kebab($field)) }}End'  =>  now()
             ]);
 
-            $filter = new CountryQueryFilter($request);
+            $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\Country::filter($filter)->first();
+            $model = \NextDeveloper\Commons\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -229,9 +229,9 @@ try {
                 '{{ str_replace('-', '_', Str::kebab($field)) }}End'  =>  now()
             ]);
 
-            $filter = new CountryQueryFilter($request);
+            $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\Country::filter($filter)->first();
+            $model = \NextDeveloper\Commons\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
