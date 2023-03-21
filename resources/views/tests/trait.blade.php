@@ -126,7 +126,7 @@ try {
 
             $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\{{ $model }}::filter($filter)->first();
+            $model = \{{ $namespace }}\{{ $module }}\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -152,7 +152,7 @@ try {
 
             $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\{{ $model }}::filter($filter)->first();
+            $model = \{{ $namespace }}\{{ $module }}\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -178,7 +178,7 @@ try {
 
             $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\{{ $model }}::filter($filter)->first();
+            $model = \{{ $namespace }}\{{ $module }}\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -204,7 +204,7 @@ try {
 
             $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\{{ $model }}::filter($filter)->first();
+            $model = \{{ $namespace }}\{{ $module }}\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -231,7 +231,7 @@ try {
 
             $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\{{ $model }}::filter($filter)->first();
+            $model = \{{ $namespace }}\{{ $module }}\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
