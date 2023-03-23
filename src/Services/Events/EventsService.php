@@ -30,6 +30,7 @@ class EventsService extends AbstractService
 
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
+        $modelName = Str::singular($modelName);
 
         foreach ($events as $event) {
             $event = $modelName . '' . Str::ucfirst($event) . 'Event';

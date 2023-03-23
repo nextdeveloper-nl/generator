@@ -19,6 +19,8 @@ class {{ $model }} extends Model
     @if($has_deleted) use SoftDeletes;
     @endif
 
+    protected $table = '{{$table}}';
+
     /**
      * @var array
      */

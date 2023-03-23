@@ -27,6 +27,7 @@ class ModelService extends AbstractService
             'has_updated'       =>  self::hasColumn('updated_at', $model),
             'has_deleted'       =>  self::hasColumn('deleted_at', $model),
             'model'             =>  ucfirst(Str::camel(Str::singular($model))),
+            'table'             =>  $model,
             'casts'             =>  self::objectArrayToString($casts,$tabAmount),
             'dates'             =>  self::arrayToString($dates),
             'fullTextFields'    =>  self::arrayToString($fullTextFields),

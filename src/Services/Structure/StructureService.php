@@ -29,6 +29,7 @@ class StructureService extends AbstractService
     public static function createEventFolderForModel($root, $model) {
         $folder = Str::camel($model);
         $folder = Str::ucfirst($folder);
+        $folder = Str::singular($folder);
 
         self::createDirectory(base_path($root . '/src/Events/' . $folder));
         self::createDirectory(base_path($root . '/src/EventHandlers/' . $folder));
