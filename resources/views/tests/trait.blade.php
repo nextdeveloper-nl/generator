@@ -73,12 +73,12 @@ trait {{ $model }}TestTraits
         @php
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::plural($modelName);
+        $modelName = Str::singular($modelName);
 
         $event = $modelName . '' . Str::ucfirst($event) . 'Event';
         @endphp
 try {
-            event( new \{{ $namespace }}\{{ $module }}\Events\{{ Str::plural($modelName) }}\{{ $event }}() );
+            event( new \{{ $namespace }}\{{ $module }}\Events\{{ $modelName }}\{{ $event }}() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -93,14 +93,14 @@ try {
     @php
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::plural($modelName);
+        $modelName = Str::singular($modelName);
 
         $event = $modelName . '' . Str::ucfirst($event) . 'Event';
     @endphp
     try {
             $model = \{{ $namespace }}\{{ $module }}\Database\Models\{{ $model }}::first();
 
-            event( new \{{ $namespace }}\{{ $module }}\Events\{{ Str::plural($modelName) }}\{{ $event }}($model) );
+            event( new \{{ $namespace }}\{{ $module }}\Events\{{ $modelName }}\{{ $event }}($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -115,7 +115,7 @@ try {
     @php
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::plural($modelName);
+        $modelName = Str::singular($modelName);
 
         $event = $modelName . '' . Str::ucfirst($event) . 'Event';
     @endphp
@@ -141,7 +141,7 @@ try {
     @php
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::plural($modelName);
+        $modelName = Str::singular($modelName);
 
         $event = $modelName . '' . Str::ucfirst($event) . 'Event';
     @endphp
@@ -167,7 +167,7 @@ try {
     @php
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::plural($modelName);
+        $modelName = Str::singular($modelName);
 
         $event = $modelName . '' . Str::ucfirst($event) . 'Event';
     @endphp
@@ -193,7 +193,7 @@ try {
     @php
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::plural($modelName);
+        $modelName = Str::singular($modelName);
 
         $event = $modelName . '' . Str::ucfirst($event) . 'Event';
     @endphp
@@ -219,7 +219,7 @@ try {
     @php
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::plural($modelName);
+        $modelName = Str::singular($modelName);
 
         $event = $modelName . '' . Str::ucfirst($event) . 'Event';
     @endphp

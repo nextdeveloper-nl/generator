@@ -6,8 +6,8 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};
 use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}QueryFilter;
 
-use {{ $namespace }}\{{ $module }}\Events\{{ Str::plural($model) }}\{{ Str::plural($model) }}CreatedEvent;
-use {{ $namespace }}\{{ $module }}\Events\{{ Str::plural($model) }}\{{ Str::plural($model) }}CreatingEvent;
+use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}CreatedEvent;
+use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}CreatingEvent;
 
 /**
 * This class is responsible from managing the data for {{ $model }}
@@ -92,7 +92,7 @@ class Abstract{{ $model }}Service {
     * @throw Exception
     */
     public static function create(array $data) {
-        event( new {{ Str::plural($model) }}CreatingEvent() );
+        event( new {{ $model }}CreatingEvent() );
 
         try {
             $model = {{ $model }}::create([
@@ -102,7 +102,7 @@ class Abstract{{ $model }}Service {
             throw $e;
         }
 
-        event( new {{ Str::plural($model) }}CreatedEvent($model) );
+        event( new {{ $model }}CreatedEvent($model) );
 
         return $model;
     }

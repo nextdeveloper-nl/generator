@@ -1,5 +1,5 @@
 
-namespace {{ $namespace }}\{{ $module }}\Events\{{ Str::plural($model) }};
+namespace {{ $namespace }}\{{ $module }}\Events\{{ $model }};
 
 use Illuminate\Queue\SerializesModels;
 use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};

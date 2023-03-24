@@ -28,6 +28,7 @@ class HandlersService extends AbstractService
 
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
+        $modelName = Str::singular($modelName);
 
         foreach ($handlers as $handler) {
             $handler = $modelName . '' . Str::ucfirst($handler) . 'Event';
