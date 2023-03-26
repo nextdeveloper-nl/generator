@@ -52,6 +52,12 @@ class AbstractService
         return false;
     }
 
+    public static function isBooleanField($field) : bool {
+        /* This function checks whether  the field is a boolean field or not
+           e.g: is_active will return true since the first three charachters are 'is_'*/
+        return substr($field, 0, 3) === 'is_';
+    }
+
     public static function objectArrayToString(?array $array, $tabAmount): string {
         if (!$array) {
             return '';

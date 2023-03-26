@@ -77,7 +77,7 @@ class FilterService extends AbstractService
         foreach ($columns as $column) {
             $columnType = self::cleanColumnType($column->Type);
             $columnField = $column->Field;
-
+            
             if(!self::isIdField($columnField)){
                 switch ($columnType) {
                     case 'decimal':
@@ -91,6 +91,11 @@ class FilterService extends AbstractService
                     case 'smallint':
                         $filterNumberFields[] = $column->Field;
                         break;
+                    case 'tinyint':
+                        if(!self::isBooleanField($column->Field)){
+                            $filterNumberFields[] = $column->Field;
+                            break;
+                        }
                 } 
             }
                    
@@ -110,8 +115,10 @@ class FilterService extends AbstractService
                     case 'tinyint':
                     case 'bool':
                     case 'boolean':
-                        $filterBooleanFields[] = $column->Field;
-                        break;
+                        if(self::isBooleanField($column->Field)){
+                            $filterBooleanFields[] = $column->Field;
+                            break;
+                        }
                 } 
             }
                    
