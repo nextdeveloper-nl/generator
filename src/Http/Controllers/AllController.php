@@ -54,9 +54,6 @@ class AllController extends AbstractController
 
             RequestService::generateFile($rootPath, $namespace, $moduleName, $model);
 
-            ServiceService::generateFile($rootPath, $namespace, $moduleName, $model);
-            ServiceService::generateAbstractFile($rootPath, $namespace, $moduleName, $model);
-
             ControllerService::generateFile($rootPath, $namespace, $moduleName, $model);
             ApiRoutesService::appendToRoutes($rootPath, $namespace, $moduleName, $model);
             HttpConfigurationService::appendToModelBinding($rootPath, $namespace, $moduleName, $model);
