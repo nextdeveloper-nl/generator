@@ -34,10 +34,10 @@ class FilterService extends AbstractService
         return $render;
     }
 
-    public static function generateFile($rootPath, $namespace, $module, $model) : bool{
+    public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/src/Database/Filters/' . ucfirst(Str::camel(Str::singular($model))) . 'QueryFilter.php', $content);
+        self::writeToFile($forceOverwrite, $rootPath . '/src/Database/Filters/' . ucfirst(Str::camel(Str::singular($model))) . 'QueryFilter.php', $content);
 
         return true;
     }

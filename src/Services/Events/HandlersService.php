@@ -23,7 +23,7 @@ class HandlersService extends AbstractService
         return $render;
     }
 
-    public static function generateFiles($rootPath, $namespace, $module, $model) : bool{
+    public static function generateFiles($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $handlers = config('generator.action-events.handlers');
 
         $modelName = Str::camel($model);
@@ -36,7 +36,7 @@ class HandlersService extends AbstractService
 
             StructureService::createEventFolderForModel($rootPath, $model);
 
-            self::writeToFile($rootPath . '/src/EventHandlers/' . $modelName . '/' . $handler . '.php', $content);
+            self::writeToFile($forceOverwrite, $rootPath . '/src/EventHandlers/' . $modelName . '/' . $handler . '.php', $content);
         }
 
         return true;

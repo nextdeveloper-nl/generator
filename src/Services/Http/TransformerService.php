@@ -25,10 +25,10 @@ class TransformerService extends AbstractService
         return $render;
     }
 
-    public static function generateFile($rootPath, $namespace, $module, $model) : bool{
+    public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/src/Http/Transformers/' . ucfirst(Str::camel(Str::singular($model))) . 'Transformer.php', $content);
+        self::writeToFile($forceOverwrite, $rootPath . '/src/Http/Transformers/' . ucfirst(Str::camel(Str::singular($model))) . 'Transformer.php', $content);
 
         return true;
     }

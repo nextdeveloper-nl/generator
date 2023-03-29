@@ -16,7 +16,7 @@ use NextDeveloper\Commons\Database\Traits\UuidId;
 class {{ $model }} extends Model
 {
     use Filterable, UuidId;
-    @if($has_deleted) use SoftDeletes;
+    @if($has_deleted)use SoftDeletes;
     @endif
 
     protected $table = '{{$table}}';

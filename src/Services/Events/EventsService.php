@@ -25,7 +25,7 @@ class EventsService extends AbstractService
         return $render;
     }
 
-    public static function generateFiles($rootPath, $namespace, $module, $model) : bool{
+    public static function generateFiles($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $events = config('generator.action-events.events');
 
         $modelName = Str::camel($model);
@@ -38,7 +38,7 @@ class EventsService extends AbstractService
 
             StructureService::createEventFolderForModel($rootPath, $model);
 
-            self::writeToFile($rootPath . '/src/Events/' . $modelName . '/' . $event . '.php', $content);
+            self::writeToFile($forceOverwrite, $rootPath . '/src/Events/' . $modelName . '/' . $event . '.php', $content);
         }
 
         return true;

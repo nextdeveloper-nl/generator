@@ -24,14 +24,14 @@ class HttpConfigurationService extends AbstractService
         return $render;
     }
 
-    public static function appendToModelBinding($rootPath, $namespace, $module, $model) : bool{
+    public static function appendToModelBinding($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generate($namespace, $module, $model);
         $fileContent = self::readFile($rootPath . '/config/model-binding.php');
 
         $fileContent = str_replace('//!APPENDHERE', $content, $fileContent);
         $fileContent = trim(str_replace('<?php', '', $fileContent));
 
-        self::writeToFile($rootPath . '/config/model-binding.php', $fileContent);
+        self::writeToFile($forceOverwrite, $rootPath . '/config/model-binding.php', $fileContent);
 
         return true;
     }

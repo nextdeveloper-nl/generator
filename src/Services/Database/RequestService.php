@@ -30,13 +30,13 @@ class RequestService extends AbstractService
         return $render;
     }
 
-    public static function generateFile($rootPath, $namespace, $module, $model) : bool{
+    public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         self::createModelFolderForRequest($rootPath, $model);
         $contentCreateRequest = self::generate($namespace, $module, $model, 'Create');
         $contentUpdateRequest = self::generate($namespace, $module, $model, 'Update');
     
-        self::writeToFile($rootPath . '/src/Http/Requests/'.ucfirst(Str::camel(Str::singular($model))).'/'. ucfirst(Str::camel(Str::singular($model))) . 'CreateRequest.php', $contentCreateRequest);
-        self::writeToFile($rootPath . '/src/Http/Requests/'.ucfirst(Str::camel(Str::singular($model))).'/'. ucfirst(Str::camel(Str::singular($model))) . 'UpdateRequest.php', $contentUpdateRequest);
+        self::writeToFile($forceOverwrite, $rootPath . '/src/Http/Requests/'.ucfirst(Str::camel(Str::singular($model))).'/'. ucfirst(Str::camel(Str::singular($model))) . 'CreateRequest.php', $contentCreateRequest);
+        self::writeToFile($forceOverwrite, $rootPath . '/src/Http/Requests/'.ucfirst(Str::camel(Str::singular($model))).'/'. ucfirst(Str::camel(Str::singular($model))) . 'UpdateRequest.php', $contentUpdateRequest);
 
         return true;
     }

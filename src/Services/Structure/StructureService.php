@@ -44,10 +44,10 @@ class StructureService extends AbstractService
         return $render;
     }
 
-    public static function generateComposerFile($namespace, $module, $root) {
+    public static function generateComposerFile($namespace, $module, $root, $forceOverwrite) {
         $content = self::generateComposer($namespace, $module);
 
-        self::writeToFile($root . '/composer.json', $content, 'json');
+        self::writeToFile($forceOverwrite ,$root . '/composer.json', $content, 'json');
 
         return true;
     }
@@ -61,10 +61,10 @@ class StructureService extends AbstractService
         return $render;
     }
 
-    public static function generateServiceProviderFile($rootPath, $namespace, $module): bool {
+    public static function generateServiceProviderFile($rootPath, $namespace, $module, $forceOverwrite): bool {
         $content = self::generateServiceProvider($namespace, $module);
 
-        self::writeToFile($rootPath . '/src/' . ucfirst($module) . 'ServiceProvider.php', $content);
+        self::writeToFile($forceOverwrite, $rootPath . '/src/' . ucfirst($module) . 'ServiceProvider.php', $content);
 
         return true;
     }
@@ -77,10 +77,10 @@ class StructureService extends AbstractService
         return $render;
     }
 
-    public static function generateApiRoutesFile($rootPath, $namespace, $moduleName): bool {
+    public static function generateApiRoutesFile($rootPath, $namespace, $moduleName, $forceOverwrite): bool {
         $content = self::generateApiRoutes($moduleName);
 
-        self::writeToFile($rootPath . '/src/Http/api.routes.php', $content);
+        self::writeToFile($forceOverwrite, $rootPath . '/src/Http/api.routes.php', $content);
 
         return true;
     }
@@ -106,10 +106,10 @@ class StructureService extends AbstractService
         return $render;
     }
 
-    public static function generateConfigurationFiles($rootPath, $module): bool {
-        self::writeToFile($rootPath . '/config/' . strtolower($module) . '.php', self::generateConfig());
-        self::writeToFile($rootPath . '/config/model-binding.php', self::generateModelBindingConfig());
-        self::writeToFile($rootPath . '/config/relation.php', self::generateRelationConfig());
+    public static function generateConfigurationFiles($rootPath, $module, $forceOverwrite): bool {
+        self::writeToFile($forceOverwrite, $rootPath . '/config/' . strtolower($module) . '.php', self::generateConfig());
+        self::writeToFile($forceOverwrite, $rootPath . '/config/model-binding.php', self::generateModelBindingConfig());
+        self::writeToFile($forceOverwrite, $rootPath . '/config/relation.php', self::generateRelationConfig());
 
         return false;
     }

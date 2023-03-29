@@ -21,10 +21,10 @@ class ModelTestService extends AbstractService
         return $render;
     }
 
-    public static function generateFile($rootPath, $namespace, $module, $model) : bool{
+    public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile('tests/Unit/GeneratedModel' . Str::ucfirst(Str::camel(Str::singular($model))) . 'Test.php', $content);
+        self::writeToFile($forceOverwrite, 'tests/Unit/GeneratedModel' . Str::ucfirst(Str::camel(Str::singular($model))) . 'Test.php', $content);
 
         return true;
     }
@@ -47,10 +47,10 @@ class ModelTestService extends AbstractService
         return $render;
     }
 
-    public static function generateTraitFile($rootPath, $namespace, $module, $model) : bool{
+    public static function generateTraitFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generateTrait($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/tests/Database/Models/' . ucfirst(Str::camel(Str::singular($model))) . 'TestTraits.php', $content);
+        self::writeToFile($forceOverwrite, $rootPath . '/tests/Database/Models/' . ucfirst(Str::camel(Str::singular($model))) . 'TestTraits.php', $content);
 
         return true;
     }

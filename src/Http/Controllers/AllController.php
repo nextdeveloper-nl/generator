@@ -2,9 +2,11 @@
 
 namespace NextDeveloper\Generator\Http\Controllers;
 
+use Carbon\Carbon;
 use Psy\Util\Str;
 use Illuminate\Http\Request;
 use NextDeveloper\Commons\Services\AccountService;
+use NextDeveloper\Generator\Services\AbstractService;
 use NextDeveloper\Generator\Common\AbstractController;
 use NextDeveloper\Generator\Services\Events\EventsService;
 use NextDeveloper\Generator\Services\Database\ModelService;
@@ -27,38 +29,51 @@ class AllController extends AbstractController
         $namespace = $request->query('namespace');
         $moduleName = $request->query('moduleName');
         $rootPath = '../' . $namespace . '/' . $moduleName;
+
+        $force = $request->query('force');
+        $forceOverwrite = false;
+
+        if($force === 'true')
+            $forceOverwrite = true;
+
+        $currentDateTime = Carbon::now();
+        $dateString = $currentDateTime->format('Y_m_d--H_i_s');
+
+        AbstractService::backupModule($rootPath,$rootPath.'/backup'.'/'.$dateString,$moduleName);
     
         StructureService::generateStructure($rootPath);
-        StructureService::generateComposerFile($namespace, $moduleName, $rootPath);
-        StructureService::generateServiceProviderFile($rootPath, $namespace, $moduleName);
-        StructureService::generateApiRoutesFile($rootPath, $namespace, $moduleName);
-        StructureService::generateConfigurationFiles($rootPath, $moduleName);
+        StructureService::generateComposerFile($namespace, $moduleName, $rootPath, $forceOverwrite);
+        StructureService::generateServiceProviderFile($rootPath, $namespace, $moduleName, $forceOverwrite);
+        StructureService::generateApiRoutesFile($rootPath, $namespace, $moduleName, $forceOverwrite);
+        StructureService::generateConfigurationFiles($rootPath, $moduleName, $forceOverwrite);
 
         $modelsArray = explode(',', $request->query('models'));
 
         foreach ($modelsArray as $model) {
             StructureService::createEventFolderForModel($rootPath, $model);
 
-            ServiceService::generateFile($rootPath, $namespace, $moduleName, $model);
-            ServiceService::generateAbstractFile($rootPath, $namespace, $moduleName, $model);
+            ServiceService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
-            EventsService::generateFiles($rootPath, $namespace, $moduleName, $model);
-            HandlersService::generateFiles($rootPath, $namespace, $moduleName, $model);
+            // Abstract file should always be overwritten, so sending true directly!
+            ServiceService::generateAbstractFile($rootPath, $namespace, $moduleName, $model, true); 
 
-            ModelService::generateFile($rootPath, $namespace, $moduleName, $model);
-            ModelTestService::generateTraitFile($rootPath, $namespace, $moduleName, $model);
-            ModelTestService::generateFile($rootPath, $namespace, $moduleName, $model);
+            EventsService::generateFiles($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+            HandlersService::generateFiles($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+
+            ModelService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+            ModelTestService::generateTraitFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+            ModelTestService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
             
-            ObserverService::generateFile($rootPath, $namespace, $moduleName, $model);
-            FilterService::generateFile($rootPath, $namespace, $moduleName, $model);
+            ObserverService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+            FilterService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
-            RequestService::generateFile($rootPath, $namespace, $moduleName, $model);
+            RequestService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
-            ControllerService::generateFile($rootPath, $namespace, $moduleName, $model);
-            ApiRoutesService::appendToRoutes($rootPath, $namespace, $moduleName, $model);
-            HttpConfigurationService::appendToModelBinding($rootPath, $namespace, $moduleName, $model);
+            ControllerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+            ApiRoutesService::appendToRoutes($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+            HttpConfigurationService::appendToModelBinding($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
-            TransformerService::generateFile($rootPath, $namespace, $moduleName, $model);
+            TransformerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
         }
 
         return $this->withCompleted();

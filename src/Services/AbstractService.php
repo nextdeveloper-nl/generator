@@ -3,7 +3,10 @@
 namespace NextDeveloper\Generator\Services;
 
 use Illuminate\Support\Str;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class AbstractService
@@ -106,7 +109,7 @@ class AbstractService
         return rtrim($result,"\n");
     }
 
-    public static function writeToFile($file, $content, $fileType = 'php') {
+    public static function writeToFile($forceOverwrite, $file, $content, $fileType = 'php') {
         switch ($fileType) {
             case 'php':
                 $content = '<?php' . PHP_EOL . PHP_EOL . $content;
@@ -114,9 +117,29 @@ class AbstractService
             case 'json':
                 break;
         }
+
         $content = htmlspecialchars_decode($content);
 
-        file_put_contents(base_path($file), $content);
+        if($forceOverwrite || self::checkForSameContent($file,$content)){ // If the content is the same, generate the file again
+            file_put_contents(base_path($file), $content);
+        }       
+        
+    }
+
+    public static function checkForSameContent($file, $content) {
+
+        $existingContent = file_get_contents(base_path($file));
+        $existingContent = htmlspecialchars_decode($existingContent);
+
+        /* There is a special case for api.routes.php and model-binding.php
+           There is a problem because we are creating these files initially and then checking for them with the updated version
+        */
+        if ($existingContent === $content || $file == '../NextDeveloper/Dummy/src/Http/api.routes.php' || $file == '../NextDeveloper/Dummy/config/model-binding.php') {
+            return true;
+        } else{
+            //dd("different content",$file,$content,$existingContent);
+            return false;
+        }
     }
 
     public static function readFile($file) {
@@ -144,4 +167,34 @@ class AbstractService
 
         return true;
     }
+
+    public static function backupModule($sourcePath, $backupPath, $moduleName) {
+        // Get an iterator for all the files in the source directory
+        $iterator = new RecursiveDirectoryIterator(base_path($sourcePath), RecursiveDirectoryIterator::SKIP_DOTS);
+
+        // Loop through each file and copy it to the backup directory
+        foreach (new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST) as $file) {
+            // Skip the file if it's a directory or in the excluded folders
+            if ($file->isDir() || preg_match('/(^|\/)(\.git|backup)\//', $file->getPathname()) || Str::contains($file->getPathname(), 'backup') || Str::contains($file->getPathname(), '.git')) {
+                continue;
+            }
+
+
+            // Get the file contents and write them to the backup file
+            $contents = File::get($file->getPathname());
+            
+            $relativePath = Str::after($file->getPathname(), $moduleName);
+            $backupFilePath = $backupPath.$relativePath;
+            $backupFilePath = base_path($backupFilePath);
+
+            $backupDirectory = dirname($backupFilePath);
+
+            if (!File::exists($backupDirectory)) {
+                File::makeDirectory($backupDirectory, 0755, true, true);
+            }
+
+            File::put($backupFilePath, $contents);
+        }
+    }
+
 }
