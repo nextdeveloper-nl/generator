@@ -96,4 +96,6 @@ class {{ $model }}QueryFilter
     {
     return $this->builder->where('representative_account_name', 'like', '%' . $value . '%');
     }
+    // EDIT AFTER HERE
+    // WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

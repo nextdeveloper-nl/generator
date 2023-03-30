@@ -120,10 +120,44 @@ class AbstractService
 
         $content = htmlspecialchars_decode($content);
 
-        if($forceOverwrite || self::checkForSameContent($file,$content)){ // If the content is the same, generate the file again
-            file_put_contents(base_path($file), $content);
-        }       
+        if(!$forceOverwrite){ 
+            $content = self::appendExistingContentAfterWarningMessage($file,$content); 
+        }    
         
+        file_put_contents(base_path($file), $content);
+    }
+
+    public static function appendExistingContentAfterWarningMessage($file, $content) {
+
+        if (file_exists(base_path($file))) {
+            $existingContent = file_get_contents(base_path($file));
+        } 
+        else { // If the file does not exist, regenerate the whole file
+            return $content;
+        }
+
+        $existingContent = htmlspecialchars_decode($existingContent);
+
+        $warningString = "// WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE";
+        $pos = strpos($existingContent, $warningString);
+
+        // Get the portion of the file contents that comes after the warning string
+        if ($pos !== false) {
+            $afterWarningString = substr($existingContent, $pos + strlen($warningString));
+            $content = self::removeLastBracketCharachters($content);
+            return $content.$afterWarningString;
+
+        } else { // If the warning string is not found, regenerate the whole file
+            return $content;
+        }
+    }
+
+    public static function removeLastBracketCharachters($content){
+        // Remove characters until the 'E' character of CODE is found
+        while (strlen($content) > 0 && substr($content, -1) !== 'E') {
+            $content = substr($content, 0, -1);
+        }
+        return $content;
     }
 
     public static function checkForSameContent($file, $content) {
@@ -137,7 +171,7 @@ class AbstractService
         if ($existingContent === $content || $file == '../NextDeveloper/Dummy/src/Http/api.routes.php' || $file == '../NextDeveloper/Dummy/config/model-binding.php') {
             return true;
         } else{
-            //dd("different content",$file,$content,$existingContent);
+            dd("different content",$file,$content,$existingContent);
             return false;
         }
     }

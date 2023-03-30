@@ -78,4 +78,7 @@ class {{ $model }} extends Model
         //  We create and add Observer even if we wont use it.
         parent::observe({{ $model }}Observer::class);
     }
+
+    // EDIT AFTER HERE
+    // WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }
