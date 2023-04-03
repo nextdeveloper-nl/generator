@@ -20,6 +20,15 @@ class ModelService extends AbstractService
         $fullTextFields = self::generateFullTextFieldsArray($model);
         $tabAmount = 2;
 
+        $hasTimestamps = false;
+
+        foreach ($columns as $column) {
+            if($column->Field == 'created_at') {
+                $hasTimestamps = true;
+                break;
+            }
+        }
+
         $render = view('Generator::templates/database/model', [
             'namespace'         =>  $namespace,
             'module'            =>  $module,
@@ -30,7 +39,8 @@ class ModelService extends AbstractService
             'casts'             =>  self::objectArrayToString($casts,$tabAmount),
             'dates'             =>  self::arrayToString($dates),
             'fullTextFields'    =>  self::arrayToString($fullTextFields),
-            'perPage'           =>  config('generator.pagination.perPage')
+            'perPage'           =>  config('generator.pagination.perPage'),
+            'hasTimestamps'     =>  $hasTimestamps
         ])->render();
 
         return $render;

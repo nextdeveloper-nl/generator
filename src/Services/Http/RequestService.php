@@ -1,6 +1,6 @@
 <?php
 
-namespace NextDeveloper\Generator\Services\Database;
+namespace NextDeveloper\Generator\Services\Http;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +15,7 @@ class RequestService extends AbstractService
      */
     public static function generate($namespace, $module, $model, $requestType) {
         $columns = self::getColumns($model);
-        $rules = self::generateRulesArray($columns);
+        $rules = self::generateRulesArray($columns, ($requestType == 'Update'));
         $tabAmount = 3;
 
         $render = view('Generator::templates/http/request', [
@@ -41,26 +41,29 @@ class RequestService extends AbstractService
         return true;
     }
 
-    public static function generateRulesArray($columns) {
+    public static function generateRulesArray($columns, $isUpdate = false) {
         $rules = [];
-        $disgardedFields = ['created_at', 'deleted_at', 'updated_at', 'id'];
+        $discardedFields = ['created_at', 'deleted_at', 'updated_at', 'id', 'id_ref'];
 
         foreach ($columns as $column) {
             $columnType = self::cleanColumnType($column->Type); 
             $columnDefaultValue = $column->Default;
             $nullable = $column->Null === 'YES';
-            $required = $nullable ? 'nullable|' : 'required|';
+
+            if($isUpdate)
+                $required = 'nullable|';
+            else
+                $required = $nullable ? 'nullable|' : 'required|';
+
             $fieldName = $column->Field;
 
             $type = $column->Type;
 
-            if (!in_array($fieldName, $disgardedFields) && stripos($fieldName, 'id_ref') === false){
-
+            if (!in_array($fieldName, $discardedFields) && stripos($fieldName, 'id_ref') === false){
                 $rules[$fieldName] = '';
                 if($columnDefaultValue == null){
                     $rules[$fieldName] = $required;
                 }
-                    
 
                 switch ($columnType) {
                     case 'boolean':

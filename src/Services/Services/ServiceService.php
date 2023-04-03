@@ -31,7 +31,8 @@ class ServiceService extends AbstractService
         $render = view('Generator::templates/services/abstract', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::singular($model))
+            'model'         =>  ucfirst(Str::singular($model)),
+            'createData'         =>  self::buildData($columns, $model)
         ])->render();
 
         return $render;
@@ -51,5 +52,31 @@ class ServiceService extends AbstractService
         self::writeToFile($rootPath . '/src/Services/' . ucfirst(Str::singular($model)) . 'Service.php', $content);
 
         return true;
+    }
+
+    private static function buildData($columns, $model) {
+        $data = [];
+
+        foreach ($columns as $column) {
+            if($column->Field == 'id' || $column->Field == 'id_ref')
+                continue;
+
+            switch ($column->Type) {
+                case 'tinyint':
+                    $data[] =   [
+                        'field'     =>  $column->Field,
+                        'return'    =>  $column->Field . ' == 1 ? true : false'
+                    ];
+                    break;
+                default:
+                    $data[] =   [
+                        'field'     =>  $column->Field,
+                        'return'    =>  "\$data['" . $column->Field . "']"
+                    ];
+                    break;
+            }
+        }
+
+        return $data;
     }
 }

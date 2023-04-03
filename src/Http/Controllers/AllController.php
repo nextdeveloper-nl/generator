@@ -2,17 +2,16 @@
 
 namespace NextDeveloper\Generator\Http\Controllers;
 
-use NextDeveloper\Commons\Services\AccountService;
 use NextDeveloper\Generator\Common\AbstractController;
 use NextDeveloper\Generator\Services\Database\FilterService;
 use NextDeveloper\Generator\Services\Database\ModelService;
 use NextDeveloper\Generator\Services\Database\ObserverService;
-use NextDeveloper\Generator\Services\Database\RequestService;
 use NextDeveloper\Generator\Services\Events\EventsService;
 use NextDeveloper\Generator\Services\Events\HandlersService;
 use NextDeveloper\Generator\Services\Http\ApiRoutesService;
 use NextDeveloper\Generator\Services\Http\ControllerService;
 use NextDeveloper\Generator\Services\Http\HttpConfigurationService;
+use NextDeveloper\Generator\Services\Http\RequestService;
 use NextDeveloper\Generator\Services\Http\TransformerService;
 use NextDeveloper\Generator\Services\Services\ServiceService;
 use NextDeveloper\Generator\Services\Structure\StructureService;

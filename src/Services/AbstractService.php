@@ -100,7 +100,7 @@ class AbstractService
         return rtrim($result,"\n");
     }
 
-    public static function writeToFile($file, $content, $fileType = 'php') {
+    public static function writeToFile($file, $content, $fileType = 'php', $addWarning = true) {
         switch ($fileType) {
             case 'php':
                 $content = '<?php' . PHP_EOL . PHP_EOL . $content;
@@ -108,6 +108,10 @@ class AbstractService
             case 'json':
                 break;
         }
+
+        if($addWarning)
+            $content .= '// WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE';
+
         $content = htmlspecialchars_decode($content);
 
         file_put_contents(base_path($file), $content);

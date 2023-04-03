@@ -19,6 +19,12 @@ class {{ $model }} extends Model
     @if($has_deleted) use SoftDeletes;
     @endif
 
+@if($hasTimestamps)
+    public $timestamps = true;
+@else
+    public $timestamps = false;
+@endif
+
     /**
      * @var array
      */

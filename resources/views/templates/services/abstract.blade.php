@@ -69,7 +69,7 @@ class Abstract{{ $model }}Service {
     * @return mixed
     */
     public static function getByRef($ref) : ?Country {
-        return Country::findByRef($ref);
+        return {{ $model }}::findByRef($ref);
     }
 
     /**
@@ -79,7 +79,7 @@ class Abstract{{ $model }}Service {
     * @return Country|null
     */
     public static function getById($id) : ?Country {
-        return Country::where('id', $id)->first();
+        return {{ $model }}::where('id', $id)->first();
     }
 
     /**
@@ -95,11 +95,33 @@ class Abstract{{ $model }}Service {
         event( new {{ Str::plural($model) }}CreatingEvent() );
 
         try {
-            $model = Country::create([
-
-            ]);
+            $model = {{ $model }}::create($data);
         } catch(\Exception $e) {
             throw $e;
+        }
+
+        event( new {{ Str::plural($model) }}CreatedEvent($model) );
+
+        return $model;
+    }
+
+    /**
+    * This method updated the model from an array.
+    *
+    * Throws an exception if stuck with any problem.
+    *
+    * @param
+    * @param array $data
+    * @return mixed
+    * @throw Exception
+    */
+    public static function update($id, array $data) {
+        event( new {{ Str::plural($model) }}CreatingEvent() );
+
+        try {
+           $model = {{ $model }}::create($data);
+        } catch(\Exception $e) {
+           throw $e;
         }
 
         event( new {{ Str::plural($model) }}CreatedEvent($model) );

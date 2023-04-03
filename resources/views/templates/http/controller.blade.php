@@ -3,8 +3,8 @@ namespace {{ $namespace }}\{{ $module }}\Http\Controllers\{{ $model }};
 use Illuminate\Http\Request;
 use NextDeveloper\Generator\Common\AbstractController;
 use NextDeveloper\Generator\Http\Traits\ResponsableFactory;
+use {{ $namespace }}\{{ $module }}\Http\Requests\{{ $model }}\{{ $model }}UpdateRequest;
 use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}QueryFilter;
-use {{ $namespace }}\{{ $module }}\Http\Transformers\{{ $model }}Transformer;
 use {{ $namespace }}\{{ $module }}\Services\{{ $model }}Service;
 use {{ $namespace }}\{{ $module }}\Http\Requests\{{ $model }}\{{ $model }}CreateRequest;
 
@@ -41,7 +41,7 @@ class {{ $model }}Controller extends AbstractController
     }
 
     /**
-    * This method created Country object on database.
+    * This method created {{ $model }} object on database.
     *
     * @param CountryCreateRequest $request
     * @return mixed|null
@@ -49,6 +49,20 @@ class {{ $model }}Controller extends AbstractController
     */
     public function store(CountryCreateRequest $request) {
         $model = CountryService::create($request->validated());
+
+        return ResponsableFactory::makeResponse($this, $model);
+    }
+
+    /**
+    * This method updates {{ $model }} object on database.
+    *
+    * @param ${{ Str::camel($model) }}Id
+    * @param CountryCreateRequest $request
+    * @return mixed|null
+    * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
+    */
+    public function update(${{ Str::camel($model) }}Id, CountryUpdateRequest $request) {
+        $model = CountryService::update($countryId, $request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
     }
