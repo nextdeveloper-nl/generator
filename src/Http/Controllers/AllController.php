@@ -76,6 +76,10 @@ class AllController extends AbstractController
             TransformerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
         }
 
+        foreach ($modelsArray as $model) {
+            ModelService::generateOneToManyRelations($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+        }
+
         return $this->withCompleted();
     }
 }

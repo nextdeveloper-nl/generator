@@ -26,13 +26,8 @@ class ApiRoutesService extends AbstractService
 
     public static function appendToRoutes($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generate($namespace, $module, $model);
-        $fileContent = self::readFile($rootPath . '/src/Http/api.routes.php');
+        $rootPath .= '/src/Http/api.routes.php';
 
-        $fileContent = str_replace('//!APPENDHERE', $content, $fileContent);
-        $fileContent = trim(str_replace('<?php', '', $fileContent));
-
-        self::writeToFile($forceOverwrite, $rootPath . '/src/Http/api.routes.php', $fileContent);
-
-        return true;
+        return self::appendToFile($rootPath, $content, $forceOverwrite);
     }
 }

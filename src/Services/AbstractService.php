@@ -138,7 +138,7 @@ class AbstractService
 
         $existingContent = htmlspecialchars_decode($existingContent);
 
-        $warningString = "// WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE";
+        $warningString = "// EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE";
         $pos = strpos($existingContent, $warningString);
 
         // Get the portion of the file contents that comes after the warning string
@@ -209,7 +209,7 @@ class AbstractService
         // Loop through each file and copy it to the backup directory
         foreach (new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST) as $file) {
             // Skip the file if it's a directory or in the excluded folders
-            if ($file->isDir() || preg_match('/(^|\/)(\.git|backup)\//', $file->getPathname()) || Str::contains($file->getPathname(), 'backup') || Str::contains($file->getPathname(), '.git')) {
+            if ($file->isDir() || preg_match('/(^|\/)(\.git|backup)\//', $file->getPathname()) || Str::contains($file->getPathname(), '\\backup\\') || Str::contains($file->getPathname(), '.git')) {
                 continue;
             }
 
@@ -230,5 +230,17 @@ class AbstractService
             File::put($backupFilePath, $contents);
         }
     }
+
+    public static function appendToFile($rootPath, $content, $forceOverwrite) : bool{
+        $fileContent = self::readFile($rootPath);
+
+        $fileContent = str_replace('// EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE', $content, $fileContent);
+        $fileContent = trim(str_replace('<?php', '', $fileContent));
+
+        self::writeToFile($forceOverwrite, $rootPath, $fileContent);
+
+        return true;
+    }
+
 
 }

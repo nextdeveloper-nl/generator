@@ -4,6 +4,7 @@ namespace NextDeveloper\Generator\Services\Database;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use NextDeveloper\Generator\Services\AbstractService;
 use NextDeveloper\Generator\Exceptions\TemplateNotFoundException;
 
@@ -32,6 +33,38 @@ class ModelService extends AbstractService
             'dates'             =>  self::arrayToString($dates),
             'fullTextFields'    =>  self::arrayToString($fullTextFields),
             'perPage'           =>  config('generator.pagination.perPage')
+        ])->render();
+
+        return $render;
+    }
+
+    /**
+     * @throws TemplateNotFoundException
+     */
+    public static function generateBelongsToContent($namespace, $module, $model) {
+        $columns = self::getColumns($model);
+
+        $render = view('Generator::templates/database/belongs_to_model', [
+            'namespace'          =>  $namespace,
+            'module'             =>  $module,
+            'model'              =>  Str::camel(Str::singular($model)),
+            'columns'            =>  $columns
+        ])->render();
+
+        return $render;
+    }
+
+    /**
+     * @throws TemplateNotFoundException
+     */
+    public static function generateHasManyContent($namespace, $module, $model) {
+        $columns = self::getColumns($model);
+
+        $render = view('Generator::templates/database/has_many_model', [
+            'namespace'          =>  $namespace,
+            'module'             =>  $module,
+            'model'              =>  Str::camel($model),
+            'columns'            =>  $columns
         ])->render();
 
         return $render;
@@ -116,5 +149,37 @@ class ModelService extends AbstractService
                 $fullTextFields[] = $index->Column_name;
             }
         return $fullTextFields;
+    }
+
+    public static function foreignKeys($table) {
+        $query = "
+            SELECT
+                `COLUMN_NAME`,
+                `REFERENCED_TABLE_NAME`,
+                `REFERENCED_COLUMN_NAME`
+            FROM
+                `information_schema`.`KEY_COLUMN_USAGE`
+            WHERE
+                `TABLE_SCHEMA` = DATABASE() AND
+                `TABLE_NAME` = ? AND
+                `REFERENCED_TABLE_NAME` IS NOT NULL
+        ";
+        return DB::select($query, [$table]);
+    }
+
+    public static function generateOneToManyRelations($rootPath, $namespace, $module, $model, $forceOverwrite){
+        $foreignKeys = self::foreignKeys($model);
+        $currentModelRootpath = $rootPath. '/src/Database/Models/' . ucfirst(Str::camel(Str::singular($model))) . '.php';
+        foreach ($foreignKeys as $foreignKey) {
+            $foreignModelRootPath = $rootPath. '/src/Database/Models/' . ucfirst(Str::camel(Str::singular($foreignKey->REFERENCED_TABLE_NAME))) . '.php';
+            
+             if (file_exists(base_path($foreignModelRootPath))) {
+                $currentModelContent = self::generateBelongsToContent($namespace, $module, $foreignKey->REFERENCED_TABLE_NAME);
+                self::appendToFile($currentModelRootpath, $currentModelContent, $forceOverwrite);
+
+                $foreignModelContent = self::generateHasManyContent($namespace, $module, $model);
+                self::appendToFile($foreignModelRootPath, $foreignModelContent, $forceOverwrite);
+            }  
+        }
     }
 }
