@@ -68,11 +68,7 @@ class Abstract{{ $model }}Service {
     * @param $ref
     * @return mixed
     */
-<<<<<<< HEAD
-    public static function getByRef($ref) : ?Country {
-=======
     public static function getByRef($ref) : ?{{ $model }} {
->>>>>>> 6d8375b1f1a376413ca272606bde64e7ab40b536
         return {{ $model }}::findByRef($ref);
     }
 

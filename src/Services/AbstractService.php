@@ -109,11 +109,7 @@ class AbstractService
         return rtrim($result,"\n");
     }
 
-<<<<<<< HEAD
-    public static function writeToFile($file, $content, $fileType = 'php', $addWarning = true) {
-=======
     public static function writeToFile($forceOverwrite, $file, $content, $fileType = 'php') {
->>>>>>> 6d8375b1f1a376413ca272606bde64e7ab40b536
         switch ($fileType) {
             case 'php':
                 $content = '<?php' . PHP_EOL . PHP_EOL . $content;
@@ -122,12 +118,6 @@ class AbstractService
                 break;
         }
 
-<<<<<<< HEAD
-        if($addWarning)
-            $content .= '// WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE';
-
-=======
->>>>>>> 6d8375b1f1a376413ca272606bde64e7ab40b536
         $content = htmlspecialchars_decode($content);
 
         if(!$forceOverwrite){ 
