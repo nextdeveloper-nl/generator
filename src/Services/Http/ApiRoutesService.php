@@ -17,22 +17,17 @@ class ApiRoutesService extends AbstractService
         $render = view('Generator::templates/http/apiroutesmodel', [
             'namespace'          =>  $namespace,
             'module'             =>  $module,
-            'model'              =>  ucfirst(Str::singular($model)),
+            'model'              =>  ucfirst(Str::camel(Str::singular($model))),
             'columns'            =>  $columns
         ])->render();
 
         return $render;
     }
 
-    public static function appendToRoutes($rootPath, $namespace, $module, $model) : bool{
+    public static function appendToRoutes($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generate($namespace, $module, $model);
-        $fileContent = self::readFile($rootPath . '/src/Http/api.routes.php');
+        $rootPath .= '/src/Http/api.routes.php';
 
-        $fileContent = str_replace('//!APPENDHERE', $content, $fileContent);
-        $fileContent = trim(str_replace('<?php', '', $fileContent));
-
-        self::writeToFile($rootPath . '/src/Http/api.routes.php', $fileContent);
-
-        return true;
+        return self::appendToFile($rootPath, $content, $forceOverwrite);
     }
 }

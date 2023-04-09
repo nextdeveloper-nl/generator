@@ -107,4 +107,5 @@ class {{ $model }}Observer
     public function restored(Model $model)
     {
     }
+    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

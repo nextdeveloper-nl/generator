@@ -18,18 +18,19 @@ class EventsService extends AbstractService
         $render = view('Generator::templates/events/event', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::singular($model)),
+            'model'         =>  ucfirst(Str::camel(Str::singular($model))),
             'event'         =>  $event
         ])->render();
 
         return $render;
     }
 
-    public static function generateFiles($rootPath, $namespace, $module, $model) : bool{
+    public static function generateFiles($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $events = config('generator.action-events.events');
 
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
+        $modelName = Str::singular($modelName);
 
         foreach ($events as $event) {
             $event = $modelName . '' . Str::ucfirst($event) . 'Event';
@@ -37,7 +38,7 @@ class EventsService extends AbstractService
 
             StructureService::createEventFolderForModel($rootPath, $model);
 
-            self::writeToFile($rootPath . '/src/Events/' . $modelName . '/' . $event . '.php', $content);
+            self::writeToFile($forceOverwrite, $rootPath . '/src/Events/' . $modelName . '/' . $event . '.php', $content);
         }
 
         return true;

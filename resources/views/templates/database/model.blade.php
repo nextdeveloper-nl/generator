@@ -16,14 +16,18 @@ use NextDeveloper\Commons\Database\Traits\UuidId;
 class {{ $model }} extends Model
 {
     use Filterable, UuidId;
-    @if($has_deleted) use SoftDeletes;
+    @if($has_deleted)use SoftDeletes;
     @endif
 
+<<<<<<< HEAD
 @if($hasTimestamps)
     public $timestamps = true;
 @else
     public $timestamps = false;
 @endif
+=======
+    protected $table = '{{$table}}';
+>>>>>>> 6d8375b1f1a376413ca272606bde64e7ab40b536
 
     /**
      * @var array
@@ -82,4 +86,6 @@ class {{ $model }} extends Model
         //  We create and add Observer even if we wont use it.
         parent::observe({{ $model }}Observer::class);
     }
+
+    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

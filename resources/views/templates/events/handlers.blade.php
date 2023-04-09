@@ -1,5 +1,5 @@
 
-namespace {{ $namespace }}\{{ $module }}\EventHandlers\{{ Str::plural($model) }};
+namespace {{ $namespace }}\{{ $module }}\EventHandlers\{{ $model}};
 
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,4 +16,5 @@ class {{ $handler }} implements ShouldQueue
     {
 
     }
+    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

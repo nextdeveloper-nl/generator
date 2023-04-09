@@ -1,5 +1,5 @@
 
-namespace {{ $namespace }}\{{ $module }}\Events\{{ Str::plural($model) }};
+namespace {{ $namespace }}\{{ $module }}\Events\{{ $model }};
 
 use Illuminate\Queue\SerializesModels;
 use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};
@@ -43,4 +43,5 @@ class {{ $event }}
     public function getTimestamp() {
         return $this->timestamp;
     }
+    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

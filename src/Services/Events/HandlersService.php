@@ -16,18 +16,19 @@ class HandlersService extends AbstractService
         $render = view('Generator::templates/events/handlers', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::singular($model)),
-            'handler'         =>  $handler
+            'model'         =>  ucfirst(Str::camel(Str::singular($model))),
+            'handler'       =>  $handler
         ])->render();
 
         return $render;
     }
 
-    public static function generateFiles($rootPath, $namespace, $module, $model) : bool{
+    public static function generateFiles($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $handlers = config('generator.action-events.handlers');
 
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
+        $modelName = Str::singular($modelName);
 
         foreach ($handlers as $handler) {
             $handler = $modelName . '' . Str::ucfirst($handler) . 'Event';
@@ -35,7 +36,7 @@ class HandlersService extends AbstractService
 
             StructureService::createEventFolderForModel($rootPath, $model);
 
-            self::writeToFile($rootPath . '/src/EventHandlers/' . $modelName . '/' . $handler . '.php', $content);
+            self::writeToFile($forceOverwrite, $rootPath . '/src/EventHandlers/' . $modelName . '/' . $handler . '.php', $content);
         }
 
         return true;

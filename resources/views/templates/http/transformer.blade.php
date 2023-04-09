@@ -1,6 +1,7 @@
 namespace {{ $namespace }}\{{ $module }}\Http\Transformers;
 
 use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};
+use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 
 /**
  * Class {{ $model }}Transformer. This class is being used to manipulate the data we are serving to the customer
@@ -21,4 +22,5 @@ class {{ $model }}Transformer extends AbstractTransformer {
     @endforeach
     ]);
     }
+    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

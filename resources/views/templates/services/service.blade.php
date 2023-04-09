@@ -11,4 +11,5 @@ use {{ $namespace }}\{{ $module }}\Services\AbstractServices\Abstract{{ $model }
 */
 class {{ $model }}Service extends Abstract{{ $model }}Service {
 
+    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

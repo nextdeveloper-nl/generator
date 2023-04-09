@@ -43,12 +43,12 @@ class {{ $model }}Controller extends AbstractController
     /**
     * This method created {{ $model }} object on database.
     *
-    * @param CountryCreateRequest $request
+    * @param {{ $model }}CreateRequest $request
     * @return mixed|null
     * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
     */
-    public function store(CountryCreateRequest $request) {
-        $model = CountryService::create($request->validated());
+    public function store({{ $model }}CreateRequest $request) {
+        $model = {{ $model }}Service::create($request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
     }
@@ -66,4 +66,7 @@ class {{ $model }}Controller extends AbstractController
 
         return ResponsableFactory::makeResponse($this, $model);
     }
+
+    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }

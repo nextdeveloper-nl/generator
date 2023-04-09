@@ -15,27 +15,29 @@ class FilterService extends AbstractService
         $columns = self::getColumns($model);
         $filterTextFields = self::generateFilterTextFields($columns);
         $filterNumberFields = self::generateFilterNumberFields($columns);
+        $filterBooleanFields = self::generateFilterBooleanFields($columns);
         $filterDateFields = self::generateFilterDateFields($columns);
         $idRefFields = self::generateIdRefFields($columns);
 
         $render = view('Generator::templates/database/filter', [
-            'namespace'          =>  $namespace,
-            'module'             =>  $module,
-            'model'              =>  ucfirst(Str::singular($model)),
-            'columns'            =>  $columns,
-            'filterTextFields'   =>  $filterTextFields,
-            'filterNumberFields' =>  $filterNumberFields,
-            'filterDateFields'   =>  $filterDateFields,
-            'idRefFields'        =>  $idRefFields
+            'namespace'           =>  $namespace,
+            'module'              =>  $module,
+            'model'               =>  ucfirst(Str::camel(Str::singular($model))),
+            'columns'             =>  $columns,
+            'filterTextFields'    =>  $filterTextFields,
+            'filterNumberFields'  =>  $filterNumberFields,
+            'filterBooleanFields' =>  $filterBooleanFields,
+            'filterDateFields'    =>  $filterDateFields,
+            'idRefFields'         =>  $idRefFields
         ])->render();
 
         return $render;
     }
 
-    public static function generateFile($rootPath, $namespace, $module, $model) : bool{
+    public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/src/Database/Filters/' . ucfirst(Str::singular($model)) . 'QueryFilter.php', $content);
+        self::writeToFile($forceOverwrite, $rootPath . '/src/Database/Filters/' . ucfirst(Str::camel(Str::singular($model))) . 'QueryFilter.php', $content);
 
         return true;
     }
@@ -75,7 +77,7 @@ class FilterService extends AbstractService
         foreach ($columns as $column) {
             $columnType = self::cleanColumnType($column->Type);
             $columnField = $column->Field;
-
+            
             if(!self::isIdField($columnField)){
                 switch ($columnType) {
                     case 'decimal':
@@ -89,11 +91,39 @@ class FilterService extends AbstractService
                     case 'smallint':
                         $filterNumberFields[] = $column->Field;
                         break;
+                    case 'tinyint':
+                        if(!self::isBooleanField($column->Field)){
+                            $filterNumberFields[] = $column->Field;
+                            break;
+                        }
                 } 
             }
                    
         }
         return $filterNumberFields;
+    }
+
+    public static function generateFilterBooleanFields($columns) {
+        $filterBooleanFields = [];
+
+        foreach ($columns as $column) {
+            $columnType = self::cleanColumnType($column->Type);
+            $columnField = $column->Field;
+
+            if(!self::isIdField($columnField)){
+                switch ($columnType) {
+                    case 'tinyint':
+                    case 'bool':
+                    case 'boolean':
+                        if(self::isBooleanField($column->Field)){
+                            $filterBooleanFields[] = $column->Field;
+                            break;
+                        }
+                } 
+            }
+                   
+        }
+        return $filterBooleanFields;
     }
 
     public static function generateFilterDateFields($columns) {

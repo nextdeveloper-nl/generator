@@ -11,6 +11,7 @@
 
 return [
     'structure' =>  [
+		'backup',
         'config',
         'docs',
         'resources' =>  [
@@ -94,6 +95,9 @@ return [
             'deleted'
         ]
     ],
-
+        /* Relations diye açıp representative in user olduğunu ekle 
+        [
+        'representative' => 'user'
+        ]*/
     'enableBroadcast'   =>  true
 ];

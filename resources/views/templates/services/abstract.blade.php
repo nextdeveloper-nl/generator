@@ -6,8 +6,8 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};
 use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}QueryFilter;
 
-use {{ $namespace }}\{{ $module }}\Events\{{ Str::plural($model) }}\{{ Str::plural($model) }}CreatedEvent;
-use {{ $namespace }}\{{ $module }}\Events\{{ Str::plural($model) }}\{{ Str::plural($model) }}CreatingEvent;
+use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}CreatedEvent;
+use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}CreatingEvent;
 
 /**
 * This class is responsible from managing the data for {{ $model }}
@@ -27,7 +27,7 @@ class Abstract{{ $model }}Service {
         * Please let me know if you have any other idea about this; baris.bulut@nextdeveloper.com
         */
         if($filter == null)
-            $filter = new CountryQueryFilter(new Request());
+            $filter = new {{ $model }}QueryFilter(new Request());
 
         $perPage = config('commons.pagination.per_page');
 
@@ -68,7 +68,11 @@ class Abstract{{ $model }}Service {
     * @param $ref
     * @return mixed
     */
+<<<<<<< HEAD
     public static function getByRef($ref) : ?Country {
+=======
+    public static function getByRef($ref) : ?{{ $model }} {
+>>>>>>> 6d8375b1f1a376413ca272606bde64e7ab40b536
         return {{ $model }}::findByRef($ref);
     }
 
@@ -76,9 +80,9 @@ class Abstract{{ $model }}Service {
     * This method returns the model by lookint at its id
     *
     * @param $id
-    * @return Country|null
+    * @return {{ $model }}|null
     */
-    public static function getById($id) : ?Country {
+    public static function getById($id) : ?{{ $model }} {
         return {{ $model }}::where('id', $id)->first();
     }
 
@@ -92,7 +96,7 @@ class Abstract{{ $model }}Service {
     * @throw Exception
     */
     public static function create(array $data) {
-        event( new {{ Str::plural($model) }}CreatingEvent() );
+        event( new {{ $model }}CreatingEvent() );
 
         try {
             $model = {{ $model }}::create($data);
@@ -100,7 +104,7 @@ class Abstract{{ $model }}Service {
             throw $e;
         }
 
-        event( new {{ Str::plural($model) }}CreatedEvent($model) );
+        event( new {{ $model }}CreatedEvent($model) );
 
         return $model;
     }
@@ -128,4 +132,7 @@ class Abstract{{ $model }}Service {
 
         return $model;
     }
+
+    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }

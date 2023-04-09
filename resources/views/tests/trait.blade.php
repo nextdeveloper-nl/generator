@@ -73,12 +73,12 @@ trait {{ $model }}TestTraits
         @php
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::plural($modelName);
+        $modelName = Str::singular($modelName);
 
         $event = $modelName . '' . Str::ucfirst($event) . 'Event';
         @endphp
 try {
-            event( new \{{ $namespace }}\{{ $module }}\Events\{{ Str::plural($modelName) }}\{{ $event }}() );
+            event( new \{{ $namespace }}\{{ $module }}\Events\{{ $modelName }}\{{ $event }}() );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -93,14 +93,14 @@ try {
     @php
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::plural($modelName);
+        $modelName = Str::singular($modelName);
 
         $event = $modelName . '' . Str::ucfirst($event) . 'Event';
     @endphp
     try {
             $model = \{{ $namespace }}\{{ $module }}\Database\Models\{{ $model }}::first();
 
-            event( new \{{ $namespace }}\{{ $module }}\Events\{{ Str::plural($modelName) }}\{{ $event }}($model) );
+            event( new \{{ $namespace }}\{{ $module }}\Events\{{ $modelName }}\{{ $event }}($model) );
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -115,7 +115,7 @@ try {
     @php
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::plural($modelName);
+        $modelName = Str::singular($modelName);
 
         $event = $modelName . '' . Str::ucfirst($event) . 'Event';
     @endphp
@@ -124,9 +124,9 @@ try {
                 '{{ str_replace('-', '_', Str::kebab($field)) }}'  =>  'a'
             ]);
 
-            $filter = new CountryQueryFilter($request);
+            $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\Country::filter($filter)->first();
+            $model = \{{ $namespace }}\{{ $module }}\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -141,7 +141,7 @@ try {
     @php
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::plural($modelName);
+        $modelName = Str::singular($modelName);
 
         $event = $modelName . '' . Str::ucfirst($event) . 'Event';
     @endphp
@@ -150,9 +150,9 @@ try {
                 '{{ str_replace('-', '_', Str::kebab($field)) }}'  =>  '1'
             ]);
 
-            $filter = new CountryQueryFilter($request);
+            $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\Country::filter($filter)->first();
+            $model = \{{ $namespace }}\{{ $module }}\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -167,7 +167,7 @@ try {
     @php
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::plural($modelName);
+        $modelName = Str::singular($modelName);
 
         $event = $modelName . '' . Str::ucfirst($event) . 'Event';
     @endphp
@@ -176,9 +176,9 @@ try {
                 '{{ str_replace('-', '_', Str::kebab($field)) }}Start'  =>  now()
             ]);
 
-            $filter = new CountryQueryFilter($request);
+            $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\Country::filter($filter)->first();
+            $model = \{{ $namespace }}\{{ $module }}\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -193,7 +193,7 @@ try {
     @php
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::plural($modelName);
+        $modelName = Str::singular($modelName);
 
         $event = $modelName . '' . Str::ucfirst($event) . 'Event';
     @endphp
@@ -202,9 +202,9 @@ try {
                 '{{ str_replace('-', '_', Str::kebab($field)) }}End'  =>  now()
             ]);
 
-            $filter = new CountryQueryFilter($request);
+            $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\Country::filter($filter)->first();
+            $model = \{{ $namespace }}\{{ $module }}\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -219,7 +219,7 @@ try {
     @php
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::plural($modelName);
+        $modelName = Str::singular($modelName);
 
         $event = $modelName . '' . Str::ucfirst($event) . 'Event';
     @endphp
@@ -229,9 +229,9 @@ try {
                 '{{ str_replace('-', '_', Str::kebab($field)) }}End'  =>  now()
             ]);
 
-            $filter = new CountryQueryFilter($request);
+            $filter = new {{ $model }}QueryFilter($request);
 
-            $model = \NextDeveloper\Commons\Database\Models\Country::filter($filter)->first();
+            $model = \{{ $namespace }}\{{ $module }}\Database\Models\{{ $model }}::filter($filter)->first();
         } catch (\Exception $e) {
             $this->assertFalse(false, $e->getMessage());
         }
@@ -239,4 +239,5 @@ try {
         $this->assertTrue(true);
     }
 @endforeach
+    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

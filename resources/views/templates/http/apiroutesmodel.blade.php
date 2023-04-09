@@ -6,4 +6,4 @@ Route::prefix('{{ strtolower($model) }}')->group(function () {
         Route::delete('/{@php echo strtolower($model)@endphp}', '{{ $model }}\{{ $model }}Controller@destroy');
     });
 
-//!APPENDHERE
+// EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

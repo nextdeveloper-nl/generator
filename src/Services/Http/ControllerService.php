@@ -17,24 +17,24 @@ class ControllerService extends AbstractService
         $render = view('Generator::templates/http/controller', [
             'namespace'          =>  $namespace,
             'module'             =>  $module,
-            'model'              =>  ucfirst(Str::singular($model)),
+            'model'              =>  ucfirst(Str::camel(Str::singular($model))),
             'columns'            =>  $columns
         ])->render();
 
         return $render;
     }
 
-    public static function generateFile($rootPath, $namespace, $module, $model) : bool{
-        self::createModelFolderForController($rootPath, ucfirst(Str::singular($model)));
+    public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
+        self::createModelFolderForController($rootPath, ucfirst(Str::camel(Str::singular($model))));
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/src/Http/Controllers/' . ucfirst(Str::singular($model)) . '/' . ucfirst(Str::singular($model)) . 'Controller.php', $content);
+        self::writeToFile($forceOverwrite, $rootPath . '/src/Http/Controllers/' . ucfirst(Str::camel(Str::singular($model))) . '/' . ucfirst(Str::camel(Str::singular($model))) . 'Controller.php', $content);
 
         return true;
     }
 
     public static function createModelFolderForController($root, $model) {
-        $folder = ucfirst(Str::singular($model));
+        $folder = ucfirst(Str::camel(Str::singular($model)));
         self::createDirectory(base_path($root . '/src/Http/Controllers/' . $folder));
     }
 }

@@ -1,6 +1,7 @@
 namespace {{ $namespace }}\{{ $module }}\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
+use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -19,7 +20,7 @@ class {{ $model }}QueryFilter extends AbstractQueryFilter
 
     public function {{ $fieldName }}($value)
     {
-        return $this->builder->where('{{$fieldName}}', 'like', '%' . $value . '%');
+        return $this->builder->where('{{$field}}', 'like', '%' . $value . '%');
     }
 @endforeach
 
@@ -37,7 +38,17 @@ public function {{ $fieldName }}($value)
             $value = substr($value, 1);
         }
 
-        return $this->builder->where('{{$fieldName}}', $operator, $value);
+        return $this->builder->where('{{$field}}', $operator, $value);
+    }
+    
+@endforeach
+@foreach( $filterBooleanFields as $field )
+    @php
+    $fieldName = Str::camel($field);
+    @endphp
+public function {{ $fieldName }}()
+    {
+        return $this->builder->where('{{$field}}', true);
     }
     
 @endforeach
@@ -47,12 +58,12 @@ public function {{ $fieldName }}($value)
     @endphp
 public function {{$fieldName}}Start($date) 
     {
-        return $this->builder->where( '{{$fieldName}}', '>=', $date );
+        return $this->builder->where( '{{$field}}', '>=', $date );
     }
 
     public function {{$fieldName}}End($date) 
     {
-        return $this->builder->where( '{{$fieldName}}', '<=', $date );
+        return $this->builder->where( '{{$field}}', '<=', $date );
     }
 
 @endforeach
@@ -67,9 +78,10 @@ public function {{$functionName}}($value)
         ${{$fieldName}} = {{$modelName}}::where('id_ref', $value)->first();
 
         if(${{$fieldName}}) {
-            return $this->builder->where('{{$functionName}}', '=', ${{$fieldName}}->id);
+            return $this->builder->where('{{$field}}', '=', ${{$fieldName}}->id);
         }
     }
 
 @endforeach
+    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }
