@@ -37,7 +37,7 @@ class AllController extends AbstractController
         $currentDateTime = Carbon::now();
         $dateString = $currentDateTime->format('Y_m_d--H_i_s');
 
-        AbstractService::backupModule($rootPath,$rootPath.'/backup'.'/'.$dateString,$moduleName);
+        //AbstractService::backupModule($rootPath,$rootPath.'/backup'.'/'.$dateString,$moduleName);
     
         StructureService::generateStructure($rootPath);
         StructureService::generateComposerFile($namespace, $moduleName, $rootPath, $forceOverwrite);

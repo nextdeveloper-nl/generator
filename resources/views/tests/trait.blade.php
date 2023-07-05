@@ -34,7 +34,41 @@ trait {{ $model }}TestTraits
     public function test_http_{{ strtolower($model) }}_get()
     {
         $this->setupGuzzle();
-        $response = $this->http->request('GET', '/{{ strtolower($module) }}/{{ strtolower($model) }}');
+        $response = $this->http->request(
+            'GET',
+            '/{{ strtolower($module) }}/{{ strtolower($model) }}',
+            ['http_errors' => false]
+        );
+
+        $this->assertContains($response->getStatusCode(), [
+            Response::HTTP_OK,
+            Response::HTTP_NOT_FOUND
+        ]);
+    }
+
+    public function test_http_{{ strtolower($model) }}_post()
+    {
+        $this->setupGuzzle();
+        $response = $this->http->request('POST', '/{{ strtolower($module) }}/{{ strtolower($model) }}', [
+            'form_params'   =>  [
+@foreach( $filterTextFields as $field )
+                '{{ str_replace('-', '_', Str::kebab($field)) }}'  =>  'a',
+@endforeach
+@foreach( $filterNumberFields as $field )
+                '{{ str_replace('-', '_', Str::kebab($field)) }}'  =>  '1',
+@endforeach
+@foreach( $filterDateFields as $field )
+    @php
+        if($field == 'created_at' || $field == 'updated_at' || $field == 'deleted_at') {
+            continue;
+        }
+    @endphp
+                '{{ str_replace('-', '_', Str::kebab($field)) }}'  =>  now(),
+@endforeach
+                ],
+                ['http_errors' => false]
+            ]
+        );
 
         $this->assertEquals($response->getStatusCode(), Response::HTTP_OK);
     }

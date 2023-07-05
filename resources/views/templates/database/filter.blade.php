@@ -75,7 +75,7 @@ public function {{$fieldName}}Start($date)
     @endphp
 public function {{$functionName}}($value)
     {
-        ${{$fieldName}} = {{$modelName}}::where('id_ref', $value)->first();
+        ${{$fieldName}} = {{$modelName}}::where('uuid', $value)->first();
 
         if(${{$fieldName}}) {
             return $this->builder->where('{{$field}}', '=', ${{$fieldName}}->id);

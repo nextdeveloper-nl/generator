@@ -116,15 +116,43 @@ class Abstract{{ $model }}Service {
     * @throw Exception
     */
     public static function update($id, array $data) {
-        event( new {{ Str::plural($model) }}CreatingEvent() );
+        $model = {{ $model }}::where('uuid', $id)->first();
+
+        event( new {{ Str::plural($model) }}UpdateingEvent($model) );
 
         try {
-           $model = {{ $model }}::create($data);
+           $model = $model->update($data);
         } catch(\Exception $e) {
            throw $e;
         }
 
-        event( new {{ Str::plural($model) }}CreatedEvent($model) );
+        event( new {{ Str::plural($model) }}UpdatedEvent($model) );
+
+        return $model;
+    }
+
+    /**
+    * This method updated the model from an array.
+    *
+    * Throws an exception if stuck with any problem.
+    *
+    * @param
+    * @param array $data
+    * @return mixed
+    * @throw Exception
+    */
+    public static function delete($id, array $data) {
+        $model = {{ $model }}::where('uuid', $id)->first();
+
+        event( new {{ Str::plural($model) }}DeletingEvent() );
+
+        try {
+            $model = $model->delete();
+        } catch(\Exception $e) {
+            throw $e;
+        }
+
+        event( new {{ Str::plural($model) }}DeletedEvent($model) );
 
         return $model;
     }

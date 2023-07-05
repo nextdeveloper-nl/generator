@@ -34,7 +34,8 @@ class {{ $model }}Controller extends AbstractController
     * @throws \Laravel\Octane\Exceptions\DdException
     */
     public function show($ref) {
-        //  Here we are not using Laravel Route Model Binding. Please check routeBinding.md file in NextDeveloper Platform Project
+        //  Here we are not using Laravel Route Model Binding. Please check routeBinding.md file
+        //  in NextDeveloper Platform Project
         $model = {{ $model }}Service::getByRef($ref);
 
         return ResponsableFactory::makeResponse($this, $model);
@@ -61,8 +62,22 @@ class {{ $model }}Controller extends AbstractController
     * @return mixed|null
     * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
     */
-    public function update(${{ Str::camel($model) }}Id, CountryUpdateRequest $request) {
-        $model = CountryService::update($countryId, $request->validated());
+    public function update(${{ Str::camel($model) }}Id, {{ $model }}UpdateRequest $request) {
+        $model = {{ $model }}Service::update(${{ Str::camel($model) }}Id, $request->validated());
+
+        return ResponsableFactory::makeResponse($this, $model);
+    }
+
+    /**
+    * This method updates {{ $model }} object on database.
+    *
+    * @param ${{ Str::camel($model) }}Id
+    * @param CountryCreateRequest $request
+    * @return mixed|null
+    * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
+    */
+    public function destroy(${{ Str::camel($model) }}Id) {
+        $model = {{ $model }}Service::delete(${{ Str::camel($model) }}Id);
 
         return ResponsableFactory::makeResponse($this, $model);
     }

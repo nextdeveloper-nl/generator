@@ -43,7 +43,7 @@ class FilterService extends AbstractService
     }
 
     public static function isIdField($fieldName) {
-        $idFields = ['id', 'id_ref'];
+        $idFields = ['id', 'uuid'];
         return (in_array($fieldName, $idFields) || substr($fieldName, -3) === '_id');
     }
 
@@ -150,7 +150,7 @@ class FilterService extends AbstractService
 
     public static function generateIdRefFields($columns) {
         $idRefFields = [];
-        $disgardedFields = ['id', 'id_ref'];
+        $disgardedFields = ['id', 'uuid'];
 
         foreach ($columns as $column) {
             $columnField = $column->Field;

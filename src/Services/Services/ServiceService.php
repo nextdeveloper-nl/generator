@@ -59,7 +59,7 @@ class ServiceService extends AbstractService
         $data = [];
 
         foreach ($columns as $column) {
-            if($column->Field == 'id' || $column->Field == 'id_ref')
+            if($column->Field == 'id' || $column->Field == 'uuid')
                 continue;
 
             switch ($column->Type) {

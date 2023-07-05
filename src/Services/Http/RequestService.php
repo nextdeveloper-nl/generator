@@ -43,7 +43,7 @@ class RequestService extends AbstractService
 
     public static function generateRulesArray($columns, $isUpdate = false) {
         $rules = [];
-        $discardedFields = ['created_at', 'deleted_at', 'updated_at', 'id', 'id_ref'];
+        $discardedFields = ['created_at', 'deleted_at', 'updated_at', 'id', 'uuid'];
 
         foreach ($columns as $column) {
             $columnType = self::cleanColumnType($column->Type); 
@@ -59,7 +59,7 @@ class RequestService extends AbstractService
 
             $type = $column->Type;
 
-            if (!in_array($fieldName, $discardedFields) && stripos($fieldName, 'id_ref') === false){
+            if (!in_array($fieldName, $discardedFields) && stripos($fieldName, 'uuid') === false){
                 $rules[$fieldName] = '';
                 if($columnDefaultValue == null){
                     $rules[$fieldName] = $required;

@@ -20,12 +20,12 @@ class {{ $model }}QueryFilter
     */
     public function my()
     {
-       return $this->builder->where('representative_user_id', getAUUser()->id_ref);
+       return $this->builder->where('representative_user_id', getAUUser()->uuid);
     }
 
     public function id($id)
     {
-       return $this->builder->where('id_ref', 'like', '%'.$id.'%');
+       return $this->builder->where('uuid', 'like', '%'.$id.'%');
     }
 
     public function phone($value)

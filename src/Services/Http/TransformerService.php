@@ -36,10 +36,10 @@ class TransformerService extends AbstractService
     private static function buildData($columns, $model) {
         $data = [];
 
-        if(self::isColumnExists('id_ref', $columns)) {
+        if(self::isColumnExists('uuid', $columns)) {
             $data[] =   [
                 'field'     =>  'id',
-                'return'    =>  'id_ref'
+                'return'    =>  'uuid'
             ];
         } else {
             $data[] =   [
@@ -49,7 +49,7 @@ class TransformerService extends AbstractService
         }
 
         foreach ($columns as $column) {
-            if($column->Field == 'id' || $column->Field == 'id_ref')
+            if($column->Field == 'id' || $column->Field == 'uuid')
                 continue;
 
             switch ($column->Type) {

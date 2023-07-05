@@ -181,12 +181,12 @@ trait Responsable
      * @return \Illuminate\Http\JsonResponse
      */
     public function withError($message, $code, array $errors = [], array $headers = []) {
-        $this->ref = genUuid();
+//        $this->ref = genUuid();
 
         $data = [
             'error' => [
                 'status'  => $this->statusCode,
-                'ref'     => $this->ref,
+//                'ref'     => $this->ref,
                 'code'    => $code,
                 'message' => $message,
             ],
@@ -432,7 +432,14 @@ trait Responsable
 }
 
 class ResponsableFactory {
-    public static function makeResponse($controller, $data, $transformer = null, $resourceKey = null, Cursor $cursor = null, array $meta = [], array $headers = []) {
+    public static function makeResponse(
+        $controller, $data,
+        $transformer = null,
+        $resourceKey = null,
+        Cursor $cursor = null,
+        array $meta = [],
+        array $headers = []
+    ) {
         $returnType = class_basename($data);
         $returnObject = null;
 
@@ -442,7 +449,15 @@ class ResponsableFactory {
             $returnType = 'Item';
             $returnObject = get_class($data);
         } else {
-            $returnObject = get_class($data[0]);
+            if(count($data) > 0)
+                $returnObject = get_class($data[0]);
+            else
+                $returnObject = null;
+        }
+
+        if(!$returnObject) {
+            return $controller->errorNotFound('Cannot find the object you are looking for. We may not have that' .
+                ' object or you may need to change your search filters.');
         }
 
         $exploded = explode('\\', $returnObject);
