@@ -81,7 +81,7 @@ class RequestService extends AbstractService
                     case 'bigint':
                     case 'mediumint':
                     case 'smallint':
-                        $rules[$fieldName] .= 'integer|';
+                        if(!Str::endsWith($fieldName, '_id')) $rules[$fieldName] .= 'integer|';
                         break;
                     case 'date':
                     case 'datetime':
@@ -104,6 +104,10 @@ class RequestService extends AbstractService
                         }
                 }
 
+                if(Str::endsWith($fieldName, '_id')) {
+                    $rules[$fieldName] .= self::getTableRelationRule($fieldName) . '|';
+                }
+
                 if (Str::endsWith($rules[$fieldName], '|')) {
                     $rules[$fieldName] = substr($rules[$fieldName], 0, -1);
                 }
@@ -117,5 +121,12 @@ class RequestService extends AbstractService
     public static function createModelFolderForRequest($root, $model) {
         $folder = ucfirst(Str::camel(Str::singular($model)));
         self::createDirectory(base_path($root . '/src/Http/Requests/' . $folder));
+    }
+
+    public static function getTableRelationRule($fieldName) {
+        $table = str_replace('_id', '', $fieldName);
+        $rule = 'exists:' . Str::plural($table) . ',uuid|uuid';
+
+        return $rule;
     }
 }

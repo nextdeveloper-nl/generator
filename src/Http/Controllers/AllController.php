@@ -48,7 +48,7 @@ class AllController extends AbstractController
         $modelsArray = explode(',', $request->query('models'));
 
         foreach ($modelsArray as $model) {
-            StructureService::createEventFolderForModel($rootPath, $model);
+/*            StructureService::createEventFolderForModel($rootPath, $model);
 
             ServiceService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
@@ -68,10 +68,12 @@ class AllController extends AbstractController
             RequestService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
             ControllerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+*/
             ApiRoutesService::appendToRoutes($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+            /*
             HttpConfigurationService::appendToModelBinding($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
-            TransformerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+            TransformerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);*/
         }
 
         foreach ($modelsArray as $model) {

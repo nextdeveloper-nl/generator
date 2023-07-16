@@ -2,6 +2,12 @@ namespace {{ $namespace }}\{{ $module }}\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
+@foreach( $idRefFields as $field )
+    @if($field == 'user_id')
+        use NextDeveloper\Accounts\Database\Models\User;
+    @endif
+@endforeach
+
 
 /**
  * This class automatically puts where clause on database so that use can filter
