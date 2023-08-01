@@ -107,11 +107,21 @@ class StructureService extends AbstractService
     }
 
     public static function generateConfigurationFiles($rootPath, $module, $forceOverwrite): bool {
-        self::writeToFile($forceOverwrite, $rootPath . '/config/' . strtolower($module) . '.php', self::generateConfig());
-        self::writeToFile($forceOverwrite, $rootPath . '/config/model-binding.php', self::generateModelBindingConfig());
-        self::writeToFile($forceOverwrite, $rootPath . '/config/relation.php', self::generateRelationConfig());
+        $rootPath = base_path($rootPath);
 
-        return false;
+        if(!file_exists($rootPath . '/config/' . strtolower($module) . '.php')) {
+            self::writeToFile($forceOverwrite, $rootPath . '/config/' . strtolower($module) . '.php', self::generateConfig());
+        }
+
+        if(!file_exists($rootPath . '/config/model-binding.php')) {
+            self::writeToFile($forceOverwrite, $rootPath . '/config/model-binding.php', self::generateModelBindingConfig());
+        }
+
+        if(!file_exists($rootPath . '/config/relation.php')) {
+            self::writeToFile($forceOverwrite, $rootPath . '/config/relation.php', self::generateRelationConfig());
+        }
+
+        return true;
     }
 
     private static function generateDirectories($directory, $currentPath, $paths = []) {

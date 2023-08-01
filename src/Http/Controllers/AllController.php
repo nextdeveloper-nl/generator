@@ -24,6 +24,9 @@ class AllController extends AbstractController
 {
     public function index(Request $request) {
 
+        $tarBackup = $request->query('tarBackup');
+        $hasAuth = $request->query('hasAuthentication');
+
         $namespace = $request->query('namespace');
         $moduleName = $request->query('moduleName');
         $rootPath = '../' . $namespace . '/' . $moduleName;
@@ -37,7 +40,7 @@ class AllController extends AbstractController
         $currentDateTime = Carbon::now();
         $dateString = $currentDateTime->format('Y_m_d--H_i_s');
 
-        //AbstractService::backupModule($rootPath,$rootPath.'/backup'.'/'.$dateString,$moduleName);
+        //AbstractService::backupModule($rootPath, $namespace ,$moduleName, false);
     
         StructureService::generateStructure($rootPath);
         StructureService::generateComposerFile($namespace, $moduleName, $rootPath, $forceOverwrite);
@@ -48,7 +51,7 @@ class AllController extends AbstractController
         $modelsArray = explode(',', $request->query('models'));
 
         foreach ($modelsArray as $model) {
-/*            StructureService::createEventFolderForModel($rootPath, $model);
+            StructureService::createEventFolderForModel($rootPath, $model);
 
             ServiceService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
@@ -59,6 +62,7 @@ class AllController extends AbstractController
             HandlersService::generateFiles($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
             ModelService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+            ModelService::generateOneToManyRelations($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
             ModelTestService::generateTraitFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
             ModelTestService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
             
@@ -68,16 +72,10 @@ class AllController extends AbstractController
             RequestService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
             ControllerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
-*/
             ApiRoutesService::appendToRoutes($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
-            /*
+
             HttpConfigurationService::appendToModelBinding($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
-
-            TransformerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);*/
-        }
-
-        foreach ($modelsArray as $model) {
-            ModelService::generateOneToManyRelations($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+            TransformerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
         }
 
         return $this->withCompleted();

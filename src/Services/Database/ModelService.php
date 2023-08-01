@@ -33,6 +33,7 @@ class ModelService extends AbstractService
         $render = view('Generator::templates/database/model', [
             'namespace'         =>  $namespace,
             'module'            =>  $module,
+            'lcModule'          =>  strtolower($module),
             'has_created'       =>  self::hasColumn('created_at', $model),
             'has_updated'       =>  self::hasColumn('updated_at', $model),
             'has_deleted'       =>  self::hasColumn('deleted_at', $model),
@@ -179,7 +180,9 @@ class ModelService extends AbstractService
 
     public static function generateOneToManyRelations($rootPath, $namespace, $module, $model, $forceOverwrite){
         $foreignKeys = self::foreignKeys($model);
+
         $currentModelRootpath = $rootPath. '/src/Database/Models/' . ucfirst(Str::camel(Str::singular($model))) . '.php';
+
         foreach ($foreignKeys as $foreignKey) {
             $foreignModelRootPath = $rootPath. '/src/Database/Models/' . ucfirst(Str::camel(Str::singular($foreignKey->REFERENCED_TABLE_NAME))) . '.php';
             

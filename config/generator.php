@@ -99,5 +99,9 @@ return [
         [
         'representative' => 'user'
         ]*/
-    'enableBroadcast'   =>  true
+    'enableBroadcast'   =>  true,
+
+    'extend'    =>  [
+        'model' => '\NextDeveloper\IAM\Database\Abstract\AuthorizationModel'
+    ]
 ];

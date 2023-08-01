@@ -2,6 +2,7 @@
 
 namespace NextDeveloper\Generator\Services;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
@@ -202,7 +203,25 @@ class AbstractService
         return true;
     }
 
-    public static function backupModule($sourcePath, $backupPath, $moduleName) {
+    public static function backupModule($sourcePath, $namespace, $moduleName, $tarBackup = true) {
+        $appPath = base_path();
+        $timestamp = Carbon::now()->format('YmdHis');
+        $backupTo = $appPath . '/../' . $namespace . '/' . $moduleName . '.' . $timestamp . '.tar.gz';
+
+        $command = 'cp ';
+
+        if($tarBackup) {
+            $command = 'tar -czf ' . $backupTo . ' ' . $appPath . '/' . $sourcePath;
+        }
+        $appPath = base_path();
+        $timestamp = Carbon::now()->format('YmdHis');
+        $backupTo = $appPath . '/../' . $namespace . '/' . $moduleName . '.' . $timestamp . '.tar.gz';
+        $command = 'tar -czf ' . $backupTo . ' ' . $appPath . '/' . $sourcePath;
+
+        $output = shell_exec($command);
+
+        return true;
+
         // Get an iterator for all the files in the source directory
         $iterator = new RecursiveDirectoryIterator(base_path($sourcePath), RecursiveDirectoryIterator::SKIP_DOTS);
 

@@ -8,6 +8,10 @@ use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}QueryFilter;
 
 use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}CreatedEvent;
 use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}CreatingEvent;
+use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}UpdatedEvent;
+use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}UpdatingEvent;
+use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}DeletedEvent;
+use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}DeletingEvent;
 
 /**
 * This class is responsible from managing the data for {{ $model }}
