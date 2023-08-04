@@ -64,7 +64,11 @@ class StructureService extends AbstractService
     public static function generateServiceProviderFile($rootPath, $namespace, $module, $forceOverwrite): bool {
         $content = self::generateServiceProvider($namespace, $module);
 
-        self::writeToFile($forceOverwrite, $rootPath . '/src/' . ucfirst($module) . 'ServiceProvider.php', $content);
+        $file = $rootPath . '/src/' . ucfirst($module) . 'ServiceProvider.php';
+
+        if(!file_exists(base_path($file))) {
+            self::writeToFile($forceOverwrite, $file, $content);
+        }
 
         return true;
     }
@@ -107,17 +111,15 @@ class StructureService extends AbstractService
     }
 
     public static function generateConfigurationFiles($rootPath, $module, $forceOverwrite): bool {
-        $rootPath = base_path($rootPath);
-
-        if(!file_exists($rootPath . '/config/' . strtolower($module) . '.php')) {
+        if(!file_exists(base_path($rootPath) . '/config/' . strtolower($module) . '.php')) {
             self::writeToFile($forceOverwrite, $rootPath . '/config/' . strtolower($module) . '.php', self::generateConfig());
         }
 
-        if(!file_exists($rootPath . '/config/model-binding.php')) {
+        if(!file_exists(base_path($rootPath) . '/config/model-binding.php')) {
             self::writeToFile($forceOverwrite, $rootPath . '/config/model-binding.php', self::generateModelBindingConfig());
         }
 
-        if(!file_exists($rootPath . '/config/relation.php')) {
+        if(!file_exists(base_path($rootPath) . '/config/relation.php')) {
             self::writeToFile($forceOverwrite, $rootPath . '/config/relation.php', self::generateRelationConfig());
         }
 

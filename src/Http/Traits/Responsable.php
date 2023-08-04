@@ -433,13 +433,20 @@ trait Responsable
 
 class ResponsableFactory {
     public static function makeResponse(
-        $controller, $data,
+        $controller,
+        $data,
         $transformer = null,
         $resourceKey = null,
         Cursor $cursor = null,
         array $meta = [],
         array $headers = []
     ) {
+        if(is_array($data)) {
+            return $controller->withArray([
+                'data'  =>  $data
+            ]);
+        }
+
         $returnType = class_basename($data);
         $returnObject = null;
 

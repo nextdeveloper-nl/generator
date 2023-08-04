@@ -42,7 +42,11 @@ class ServiceService extends AbstractService
     public static function generateAbstractFile($rootPath, $namespace, $module, $model, $forceOverwrite): bool {
         $content = self::generateAbstract($namespace, $module, $model);
 
-        self::writeToFile($forceOverwrite, $rootPath . '/src/Services/AbstractServices/Abstract' . ucfirst(Str::camel(Str::singular($model))) . 'Service.php', $content);
+        $file = $rootPath . '/src/Services/AbstractServices/Abstract' . ucfirst(Str::camel(Str::singular($model))) . 'Service.php';
+
+        if(!file_exists(base_path($file))){
+            self::writeToFile($forceOverwrite, $file, $content);
+        }
 
         return true;
     }

@@ -97,6 +97,7 @@ $globalScopes = config('{{$lcModule}}.scopes.global');
 $modelScopes = config('{{$lcModule}}.scopes.{{$table}}');
 
 if(!$modelScopes) $modelScopes = [];
+if (!$globalScopes) $globalScopes = [];
 
 $scopes = array_merge(
 $globalScopes,
