@@ -195,4 +195,28 @@ class ModelService extends AbstractService
             }  
         }
     }
+
+    public static function getIdFields($namespace, $model) : array {
+        $columns = self::getColumns($model);
+
+        $idFields = [];
+
+        foreach ($columns as $column) {
+            $module = explode('_', $column->Field);
+            $module = config('generator.modules.' . $module[0] . '_*');
+
+            $foreignModel = Str::remove('_id', $column->Field);
+
+            if(Str::endsWith($column->Field, '_id')) {
+                $idFields[] = [
+                    '\\' . $namespace . '\\' . $module['module'] . '\\Database\\Models\\' . Str::singular(Str::ucfirst(Str::camel($foreignModel))),
+                    $column->Field,
+                    Str::camel($column->Field)
+                ];
+            }
+        }
+
+        return $idFields;
+    }
+
 }

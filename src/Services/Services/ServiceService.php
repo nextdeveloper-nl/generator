@@ -5,6 +5,7 @@ namespace NextDeveloper\Generator\Services\Services;
 use Illuminate\Support\Str;
 use NextDeveloper\Generator\Exceptions\TemplateNotFoundException;
 use NextDeveloper\Generator\Services\AbstractService;
+use NextDeveloper\Generator\Services\Database\ModelService;
 
 class ServiceService extends AbstractService
 {
@@ -28,12 +29,30 @@ class ServiceService extends AbstractService
 
         $events = config('generator.action-events.events');
 
+        $hasUserId = false;
+        $hasAccountId = false;
+
+        foreach ($columns as $column) {
+            if($column->Field == config('generator.magicFields.account')[0])
+                $hasAccountId = true;
+
+            if($column->Field == config('generator.magicFields.user')[0])
+                $hasUserId = true;
+        }
+
+        //$idFields = ModelService::getIdFields($namespace, $model);
+
         $render = view('Generator::templates/services/abstract', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-//            'model'         =>  ucfirst(Str::singular($model)),
             'createData'         =>  self::buildData($columns, $model),
-            'model'         =>  ucfirst(Str::camel(Str::singular($model)))
+            'hasAccountId'  =>  $hasAccountId,
+            'accountIdField'    =>  config('generator.magicFields.account')[0],
+            'accountTable'  =>  config('generator.magicFields.account')[1],
+            'hasUserId' =>  $hasUserId,
+            'userIdField'   =>  config('generator.magicFields.user')[0],
+            'userTable'   =>  config('generator.magicFields.user')[1],
+            'model'      =>  ucfirst(Str::camel(Str::singular($model)))
         ])->render();
 
         return $render;

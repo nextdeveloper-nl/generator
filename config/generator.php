@@ -103,5 +103,34 @@ return [
 
     'extend'    =>  [
         'model' => '\NextDeveloper\IAM\Database\Abstract\AuthorizationModel'
-    ]
+    ],
+
+    'modules'   =>  [
+        'iam_*'   =>  [
+            'module' =>  'IAM',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
+        ],
+        'commons_*' =>  [
+            'module' =>  'Commons',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  true
+        ]
+    ],
+
+    //  These are magic fields that we will use in our database to understand AccountId and UserId
+    'magicFields' =>  [
+        'account'     => [
+                'iam_account_id',
+                '\NextDeveloper\IAM\Database\Models\IamAccount',
+                'iam_accounts',
+                'id',
+            ],
+        'user'        =>  [
+            'iam_user_id',
+            '\NextDeveloper\IAM\Database\Models\IamUser',
+            'iam_user',
+            'id'
+        ]
+    ],
 ];

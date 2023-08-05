@@ -5,6 +5,7 @@ namespace NextDeveloper\Generator\Services\Http;
 use Illuminate\Support\Str;
 use NextDeveloper\Generator\Exceptions\TemplateNotFoundException;
 use NextDeveloper\Generator\Services\AbstractService;
+use NextDeveloper\Generator\Services\Database\ModelService;
 
 class TransformerService extends AbstractService
 {
@@ -14,12 +15,15 @@ class TransformerService extends AbstractService
     public static function generate($namespace, $module, $model) {
         $columns = self::getColumns($model);
 
+        $idFields = ModelService::getIdFields($namespace, $model);
+
         $render = view('Generator::templates/http/transformer', [
             'namespace'          =>  $namespace,
             'module'             =>  $module,
             'model'              =>  ucfirst(Str::camel(Str::singular($model))),
             'columns'            =>  $columns,
-            'returnData'         =>  self::buildData($columns, $model)
+            'returnData'         =>  self::buildData($columns, $model),
+            'idFields'           =>  $idFields
         ])->render();
 
         return $render;

@@ -4,8 +4,10 @@ namespace NextDeveloper\Generator\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use NextDeveloper\Generator\Services\AbstractService;
 use NextDeveloper\Generator\Common\AbstractController;
+use NextDeveloper\Generator\Services\Database\TableService;
 use NextDeveloper\Generator\Services\Events\EventsService;
 use NextDeveloper\Generator\Services\Database\ModelService;
 use NextDeveloper\Generator\Services\Http\ApiRoutesService;
@@ -48,7 +50,13 @@ class AllController extends AbstractController
         StructureService::generateApiRoutesFile($rootPath, $namespace, $moduleName, $forceOverwrite);
         StructureService::generateConfigurationFiles($rootPath, $moduleName, $forceOverwrite);
 
-        $modelsArray = explode(',', $request->query('models'));
+        $modelsArray = $request->query('models');
+
+        if(Str::contains($modelsArray, '*')) {
+            $modelsArray = TableService::getTables($modelsArray);
+        } else {
+            $modelsArray = explode(',', $request->query('models'));
+        }
 
         foreach ($modelsArray as $model) {
             StructureService::createEventFolderForModel($rootPath, $model);

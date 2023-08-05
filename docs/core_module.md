@@ -1,4 +1,4 @@
-# Core Module
+# Generator Module
 
 ## To Do
 - [x] Write a folder structure document
@@ -197,6 +197,27 @@ class ${ShowExample}Command extends Command {
 
 #### 6.4. Database
 Everything related to database is located in this directory.
+
+Database standardization is very important while using this generator. Since we are using this generator to generate code on behalf of us, we should be very careful about naming conventions.
+
+For instance, tables should be named in this fashion;
+```
+{moduleName}_{tableName}
+```
+Since we   are using naming convention almost everywhere, we will be trying to relate ID fields in all database. That is why please make sure that the namings are correct.
+
+##### 6.4.0 Naming Conventions
+
+Tables name should be like;
+```
+{moduleName}_{tableName}
+```
+
+Relational id fields should be like;
+
+```
+{moduleName}_{tableName}_id
+```
 
 ##### 6.4.1. Filters
 Core database filters are defined in here. Used for creating methods to filter certain queries to get data out of the database. Each filter should be named with ${FilterName}QueryFilter.php and should be encapsulated under PlusClouds\{ModuleName}\Database\Filters namespace. Each developed filter should extend AbstractQueryFilter. Each class method should also contain informative comments including the parameter types and return types along with an informative explanation. 

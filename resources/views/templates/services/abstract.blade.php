@@ -3,6 +3,8 @@ namespace {{ $namespace }}\{{ $module }}\Services\AbstractServices;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Str;
+use NextDeveloper\IAM\Helpers\UserHelper;
 use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};
 use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}QueryFilter;
 
@@ -55,11 +57,6 @@ class Abstract{{ $model }}Service {
             return $model->paginate($perPage);
         else
             return $model->get();
-
-        if(!$model && $enablePaginate)
-            return {{ $model }}::paginate($perPage);
-        else
-            return {{ $model }}::get();
     }
 
     public static function getAll() {
@@ -98,6 +95,34 @@ class Abstract{{ $model }}Service {
     public static function create(array $data) {
         event( new {{ $model }}CreatingEvent() );
 
+	@if($hasAccountId)
+	if(array_key_exists('{{$accountIdField}}', $data))
+	{
+		$isUuid = Str::isUuid($data['{{$accountIdField}}']);
+		
+		if($isUuid) {
+			$obj = {{$accountTable}}::findByUuid($data['{{$accountIdField}}']);
+                	$data['{{$accountIdField}}'] = $obj->id;
+		} 
+	} else {
+            $data['iam_account_id'] = UserHelper::currentAccount()->id;
+        }
+	@endif
+	
+	@if($hasUserId)
+	if(array_key_exists('{{$userIdField}}', $data))
+		{
+		$isUuid = Str::isUuid($data['{{$userIdField}}']);
+		
+		if($isUuid) {
+			$obj = {{$userTable}}::findByUuid($data['{{$userIdField}}']);
+                	$data['{{$userIdField}}'] = $obj->id;
+		}
+		} else {
+            $data['iam_user_id'] = UserHelper::me()->id;
+        }
+	@endif
+
         try {
             $model = {{ $model }}::create($data);
         } catch(\Exception $e) {
@@ -106,7 +131,7 @@ class Abstract{{ $model }}Service {
 
         event( new {{ $model }}CreatedEvent($model) );
 
-        return $model;
+        return $model->fresh();
     }
 
     /**
@@ -132,7 +157,7 @@ class Abstract{{ $model }}Service {
 
         event( new {{ Str::plural($model) }}UpdatedEvent($model) );
 
-        return $model;
+        return $model->fresh();
     }
 
     /**
