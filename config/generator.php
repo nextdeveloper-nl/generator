@@ -42,7 +42,9 @@ return [
             'Helpers',
             'Http'  =>  [
                 'Controllers',
-                'Transformers',
+                'Transformers'  =>  [
+                    'AbstractTransformers'
+                ],
                 'Requests',
                 'Middlewares'
             ],
@@ -53,6 +55,7 @@ return [
             'Services' => [
                 'AbstractServices'
             ],
+            'WebSockets'
         ],
         'tests' => [
             'Database'  =>  [
@@ -106,31 +109,19 @@ return [
     ],
 
     'modules'   =>  [
-        'iam_*'   =>  [
-            'module' =>  'IAM',
+        [
+            'name'      =>  'IAM',
+            'prefix'    =>  'iam',
+            'tables'    =>  'iam_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
-        'commons_*' =>  [
-            'module' =>  'Commons',
+        [
+            'name'      =>  'Commons',
+            'prefix'    =>  'common',
+            'tables'    =>  'common_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true
-        ]
-    ],
-
-    //  These are magic fields that we will use in our database to understand AccountId and UserId
-    'magicFields' =>  [
-        'account'     => [
-                'iam_account_id',
-                '\NextDeveloper\IAM\Database\Models\IamAccount',
-                'iam_accounts',
-                'id',
-            ],
-        'user'        =>  [
-            'iam_user_id',
-            '\NextDeveloper\IAM\Database\Models\IamUser',
-            'iam_user',
-            'id'
+            'generate'  =>  false
         ]
     ],
 ];

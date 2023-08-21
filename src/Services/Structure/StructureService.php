@@ -47,7 +47,9 @@ class StructureService extends AbstractService
     public static function generateComposerFile($namespace, $module, $root, $forceOverwrite) {
         $content = self::generateComposer($namespace, $module);
 
-        self::writeToFile($forceOverwrite ,$root . '/composer.json', $content, 'json');
+        if(!file_exists(base_path('composer.json')) || $forceOverwrite) {
+            self::writeToFile($forceOverwrite ,$root . '/composer.json', $content, 'json');
+        }
 
         return true;
     }
@@ -66,7 +68,7 @@ class StructureService extends AbstractService
 
         $file = $rootPath . '/src/' . ucfirst($module) . 'ServiceProvider.php';
 
-        if(!file_exists(base_path($file))) {
+        if(!file_exists(base_path($file)) || $forceOverwrite) {
             self::writeToFile($forceOverwrite, $file, $content);
         }
 

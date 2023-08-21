@@ -28,7 +28,10 @@ class ControllerService extends AbstractService
         self::createModelFolderForController($rootPath, ucfirst(Str::camel(Str::singular($model))));
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($forceOverwrite, $rootPath . '/src/Http/Controllers/' . ucfirst(Str::camel(Str::singular($model))) . '/' . ucfirst(Str::camel(Str::singular($model))) . 'Controller.php', $content);
+        $file = $rootPath . '/src/Http/Controllers/' . ucfirst(Str::camel(Str::singular($model))) . '/' . ucfirst(Str::camel(Str::singular($model))) . 'Controller.php';
+        if(!file_exists(base_path($file)) || $forceOverwrite){
+            self::writeToFile($forceOverwrite, $file, $content);
+        }
 
         return true;
     }

@@ -38,7 +38,10 @@ class EventsService extends AbstractService
 
             StructureService::createEventFolderForModel($rootPath, $model);
 
-            self::writeToFile($forceOverwrite, $rootPath . '/src/Events/' . $modelName . '/' . $event . '.php', $content);
+            $file = $rootPath . '/src/Events/' . $modelName . '/' . $event . '.php';
+            if(!file_exists(base_path($file)) || $forceOverwrite) {
+                self::writeToFile($forceOverwrite, $file, $content);
+            }
         }
 
         return true;

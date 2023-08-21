@@ -4,6 +4,7 @@ namespace NextDeveloper\Generator\Services;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use PHP_CodeSniffer\Exceptions\DeepExitException;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use Illuminate\Support\Facades\DB;
@@ -121,15 +122,16 @@ class AbstractService
 
         $content = htmlspecialchars_decode($content);
 
-        if(!$forceOverwrite){ 
-            $content = self::appendExistingContentAfterWarningMessage($file,$content); 
-        }    
-        
-        file_put_contents(base_path($file), $content);
+        if(!$forceOverwrite){
+            $content = self::appendExistingContentAfterWarningMessage($file,$content);
+        }
+
+        $fileContent = self::replaceUsedLibraries($file, $content);
+
+        file_put_contents(base_path($file), $fileContent);
     }
 
     public static function appendExistingContentAfterWarningMessage($file, $content) {
-
         if (file_exists(base_path($file))) {
             $existingContent = file_get_contents(base_path($file));
         } 
@@ -145,24 +147,46 @@ class AbstractService
         // Get the portion of the file contents that comes after the warning string
         if ($pos !== false) {
             $afterWarningString = substr($existingContent, $pos + strlen($warningString));
-            $content = self::removeLastBracketCharachters($content);
-            return $content.$afterWarningString;
+            $afterWarningString = self::removeLastBracket($afterWarningString);
+
+            $afterWarningString = $warningString . '\n\n' . $afterWarningString;
+
+            $content = str_replace($warningString, $afterWarningString, $content);
+
+            return $content;
 
         } else { // If the warning string is not found, regenerate the whole file
             return $content;
         }
     }
 
-    public static function removeLastBracketCharachters($content){
-        // Remove characters until the 'E' character of CODE is found
-        while (strlen($content) > 0 && substr($content, -1) !== 'E') {
-            $content = substr($content, 0, -1);
+    public static function removeLastBracket($content) {
+        $lines = explode(PHP_EOL, $content);
+
+        for($i = count($lines) -1; $i >= 0; $i--) {
+            if($lines[$i] == '});' || $lines[$i] == '}') {
+                unset($lines[$i]);
+                break;
+            }
         }
+
+        $content = implode(PHP_EOL, $lines);
+
+        return $content;
+    }
+
+    public static function getContentAfterWarningSign($content){
+        $warningString = "// EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE";
+        $pos = strpos($content, $warningString);
+
+        $pos = strlen($warningString) + $pos;
+
+        $content = substr($content, $pos, -1);
+
         return $content;
     }
 
     public static function checkForSameContent($file, $content) {
-
         $existingContent = file_get_contents(base_path($file));
         $existingContent = htmlspecialchars_decode($existingContent);
 
@@ -178,7 +202,10 @@ class AbstractService
     }
 
     public static function readFile($file) {
-        return file_get_contents(base_path($file));
+        if(file_exists(base_path($file)))
+            return file_get_contents(base_path($file));
+
+        return '';
     }
 
     /**
@@ -221,45 +248,124 @@ class AbstractService
         $output = shell_exec($command);
 
         return true;
+    }
 
-        // Get an iterator for all the files in the source directory
-        $iterator = new RecursiveDirectoryIterator(base_path($sourcePath), RecursiveDirectoryIterator::SKIP_DOTS);
+    /**
+     * Reads the used libraries in the file and moves them into the new content file
+     *
+     * @param $file
+     * @param $content
+     * @return string
+     */
+    public static function replaceUsedLibraries($file, $content) : string {
+        $fileLibraries = self::findUsedLibraries(self::readFile($file));
+        $contentLibraries = self::findUsedLibraries($content);
 
-        // Loop through each file and copy it to the backup directory
-        foreach (new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST) as $file) {
-            // Skip the file if it's a directory or in the excluded folders
-            if ($file->isDir() || preg_match('/(^|\/)(\.git|backup)\//', $file->getPathname()) || Str::contains($file->getPathname(), '\\backup\\') || Str::contains($file->getPathname(), '.git')) {
+        $lines = explode(PHP_EOL, $content);
+
+        $linesBeforeUse = [];
+        $linesAfterUse = [];
+
+        $isHit = false;
+
+        foreach ($lines as $line) {
+            $tmpLine = str_replace('\t', '', $line);
+            $tmpLine = trim($tmpLine);
+
+            if(Str::startsWith($tmpLine, 'use') && Str::contains($tmpLine, '\\')) {
+                $isHit = true;
                 continue;
             }
 
-
-            // Get the file contents and write them to the backup file
-            $contents = File::get($file->getPathname());
-            
-            $relativePath = Str::after($file->getPathname(), $moduleName);
-            $backupFilePath = $backupPath.$relativePath;
-            $backupFilePath = base_path($backupFilePath);
-
-            $backupDirectory = dirname($backupFilePath);
-
-            if (!File::exists($backupDirectory)) {
-                File::makeDirectory($backupDirectory, 0755, true, true);
-            }
-
-            File::put($backupFilePath, $contents);
+            if(!$isHit) $linesBeforeUse[] = $line;
+            if($isHit) $linesAfterUse[] = $line;
         }
+
+        $libraries = [];
+
+        foreach ($fileLibraries as $fileLibrary) {
+            if(!in_array(trim($fileLibrary), $libraries)) $libraries[] = $fileLibrary;
+        }
+
+        foreach ($contentLibraries as $contentLibrary) {
+            if(!in_array(trim($contentLibrary), $libraries)) $libraries[] = $contentLibrary;
+        }
+
+        $fileContents = array_merge(
+            $linesBeforeUse,
+            $libraries,
+            $linesAfterUse
+        );
+
+
+        $fileContents = implode(PHP_EOL, $fileContents);
+
+        return $fileContents;
     }
 
-    public static function appendToFile($rootPath, $content, $forceOverwrite) : bool{
+    public static function findUsedLibraries($contents) : array {
+        $lines = explode(PHP_EOL, $contents);
+
+        $libraries = [];
+
+        foreach ($lines as $line) {
+            $line = str_replace('\t', '', $line);
+            $line = trim($line);
+            if(Str::startsWith($line, 'use') && Str::contains($line, '\\' )) {
+                $libraries[] = $line;
+            }
+        }
+
+        return $libraries;
+    }
+
+    /**
+     * Returns true if the related method exists
+     *
+     * @param $file
+     * @param $method
+     * @return bool
+     */
+    public static function isMethodExists($file, $method) :bool {
+        $contents = self::readFile($file);
+
+        $methodLines = explode(PHP_EOL, $method);
+
+        $methodName = '';
+
+        foreach ($methodLines as $line) {
+            if(Str::contains($line, 'function')) {
+                $line = str_replace('public', '', $line);
+                $line = str_replace('private', '', $line);
+                $line = str_replace('static', '', $line);
+                $line = str_replace('function', '', $line);
+
+                $methodName = trim($line);
+            }
+        }
+
+        $lines = explode(PHP_EOL, $contents);
+
+        foreach ($lines as $line) {
+            if(Str::contains($line, 'function')) {
+                if(Str::contains($line, $method)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public static function appendToFile($rootPath, $content, $fileType = 'php') : bool{
         $fileContent = self::readFile($rootPath);
 
-        $fileContent = str_replace('// EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE', $content, $fileContent);
-        $fileContent = trim(str_replace('<?php', '', $fileContent));
+        if(!Str::contains($fileContent, $content)) {
+            $fileContent = str_replace('// EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE', $content, $fileContent);
+        }
 
-        self::writeToFile($forceOverwrite, $rootPath, $fileContent);
+        file_put_contents(base_path($rootPath), $fileContent);
 
         return true;
     }
-
-
 }

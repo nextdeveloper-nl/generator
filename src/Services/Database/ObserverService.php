@@ -26,7 +26,10 @@ class ObserverService extends AbstractService
     public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($forceOverwrite, $rootPath . '/src/Database/Observers/' . ucfirst(Str::camel(Str::singular($model))) . 'Observer.php', $content);
+        $file = $rootPath . '/src/Database/Observers/' . ucfirst(Str::camel(Str::singular($model))) . 'Observer.php';
+        if(!file_exists(base_path($file)) || $forceOverwrite) {
+            self::writeToFile($forceOverwrite, $file, $content);
+        }
 
         return true;
     }

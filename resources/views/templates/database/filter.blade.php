@@ -3,7 +3,7 @@ namespace {{ $namespace }}\{{ $module }}\Database\Filters;
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
 @foreach( $idRefFields as $field )
-    @if($field == 'user_id')
+    @if($field == 'iam_user_id')
         use NextDeveloper\Accounts\Database\Models\User;
     @endif
 @endforeach

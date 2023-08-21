@@ -32,26 +32,13 @@ class ServiceService extends AbstractService
         $hasUserId = false;
         $hasAccountId = false;
 
-        foreach ($columns as $column) {
-            if($column->Field == config('generator.magicFields.account')[0])
-                $hasAccountId = true;
-
-            if($column->Field == config('generator.magicFields.user')[0])
-                $hasUserId = true;
-        }
-
-        //$idFields = ModelService::getIdFields($namespace, $model);
+        $idFields = ModelService::getIdFields($namespace, $module, $model);
 
         $render = view('Generator::templates/services/abstract', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
             'createData'         =>  self::buildData($columns, $model),
-            'hasAccountId'  =>  $hasAccountId,
-            'accountIdField'    =>  config('generator.magicFields.account')[0],
-            'accountTable'  =>  config('generator.magicFields.account')[1],
-            'hasUserId' =>  $hasUserId,
-            'userIdField'   =>  config('generator.magicFields.user')[0],
-            'userTable'   =>  config('generator.magicFields.user')[1],
+            'idFields'      =>  $idFields,
             'model'      =>  ucfirst(Str::camel(Str::singular($model)))
         ])->render();
 
@@ -73,7 +60,10 @@ class ServiceService extends AbstractService
     public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($forceOverwrite, $rootPath . '/src/Services/' . ucfirst(Str::camel(Str::singular($model))) . 'Service.php', $content);
+        $file = $rootPath . '/src/Services/' . ucfirst(Str::camel(Str::singular($model))) . 'Service.php';
+        if(!file_exists(base_path($file)) || $forceOverwrite) {
+            self::writeToFile($forceOverwrite, $file, $content);
+        }
 
         return true;
     }

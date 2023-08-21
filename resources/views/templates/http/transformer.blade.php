@@ -1,14 +1,17 @@
 namespace {{ $namespace }}\{{ $module }}\Http\Transformers;
 
+use Illuminate\Support\Facades\Cache;
+use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};
 use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
+use {{ $namespace }}\{{ $module }}\Http\Transformers\AbstractTransformers\Abstract{{ $model }}Transformer;
 
 /**
  * Class {{ $model }}Transformer. This class is being used to manipulate the data we are serving to the customer
  *
  * @package {{ $namespace }}\{{ $module }}\Http\Transformers
  */
-class {{ $model }}Transformer extends AbstractTransformer {
+class {{ $model }}Transformer extends Abstract{{ $model }}Transformer {
 
     /**
      * @param {{ $model }} $model
@@ -16,30 +19,20 @@ class {{ $model }}Transformer extends AbstractTransformer {
      * @return array
      */
     public function transform({{ $model }} $model) {
-        @foreach($idFields as $field)
-        ${{ $field[2] }} = {{ $field[0] }}::where('id', $model->{{ $field[1] }})->first();
-	@endforeach
-    
-        return $this->buildPayload([
-@php
-        foreach($returnData as $item) {
-        	$isIdField = false;
-        	
-        	foreach($idFields as $field) {
-        		if($field[1] == $item['field']) {
-        			$isIdField = true;
-        			break;
-			}
-        	}
-        	
-        	if($isIdField) {
-        		echo '\'' . $item['field'] . '\'  =>  $' . $field[2] . '->uuid,' . PHP_EOL;
-        	} else {
-        		echo '\'' . $item['field'] . '\'  =>  $model->' . $item['return'] . ',' . PHP_EOL;
-        	}
-        }
-@endphp
-    ]);
+        $transformed = Cache::get(
+            CacheHelper::getKey('{{ $model }}', $model->uuid, 'Transformed')
+        );
+
+        if($transformed)
+            return $transformed;
+
+        $transformed = parent::transform($model);
+
+        Cache::set(
+            CacheHelper::getKey('{{ $model }}', $model->uuid, 'Transformed'),
+            $transformed
+        );
+
+        return parent::transform($model);
     }
-    // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

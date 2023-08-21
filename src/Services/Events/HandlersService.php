@@ -36,7 +36,10 @@ class HandlersService extends AbstractService
 
             StructureService::createEventFolderForModel($rootPath, $model);
 
-            self::writeToFile($forceOverwrite, $rootPath . '/src/EventHandlers/' . $modelName . '/' . $handler . '.php', $content);
+            $file = $rootPath . '/src/EventHandlers/' . $modelName . '/' . $handler . '.php';
+            if(!file_exists(base_path($file)) || $forceOverwrite) {
+                self::writeToFile($forceOverwrite, $file, $content);
+            }
         }
 
         return true;

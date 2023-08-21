@@ -5,6 +5,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 use NextDeveloper\IAM\Helpers\UserHelper;
+use NextDeveloper\Commons\Common\Cache\CacheHelper;
+use NextDeveloper\Commons\Helpers\DatabaseHelper;
 use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};
 use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}QueryFilter;
 
@@ -93,36 +95,16 @@ class Abstract{{ $model }}Service {
     * @throw Exception
     */
     public static function create(array $data) {
-        event( new {{ $model }}CreatingEvent() );
+        event( new {{ Str::singular($model) }}CreatingEvent() );
 
-	@if($hasAccountId)
-	if(array_key_exists('{{$accountIdField}}', $data))
-	{
-		$isUuid = Str::isUuid($data['{{$accountIdField}}']);
-		
-		if($isUuid) {
-			$obj = {{$accountTable}}::findByUuid($data['{{$accountIdField}}']);
-                	$data['{{$accountIdField}}'] = $obj->id;
-		} 
-	} else {
-            $data['iam_account_id'] = UserHelper::currentAccount()->id;
-        }
-	@endif
-	
-	@if($hasUserId)
-	if(array_key_exists('{{$userIdField}}', $data))
-		{
-		$isUuid = Str::isUuid($data['{{$userIdField}}']);
-		
-		if($isUuid) {
-			$obj = {{$userTable}}::findByUuid($data['{{$userIdField}}']);
-                	$data['{{$userIdField}}'] = $obj->id;
-		}
-		} else {
-            $data['iam_user_id'] = UserHelper::me()->id;
-        }
-	@endif
-
+        @foreach($idFields as $field)
+        if (array_key_exists('{{$field[1]}}', $data))
+            $data['{{$field[1]}}'] = DatabaseHelper::uuidToId(
+                '{{$field[0]}}',
+                $data['{{$field[1]}}']
+            );
+	@endforeach
+        
         try {
             $model = {{ $model }}::create($data);
         } catch(\Exception $e) {
@@ -147,15 +129,26 @@ class Abstract{{ $model }}Service {
     public static function update($id, array $data) {
         $model = {{ $model }}::where('uuid', $id)->first();
 
-        event( new {{ Str::plural($model) }}UpdateingEvent($model) );
+        @foreach($idFields as $field)
+        if (array_key_exists('{{$field[1]}}', $data))
+            $data['{{$field[1]}}'] = DatabaseHelper::uuidToId(
+                '{{$field[0]}}',
+                $data['{{$field[1]}}']
+            );
+	@endforeach
+
+        event( new {{ $model }}UpdatingEvent($model) );
 
         try {
-           $model = $model->update($data);
+           $isUpdated = $model->update($data);
+           $model = $model->fresh();
         } catch(\Exception $e) {
            throw $e;
         }
 
-        event( new {{ Str::plural($model) }}UpdatedEvent($model) );
+        event( new {{ $model }}UpdatedEvent($model) );
+        
+        CacheHelper::deleteKeys('{{ $model }}', $id);
 
         return $model->fresh();
     }
@@ -173,7 +166,7 @@ class Abstract{{ $model }}Service {
     public static function delete($id, array $data) {
         $model = {{ $model }}::where('uuid', $id)->first();
 
-        event( new {{ Str::plural($model) }}DeletingEvent() );
+        event( new {{ $model }}DeletingEvent() );
 
         try {
             $model = $model->delete();
@@ -181,7 +174,9 @@ class Abstract{{ $model }}Service {
             throw $e;
         }
 
-        event( new {{ Str::plural($model) }}DeletedEvent($model) );
+        event( new {{ $model }}DeletedEvent($model) );
+        
+        CacheHelper::deleteKeys('{{ $model }}', $id);
 
         return $model;
     }

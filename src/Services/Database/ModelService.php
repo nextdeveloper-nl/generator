@@ -10,11 +10,12 @@ use NextDeveloper\Generator\Exceptions\TemplateNotFoundException;
 
 class ModelService extends AbstractService
 {
-    
+
     /**
      * @throws TemplateNotFoundException
      */
-    public static function generate($namespace, $module, $model) {
+    public static function generate($namespace, $module, $model)
+    {
         $columns = self::getColumns($model);
         $casts = self::generateCastsArray($columns);
         $dates = self::generateDatesArray($columns);
@@ -24,26 +25,26 @@ class ModelService extends AbstractService
         $hasTimestamps = false;
 
         foreach ($columns as $column) {
-            if($column->Field == 'created_at') {
+            if ($column->Field == 'created_at') {
                 $hasTimestamps = true;
                 break;
             }
         }
 
         $render = view('Generator::templates/database/model', [
-            'namespace'         =>  $namespace,
-            'module'            =>  $module,
-            'lcModule'          =>  strtolower($module),
-            'has_created'       =>  self::hasColumn('created_at', $model),
-            'has_updated'       =>  self::hasColumn('updated_at', $model),
-            'has_deleted'       =>  self::hasColumn('deleted_at', $model),
-            'model'             =>  ucfirst(Str::camel(Str::singular($model))),
-            'table'             =>  $model,
-            'casts'             =>  self::objectArrayToString($casts,$tabAmount),
-            'dates'             =>  self::arrayToString($dates),
-            'fullTextFields'    =>  self::arrayToString($fullTextFields),
-            'perPage'           =>  config('generator.pagination.perPage'),
-            'hasTimestamps'     =>  $hasTimestamps
+            'namespace' => $namespace,
+            'module' => $module,
+            'lcModule' => strtolower($module),
+            'has_created' => self::hasColumn('created_at', $model),
+            'has_updated' => self::hasColumn('updated_at', $model),
+            'has_deleted' => self::hasColumn('deleted_at', $model),
+            'model' => ucfirst(Str::camel(Str::singular($model))),
+            'table' => $model,
+            'casts' => self::objectArrayToString($casts, $tabAmount),
+            'dates' => self::arrayToString($dates),
+            'fullTextFields' => self::arrayToString($fullTextFields),
+            'perPage' => config('generator.pagination.perPage'),
+            'hasTimestamps' => $hasTimestamps
         ])->render();
 
         return $render;
@@ -52,14 +53,15 @@ class ModelService extends AbstractService
     /**
      * @throws TemplateNotFoundException
      */
-    public static function generateBelongsToContent($namespace, $module, $model) {
+    public static function generateBelongsToContent($namespace, $module, $model)
+    {
         $columns = self::getColumns($model);
 
         $render = view('Generator::templates/database/belongs_to_model', [
-            'namespace'          =>  $namespace,
-            'module'             =>  $module,
-            'model'              =>  Str::camel(Str::singular($model)),
-            'columns'            =>  $columns
+            'namespace' => $namespace,
+            'module' => $module,
+            'model' => Str::camel(Str::singular($model)),
+            'columns' => $columns
         ])->render();
 
         return $render;
@@ -68,20 +70,22 @@ class ModelService extends AbstractService
     /**
      * @throws TemplateNotFoundException
      */
-    public static function generateHasManyContent($namespace, $module, $model) {
+    public static function generateHasManyContent($namespace, $module, $model)
+    {
         $columns = self::getColumns($model);
 
         $render = view('Generator::templates/database/has_many_model', [
-            'namespace'          =>  $namespace,
-            'module'             =>  $module,
-            'model'              =>  Str::camel($model),
-            'columns'            =>  $columns
+            'namespace' => $namespace,
+            'module' => $module,
+            'model' => Str::camel($model),
+            'columns' => $columns
         ])->render();
 
         return $render;
     }
 
-    public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
+    public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite): bool
+    {
         $content = self::generate($namespace, $module, $model);
 
         self::writeToFile($forceOverwrite, $rootPath . '/src/Database/Models/' . ucfirst(Str::camel(Str::singular($model))) . '.php', $content);
@@ -89,11 +93,12 @@ class ModelService extends AbstractService
         return true;
     }
 
-    public static function generateCastsArray($columns) {
+    public static function generateCastsArray($columns)
+    {
         $casts = [];
 
         foreach ($columns as $column) {
-            $columnType = self::cleanColumnType($column->Type); 
+            $columnType = self::cleanColumnType($column->Type);
             switch ($columnType) {
                 case 'boolean':
                 case 'tinyint':
@@ -127,13 +132,14 @@ class ModelService extends AbstractService
                     $casts[$column->Field] = 'string';
                     break;
             }
-            
+
         }
 
         return $casts;
     }
 
-    public static function generateDatesArray($columns) {
+    public static function generateDatesArray($columns)
+    {
         $dates = [];
 
         foreach ($columns as $column) {
@@ -152,17 +158,19 @@ class ModelService extends AbstractService
         return $dates;
     }
 
-    public static function generateFullTextFieldsArray($model) {
+    public static function generateFullTextFieldsArray($model)
+    {
         $fullTextFields = [];
 
-        $indexes = DB::select(DB::raw("SHOW INDEX FROM ".$model." WHERE Index_type = 'FULLTEXT'"));
-            foreach ($indexes as $index) {
-                $fullTextFields[] = $index->Column_name;
-            }
+        $indexes = DB::select(DB::raw("SHOW INDEX FROM " . $model . " WHERE Index_type = 'FULLTEXT'"));
+        foreach ($indexes as $index) {
+            $fullTextFields[] = $index->Column_name;
+        }
         return $fullTextFields;
     }
 
-    public static function foreignKeys($table) {
+    public static function foreignKeys($table)
+    {
         $query = "
             SELECT
                 `COLUMN_NAME`,
@@ -178,38 +186,53 @@ class ModelService extends AbstractService
         return DB::select($query, [$table]);
     }
 
-    public static function generateOneToManyRelations($rootPath, $namespace, $module, $model, $forceOverwrite){
+    public static function generateOneToManyRelations($rootPath, $namespace, $module, $model, $forceOverwrite)
+    {
         $foreignKeys = self::foreignKeys($model);
 
-        $currentModelRootpath = $rootPath. '/src/Database/Models/' . ucfirst(Str::camel(Str::singular($model))) . '.php';
+        $currentModelRootpath = $rootPath . '/src/Database/Models/' . ucfirst(Str::camel(Str::singular($model))) . '.php';
 
         foreach ($foreignKeys as $foreignKey) {
-            $foreignModelRootPath = $rootPath. '/src/Database/Models/' . ucfirst(Str::camel(Str::singular($foreignKey->REFERENCED_TABLE_NAME))) . '.php';
-            
-             if (file_exists(base_path($foreignModelRootPath))) {
+            $foreignModelRootPath = $rootPath . '/src/Database/Models/' . ucfirst(Str::camel(Str::singular($foreignKey->REFERENCED_TABLE_NAME))) . '.php';
+
+            if (file_exists(base_path($foreignModelRootPath))) {
                 $currentModelContent = self::generateBelongsToContent($namespace, $module, $foreignKey->REFERENCED_TABLE_NAME);
-                self::appendToFile($currentModelRootpath, $currentModelContent, $forceOverwrite);
+
+                if (!self::isMethodExists($foreignModelRootPath, $currentModelContent)) {
+                    self::appendToFile($currentModelRootpath, $currentModelContent, $forceOverwrite);
+                }
 
                 $foreignModelContent = self::generateHasManyContent($namespace, $module, $model);
-                self::appendToFile($foreignModelRootPath, $foreignModelContent, $forceOverwrite);
-            }  
+
+                if (!self::isMethodExists($foreignModelRootPath, $foreignModelContent)) {
+                    self::appendToFile($foreignModelRootPath, $foreignModelContent, $forceOverwrite);
+                }
+            }
         }
     }
 
-    public static function getIdFields($namespace, $model) : array {
+    public static function getIdFields($namespace, $module, $model): array
+    {
         $columns = self::getColumns($model);
 
         $idFields = [];
 
         foreach ($columns as $column) {
-            $module = explode('_', $column->Field);
-            $module = config('generator.modules.' . $module[0] . '_*');
-
             $foreignModel = Str::remove('_id', $column->Field);
 
-            if(Str::endsWith($column->Field, '_id')) {
+            if (Str::endsWith($column->Field, '_id')) {
+                $configModules = config('generator.modules');
+
+                $classModule = '';
+                foreach ($configModules as $configModule) {
+                    if (Str::startsWith($column->Field, $configModule['prefix'] . '_')) {
+                        $classModule = $configModule['name'];
+                        break;
+                    }
+                }
+
                 $idFields[] = [
-                    '\\' . $namespace . '\\' . $module['module'] . '\\Database\\Models\\' . Str::singular(Str::ucfirst(Str::camel($foreignModel))),
+                    '\\' . $namespace . '\\' . $classModule . '\\Database\\Models\\' . Str::singular(Str::ucfirst(Str::camel($foreignModel))),
                     $column->Field,
                     Str::camel($column->Field)
                 ];

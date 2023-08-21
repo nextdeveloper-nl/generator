@@ -4,7 +4,7 @@ Route::prefix('{{ strtolower($prefix) }}')->group(function () {
         Route::get('/', '{{ $controller }}\{{ $controller }}Controller@index');
         Route::get('/{@php echo str_replace('-', '_', strtolower($model))@endphp}', '{{ $controller }}\{{ $controller }}Controller@show');
         Route::post('/', '{{ $controller }}\{{ $controller }}Controller@store');
-        Route::put('/{@php echo str_replace('-', '_', strtolower($model))@endphp}', '{{ $controller }}\{{ $controller }}Controller@update');
+        Route::patch('/{@php echo str_replace('-', '_', strtolower($model))@endphp}', '{{ $controller }}\{{ $controller }}Controller@update');
         Route::delete('/{@php echo str_replace('-', '_', strtolower($model))@endphp}', '{{ $controller }}\{{ $controller }}Controller@destroy');
 @if($prefix != '/')
     });
