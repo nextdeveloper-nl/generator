@@ -114,14 +114,14 @@ return [
             'prefix'    =>  'iam',
             'tables'    =>  'iam_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
+            'generate'  =>  false,
         ],
         [
             'name'      =>  'Commons',
             'prefix'    =>  'common',
             'tables'    =>  'common_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false
+            'generate'  =>  true
         ]
     ],
 ];

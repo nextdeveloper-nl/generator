@@ -52,6 +52,8 @@ class AllController extends AbstractController
             StructureService::generateApiRoutesFile($rootPath, $namespace, $moduleName, $forceOverwrite);
             StructureService::generateConfigurationFiles($rootPath, $moduleName, $forceOverwrite);
 
+            ControllerService::generateAbstractFile($rootPath, $namespace, $moduleName, $forceOverwrite);
+
             $modelsArray = [];
 
             if(Str::contains($module['tables'], '*')) {

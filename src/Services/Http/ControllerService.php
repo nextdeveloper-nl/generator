@@ -40,4 +40,22 @@ class ControllerService extends AbstractService
         $folder = ucfirst(Str::camel(Str::singular($model)));
         self::createDirectory(base_path($root . '/src/Http/Controllers/' . $folder));
     }
+
+    public static function generateAbstract($namespace, $module) {
+        $render = view('Generator::templates/http/abstractcontroller', [
+            'namespace'          =>  $namespace,
+            'module'             =>  $module
+        ])->render();
+
+        return $render;
+    }
+
+    public static function generateAbstractFile($rootPath, $namespace, $module, $forceOverwrite) : bool{
+        $content = self::generateAbstract($namespace, $module);
+
+        $file = $rootPath . '/src/Http/Controllers/AbstractController.php';
+        self::writeToFile($forceOverwrite, $file, $content);
+
+        return true;
+    }
 }
