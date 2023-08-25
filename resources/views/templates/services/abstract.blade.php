@@ -147,8 +147,6 @@ class Abstract{{ $model }}Service {
         }
 
         event( new {{ $model }}UpdatedEvent($model) );
-        
-        CacheHelper::deleteKeys('{{ $model }}', $id);
 
         return $model->fresh();
     }
@@ -175,8 +173,6 @@ class Abstract{{ $model }}Service {
         }
 
         event( new {{ $model }}DeletedEvent($model) );
-        
-        CacheHelper::deleteKeys('{{ $model }}', $id);
 
         return $model;
     }
