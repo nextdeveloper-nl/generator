@@ -15,10 +15,12 @@ class ServiceService extends AbstractService
     public static function generate($namespace, $module, $model) {
         $columns = self::getColumns($model);
 
+        $modelWithoutModule = self::getModelName($model, $module);
+
         $render = view('Generator::templates/services/service', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::camel(Str::singular($model)))
+            'model'         =>  $modelWithoutModule
         ])->render();
 
         return $render;
@@ -34,12 +36,14 @@ class ServiceService extends AbstractService
 
         $idFields = ModelService::getIdFields($namespace, $module, $model);
 
+        $modelWithoutModule = self::getModelName($model, $module);
+
         $render = view('Generator::templates/services/abstract', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
             'createData'         =>  self::buildData($columns, $model),
             'idFields'      =>  $idFields,
-            'model'      =>  ucfirst(Str::camel(Str::singular($model)))
+            'model'      =>  $modelWithoutModule
         ])->render();
 
         return $render;
@@ -48,7 +52,9 @@ class ServiceService extends AbstractService
     public static function generateAbstractFile($rootPath, $namespace, $module, $model, $forceOverwrite): bool {
         $content = self::generateAbstract($namespace, $module, $model);
 
-        $file = $rootPath . '/src/Services/AbstractServices/Abstract' . ucfirst(Str::camel(Str::singular($model))) . 'Service.php';
+        $modelWithoutModule = self::getModelName($model, $module);
+
+        $file = $rootPath . '/src/Services/AbstractServices/Abstract' . $modelWithoutModule . 'Service.php';
 
         if(!file_exists(base_path($file))){
             self::writeToFile($forceOverwrite, $file, $content);
@@ -60,7 +66,9 @@ class ServiceService extends AbstractService
     public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        $file = $rootPath . '/src/Services/' . ucfirst(Str::camel(Str::singular($model))) . 'Service.php';
+        $modelWithoutModule = self::getModelName($model, $module);
+
+        $file = $rootPath . '/src/Services/' . $modelWithoutModule . 'Service.php';
         if(!file_exists(base_path($file)) || $forceOverwrite) {
             self::writeToFile($forceOverwrite, $file, $content);
         }

@@ -2,6 +2,7 @@
 
 namespace NextDeveloper\Generator\Services\Database;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -31,6 +32,8 @@ class ModelService extends AbstractService
             }
         }
 
+        $modelWithoutModule = self::getModelName($model, $module);
+
         $render = view('Generator::templates/database/model', [
             'namespace' => $namespace,
             'module' => $module,
@@ -38,7 +41,7 @@ class ModelService extends AbstractService
             'has_created' => self::hasColumn('created_at', $model),
             'has_updated' => self::hasColumn('updated_at', $model),
             'has_deleted' => self::hasColumn('deleted_at', $model),
-            'model' => ucfirst(Str::camel(Str::singular($model))),
+            'model' => $modelWithoutModule,
             'table' => $model,
             'casts' => self::objectArrayToString($casts, $tabAmount),
             'dates' => self::arrayToString($dates),
@@ -55,13 +58,26 @@ class ModelService extends AbstractService
      */
     public static function generateBelongsToContent($namespace, $module, $model)
     {
-        $columns = self::getColumns($model);
+        $modelWithoutModule = self::getModelName($model, $module);
+
+        $modules = config('generator.modules');
+
+        $currentModule = '';
+
+        foreach ($modules as $module) {
+            if(Str::startsWith($model, $module['prefix'] . '_')) {
+                $currentModule = $module;
+                break;
+            }
+        }
+
+        $modelWithoutModule = self::getModelName($model, $currentModule['name']);
 
         $render = view('Generator::templates/database/belongs_to_model', [
             'namespace' => $namespace,
             'module' => $module,
-            'model' => Str::camel(Str::singular($model)),
-            'columns' => $columns
+            'model' => $modelWithoutModule,
+            'class' =>  '\\' . $currentModule['namespace'] . '\\' . $currentModule['name'] . '\\Database\\Models\\' . $modelWithoutModule,
         ])->render();
 
         return $render;
@@ -74,11 +90,24 @@ class ModelService extends AbstractService
     {
         $columns = self::getColumns($model);
 
+        $modules = config('generator.modules');
+
+        $currentModule = '';
+
+        foreach ($modules as $module) {
+            if(Str::startsWith($model, $module['prefix'] . '_')) {
+                $currentModule = $module;
+                break;
+            }
+        }
+
+        $modelWithoutModule = self::getModelName($model, $currentModule['name']);
+
         $render = view('Generator::templates/database/has_many_model', [
             'namespace' => $namespace,
             'module' => $module,
-            'model' => Str::camel($model),
-            'columns' => $columns
+            'model' => $modelWithoutModule,
+            'class' =>  '\\' . $currentModule['namespace'] . '\\' . $currentModule['name'] . '\\Database\\Models\\' . $modelWithoutModule,
         ])->render();
 
         return $render;
@@ -88,7 +117,9 @@ class ModelService extends AbstractService
     {
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($forceOverwrite, $rootPath . '/src/Database/Models/' . ucfirst(Str::camel(Str::singular($model))) . '.php', $content);
+        $modelWithoutModule = self::getModelName($model, $module);
+
+        self::writeToFile($forceOverwrite, $rootPath . '/src/Database/Models/' . $modelWithoutModule . '.php', $content);
 
         return true;
     }
@@ -190,18 +221,42 @@ class ModelService extends AbstractService
     {
         $foreignKeys = self::foreignKeys($model);
 
-        $currentModelRootpath = $rootPath . '/src/Database/Models/' . ucfirst(Str::camel(Str::singular($model))) . '.php';
+        $modelFile = self::getModelName($model, $module);
+
+        $currentModelRootpath = $rootPath . '/src/Database/Models/' . $modelFile . '.php';
+
+        $configModules = config('generator.modules');
 
         foreach ($foreignKeys as $foreignKey) {
-            $foreignModelRootPath = $rootPath . '/src/Database/Models/' . ucfirst(Str::camel(Str::singular($foreignKey->REFERENCED_TABLE_NAME))) . '.php';
+            $classModule = '';
+            foreach ($configModules as $configModule) {
+                if (Str::startsWith($foreignKey->COLUMN_NAME, $configModule['prefix'] . '_')) {
+                    $classModule = $configModule;
+                    break;
+                }
+            }
 
-            if (file_exists(base_path($foreignModelRootPath))) {
+            if(!$classModule) {
+                Log::error('Found an ID field but cannot find which module is that. Which is: ' .
+                    $foreignKey->REFERENCED_TABLE_NAME . '. In table: ' . $model . '. Dont forget to add module name' .
+                    ' in front of the column.');
+
+                throw new \Exception('Found an ID field but cannot find which module is that. Please look ' .
+                    'at the logs.');
+            }
+
+            $foreignModel = self::getModelName($foreignKey->REFERENCED_TABLE_NAME, $classModule['name']);
+            $foreignModelRootPath = $rootPath . '/../' . $classModule['name'] . '/src/Database/Models/' . $foreignModel . '.php';
+
+            if(file_exists(base_path($currentModelRootpath))) {
                 $currentModelContent = self::generateBelongsToContent($namespace, $module, $foreignKey->REFERENCED_TABLE_NAME);
 
                 if (!self::isMethodExists($foreignModelRootPath, $currentModelContent)) {
                     self::appendToFile($currentModelRootpath, $currentModelContent, $forceOverwrite);
                 }
+            }
 
+            if (file_exists(base_path($foreignModelRootPath))) {
                 $foreignModelContent = self::generateHasManyContent($namespace, $module, $model);
 
                 if (!self::isMethodExists($foreignModelRootPath, $foreignModelContent)) {
@@ -231,8 +286,12 @@ class ModelService extends AbstractService
                     }
                 }
 
+                $module = strtolower(Str::singular($module));
+                $foreignModel = ucfirst(Str::camel(Str::singular($foreignModel)));
+                $modelWithoutModule = self::getModelName($foreignModel, $classModule);
+
                 $idFields[] = [
-                    '\\' . $namespace . '\\' . $classModule . '\\Database\\Models\\' . Str::singular(Str::ucfirst(Str::camel($foreignModel))),
+                    '\\' . $namespace . '\\' . $classModule . '\\Database\\Models\\' . $modelWithoutModule,
                     $column->Field,
                     Str::camel($column->Field)
                 ];

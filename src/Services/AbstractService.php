@@ -13,6 +13,24 @@ use Illuminate\Support\Facades\Storage;
 
 class AbstractService
 {
+    public static function getModelName($model, $module) {
+        $singularModule = Str::singular($module);
+
+        if(ctype_upper($module)) {
+            //  If all letters are upper case, this means that this is short version of something.
+            //  That is why we dont make it singular.
+            $singularModule = $module;
+        }
+
+        $singularModule = Str::ucfirst(strtolower($singularModule));
+        $modelWithoutModule = ucfirst(Str::camel(Str::singular($model)));
+        $modelWithoutModule = Str::remove($singularModule, $modelWithoutModule);
+        $modelWithoutModule = Str::plural($modelWithoutModule);
+
+
+        return $modelWithoutModule;
+    }
+
     public static function getColumns($model) {
         return DB::select( DB::raw("SHOW COLUMNS FROM " . $model));
     }

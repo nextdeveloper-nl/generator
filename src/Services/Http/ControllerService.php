@@ -14,10 +14,12 @@ class ControllerService extends AbstractService
     public static function generate($namespace, $module, $model) {
         $columns = self::getColumns($model);
 
+        $modelWithoutModule = self::getModelName($model, $module);
+
         $render = view('Generator::templates/http/controller', [
             'namespace'          =>  $namespace,
             'module'             =>  $module,
-            'model'              =>  ucfirst(Str::camel(Str::singular($model))),
+            'model'              =>  $modelWithoutModule,
             'columns'            =>  $columns
         ])->render();
 
@@ -25,10 +27,12 @@ class ControllerService extends AbstractService
     }
 
     public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
-        self::createModelFolderForController($rootPath, ucfirst(Str::camel(Str::singular($model))));
+        self::createModelFolderForController($rootPath, ucfirst(Str::camel(Str::singular($model))), $module);
         $content = self::generate($namespace, $module, $model);
 
-        $file = $rootPath . '/src/Http/Controllers/' . ucfirst(Str::camel(Str::singular($model))) . '/' . ucfirst(Str::camel(Str::singular($model))) . 'Controller.php';
+        $modelWithoutModule = self::getModelName($model, $module);
+
+        $file = $rootPath . '/src/Http/Controllers/' . $modelWithoutModule . '/' . $modelWithoutModule . 'Controller.php';
         if(!file_exists(base_path($file)) || $forceOverwrite){
             self::writeToFile($forceOverwrite, $file, $content);
         }
@@ -36,9 +40,10 @@ class ControllerService extends AbstractService
         return true;
     }
 
-    public static function createModelFolderForController($root, $model) {
-        $folder = ucfirst(Str::camel(Str::singular($model)));
-        self::createDirectory(base_path($root . '/src/Http/Controllers/' . $folder));
+    public static function createModelFolderForController($root, $model, $module) {
+        $modelWithoutModule = self::getModelName($model, $module);
+
+        self::createDirectory(base_path($root . '/src/Http/Controllers/' . $modelWithoutModule));
     }
 
     public static function generateAbstract($namespace, $module) {

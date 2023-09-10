@@ -15,11 +15,14 @@ class EventsService extends AbstractService
     public static function generate($namespace, $module, $model, $event) {
         $columns = self::getColumns($model);
 
+        $modelWithoutModule = self::getModelName($model, $module);
+        $eventWithoutModule = Str::remove(Str::ucfirst(strtolower(Str::singular($module))), $event);
+
         $render = view('Generator::templates/events/event', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::camel(Str::singular($model))),
-            'event'         =>  $event
+            'model'         =>  $modelWithoutModule,
+            'event'         =>  $eventWithoutModule
         ])->render();
 
         return $render;
@@ -30,15 +33,17 @@ class EventsService extends AbstractService
 
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::singular($modelName);
 
         foreach ($events as $event) {
             $event = $modelName . '' . Str::ucfirst($event) . 'Event';
             $content = self::generate($namespace, $module, $model, $event);
 
-            StructureService::createEventFolderForModel($rootPath, $model);
+            StructureService::createEventFolderForModel($rootPath, $model, $module);
 
-            $file = $rootPath . '/src/Events/' . $modelName . '/' . $event . '.php';
+            $modelWithoutModule = self::getModelName($model, $module);
+            $eventWithoutModule = Str::remove(Str::ucfirst(strtolower(Str::singular($module))), $event);
+
+            $file = $rootPath . '/src/Events/' . $modelWithoutModule . '/' . $eventWithoutModule . '.php';
             if(!file_exists(base_path($file)) || $forceOverwrite) {
                 self::writeToFile($forceOverwrite, $file, $content);
             }

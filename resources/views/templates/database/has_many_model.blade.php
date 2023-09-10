@@ -1,9 +1,6 @@
-public function {{ $model }}()
-@php
-$className = ucfirst(Str::singular($model));
-@endphp
+public function {{ Str::camel($model) }}()
     {
-        return $this->hasMany({{$className}}::class);
+        return $this->hasMany({{$class}}::class);
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

@@ -71,12 +71,12 @@ class AllController extends AbstractController
             }
 
             if(Str::contains($module['tables'], '*')) {
-                $modelsArray = TableService::getViews($module['tables']);
+                $viewsArray = TableService::getViews($module['tables']);
             } else {
-                $modelsArray = explode(',', $request->query('models'));
+                $viewsArray = explode(',', $request->query('models'));
             }
 
-            foreach ($modelsArray as $model) {
+            foreach ($viewsArray as $model) {
                 $this->generateViews($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
             }
         }
@@ -85,7 +85,7 @@ class AllController extends AbstractController
     }
 
     private function generateModels($rootPath, $namespace, $moduleName, $model, $forceOverwrite) {
-        StructureService::createEventFolderForModel($rootPath, $model);
+        StructureService::createEventFolderForModel($rootPath, $model, $moduleName);
 
         ServiceService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 

@@ -12,6 +12,8 @@ class FilterService extends AbstractService
      * @throws TemplateNotFoundException
      */
     public static function generate($namespace, $module, $model) {
+        $modelWithoutModule = self::getModelName($model, $module);
+
         $columns = self::getColumns($model);
         $filterTextFields = self::generateFilterTextFields($columns);
         $filterNumberFields = self::generateFilterNumberFields($columns);
@@ -22,7 +24,7 @@ class FilterService extends AbstractService
         $render = view('Generator::templates/database/filter', [
             'namespace'           =>  $namespace,
             'module'              =>  $module,
-            'model'               =>  ucfirst(Str::camel(Str::singular($model))),
+            'model'               =>  $modelWithoutModule,
             'columns'             =>  $columns,
             'filterTextFields'    =>  $filterTextFields,
             'filterNumberFields'  =>  $filterNumberFields,
@@ -37,7 +39,9 @@ class FilterService extends AbstractService
     public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile($forceOverwrite, $rootPath . '/src/Database/Filters/' . ucfirst(Str::camel(Str::singular($model))) . 'QueryFilter.php', $content);
+        $modelWithoutModule = self::getModelName($model, $module);
+
+        self::writeToFile($forceOverwrite, $rootPath . '/src/Database/Filters/' . $modelWithoutModule . 'QueryFilter.php', $content);
 
         return true;
     }

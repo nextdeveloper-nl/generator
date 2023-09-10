@@ -13,10 +13,12 @@ class HandlersService extends AbstractService
      * @throws TemplateNotFoundException
      */
     public static function generate($namespace, $module, $model, $handler) {
+        $modelWithoutModule = self::getModelName($model, $module);
+
         $render = view('Generator::templates/events/handlers', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::camel(Str::singular($model))),
+            'model'         =>  $modelWithoutModule,
             'handler'       =>  $handler
         ])->render();
 
@@ -28,15 +30,17 @@ class HandlersService extends AbstractService
 
         $modelName = Str::camel($model);
         $modelName = Str::ucfirst($modelName);
-        $modelName = Str::singular($modelName);
 
         foreach ($handlers as $handler) {
             $handler = $modelName . '' . Str::ucfirst($handler) . 'Event';
             $content = self::generate($namespace, $module, $model, $handler);
 
-            StructureService::createEventFolderForModel($rootPath, $model);
+            StructureService::createEventFolderForModel($rootPath, $model, $module);
 
-            $file = $rootPath . '/src/EventHandlers/' . $modelName . '/' . $handler . '.php';
+        $modelWithoutModule = self::getModelName($model, $module);
+            $eventWithoutModule = Str::remove(Str::singular($module), $handler);
+
+            $file = $rootPath . '/src/EventHandlers/' . $modelWithoutModule . '/' . $eventWithoutModule . '.php';
             if(!file_exists(base_path($file)) || $forceOverwrite) {
                 self::writeToFile($forceOverwrite, $file, $content);
             }

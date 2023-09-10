@@ -14,10 +14,12 @@ class TransformerService extends AbstractService
 
         $idFields = ModelService::getIdFields($namespace, $module, $model);
 
+        $modelWithoutModule = self::getModelName($model, $module);
+
         $render = view('Generator::templates/http/abstracttransformer', [
             'namespace'          =>  $namespace,
             'module'             =>  $module,
-            'model'              =>  ucfirst(Str::camel(Str::singular($model))),
+            'model'              =>  $modelWithoutModule,
             'columns'            =>  $columns,
             'returnData'         =>  self::buildData($columns, $model),
             'idFields'           =>  $idFields
@@ -29,7 +31,9 @@ class TransformerService extends AbstractService
     public static function generateAbstractFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generateAbstract($namespace, $module, $model);
 
-        self::writeToFile($forceOverwrite, $rootPath . '/src/Http/Transformers/AbstractTransformers/Abstract' . ucfirst(Str::camel(Str::singular($model))) . 'Transformer.php', $content);
+        $fileAndfolder = self::getModelName($model, $module);
+
+        self::writeToFile($forceOverwrite, $rootPath . '/src/Http/Transformers/AbstractTransformers/Abstract' . $fileAndfolder . 'Transformer.php', $content);
 
         return true;
     }
@@ -42,10 +46,12 @@ class TransformerService extends AbstractService
 
         $idFields = ModelService::getIdFields($namespace, $module, $model);
 
+        $modelWithoutModule = self::getModelName($model, $module);
+
         $render = view('Generator::templates/http/transformer', [
             'namespace'          =>  $namespace,
             'module'             =>  $module,
-            'model'              =>  ucfirst(Str::camel(Str::singular($model))),
+            'model'              =>  $modelWithoutModule,
             'columns'            =>  $columns,
             'returnData'         =>  self::buildData($columns, $model),
             'idFields'           =>  $idFields
@@ -57,7 +63,9 @@ class TransformerService extends AbstractService
     public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        $file = $rootPath . '/src/Http/Transformers/' . ucfirst(Str::camel(Str::singular($model))) . 'Transformer.php';
+        $fileAndfolder = self::getModelName($model, $module);
+
+        $file = $rootPath . '/src/Http/Transformers/' . $fileAndfolder . 'Transformer.php';
 
         if(!file_exists(base_path($file)) || $forceOverwrite) {
             self::writeToFile($forceOverwrite, $file, $content);

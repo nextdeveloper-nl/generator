@@ -110,18 +110,39 @@ return [
 
     'modules'   =>  [
         [
-            'name'      =>  'IAM',
-            'prefix'    =>  'iam',
-            'tables'    =>  'iam_*',
-            'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
-        ],
-        [
             'name'      =>  'Commons',
             'prefix'    =>  'common',
             'tables'    =>  'common_*',
             'namespace' =>  'NextDeveloper',
             'generate'  =>  false
-        ]
+        ],
+        [
+            'name'      =>  'IAM',
+            'prefix'    =>  'iam',
+            'tables'    =>  'iam_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
+        ],
+        [
+            'name'      =>  'Marketplace',
+            'prefix'    =>  'marketplace',
+            'tables'    =>  'marketplace_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
+        ],
+        [
+            'name'      =>  'CRM',
+            'prefix'    =>  'crm',
+            'tables'    =>  'crm_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
+        ],
+        [
+            'name'      =>  'IAAS',
+            'prefix'    =>  'iaas',
+            'tables'    =>  'iaas_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  true,
+        ],
     ],
 ];

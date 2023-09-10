@@ -18,10 +18,12 @@ class RequestService extends AbstractService
         $rules = self::generateRulesArray($columns, ($requestType == 'Update'));
         $tabAmount = 3;
 
+        $modelWithoutModule = self::getModelName($model, $module);
+
         $render = view('Generator::templates/http/request', [
             'namespace'         =>  $namespace,
             'module'            =>  $module,
-            'model'             =>  ucfirst(Str::camel(Str::singular($model))),
+            'model'             =>  $modelWithoutModule,
             'requestType'       =>  $requestType,
             'rules'             =>  self::objectArrayToString($rules, $tabAmount),
             'perPage'           =>  config('generator.pagination.perPage')
@@ -31,12 +33,14 @@ class RequestService extends AbstractService
     }
 
     public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
-        self::createModelFolderForRequest($rootPath, $model);
+        self::createModelFolderForRequest($rootPath, $model, $module);
         $contentCreateRequest = self::generate($namespace, $module, $model, 'Create');
         $contentUpdateRequest = self::generate($namespace, $module, $model, 'Update');
-    
-        self::writeToFile($forceOverwrite, $rootPath . '/src/Http/Requests/'.ucfirst(Str::camel(Str::singular($model))).'/'. ucfirst(Str::camel(Str::singular($model))) . 'CreateRequest.php', $contentCreateRequest);
-        self::writeToFile($forceOverwrite, $rootPath . '/src/Http/Requests/'.ucfirst(Str::camel(Str::singular($model))).'/'. ucfirst(Str::camel(Str::singular($model))) . 'UpdateRequest.php', $contentUpdateRequest);
+
+        $modelWithoutModule = self::getModelName($model, $module);
+
+        self::writeToFile($forceOverwrite, $rootPath . '/src/Http/Requests/'.$modelWithoutModule.'/'. $modelWithoutModule . 'CreateRequest.php', $contentCreateRequest);
+        self::writeToFile($forceOverwrite, $rootPath . '/src/Http/Requests/'.$modelWithoutModule.'/'. $modelWithoutModule . 'UpdateRequest.php', $contentUpdateRequest);
 
         return true;
     }
@@ -118,9 +122,10 @@ class RequestService extends AbstractService
         return $rules;
     }
 
-    public static function createModelFolderForRequest($root, $model) {
-        $folder = ucfirst(Str::camel(Str::singular($model)));
-        self::createDirectory(base_path($root . '/src/Http/Requests/' . $folder));
+    public static function createModelFolderForRequest($root, $model, $module) {
+        $modelWithoutModule = self::getModelName($model, $module);
+
+        self::createDirectory(base_path($root . '/src/Http/Requests/' . $modelWithoutModule));
     }
 
     public static function getTableRelationRule($fieldName) {

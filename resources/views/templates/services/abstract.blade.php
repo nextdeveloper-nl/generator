@@ -95,7 +95,7 @@ class Abstract{{ $model }}Service {
     * @throw Exception
     */
     public static function create(array $data) {
-        event( new {{ Str::singular($model) }}CreatingEvent() );
+        event( new {{ $model }}CreatingEvent() );
 
         @foreach($idFields as $field)
         if (array_key_exists('{{$field[1]}}', $data))
@@ -115,6 +115,21 @@ class Abstract{{ $model }}Service {
 
         return $model->fresh();
     }
+
+/**
+* This function expects the ID inside the object.
+*
+* @param array $data
+* @return {{ $model }}
+*/
+public static function updateRaw(array $data) : ?{{ $model }}
+{
+if(array_key_exists('id', $data)) {
+return self::update($data['id'], $data);
+}
+
+return null;
+}
 
     /**
     * This method updated the model from an array.

@@ -26,13 +26,15 @@ class StructureService extends AbstractService
         return true;
     }
 
-    public static function createEventFolderForModel($root, $model) {
+    public static function createEventFolderForModel($root, $model, $module) {
         $folder = Str::camel($model);
         $folder = Str::ucfirst($folder);
         $folder = Str::singular($folder);
 
-        self::createDirectory(base_path($root . '/src/Events/' . $folder));
-        self::createDirectory(base_path($root . '/src/EventHandlers/' . $folder));
+        $modelWithoutModule = self::getModelName($model, $module);
+
+        self::createDirectory(base_path($root . '/src/Events/' . $modelWithoutModule));
+        self::createDirectory(base_path($root . '/src/EventHandlers/' . $modelWithoutModule));
     }
 
     public static function generateComposer($namespace, $module) {

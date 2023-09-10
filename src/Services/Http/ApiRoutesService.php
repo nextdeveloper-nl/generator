@@ -12,11 +12,19 @@ class ApiRoutesService extends AbstractService
      * @throws TemplateNotFoundException
      */
     public static function generate($namespace, $module, $model) {
-        $columns = self::getColumns($model);
+        //$columns = self::getColumns($model);
 
         $controller = Str::camel($model);
         $controller = Str::ucfirst($controller);
-        $controller = Str::singular($controller);
+
+        $singularModule = Str::singular($module);
+
+        if(ctype_upper($module)) {
+            $singularModule = $module;
+        }
+
+        $moduleName = Str::ucfirst(strtolower($singularModule));
+        $controller = Str::remove($moduleName, $controller);
 
         if(Str::startsWith($model, $namespace)) {
             $model = substr($model, strlen($namespace) - 1);
@@ -47,7 +55,7 @@ class ApiRoutesService extends AbstractService
             'model'              =>  $model,
             'prefix'             => $prefix,
             'controller'        =>  $controller,
-            'columns'            =>  $columns
+            //'columns'            =>  $columns
         ])->render();
 
         return $render;
