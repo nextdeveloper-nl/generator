@@ -3,6 +3,7 @@
 namespace NextDeveloper\Generator\Services;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use PHP_CodeSniffer\Exceptions\DeepExitException;
 use RecursiveIteratorIterator;
@@ -147,6 +148,8 @@ class AbstractService
         $fileContent = self::replaceUsedLibraries($file, $content);
 
         file_put_contents(base_path($file), $fileContent);
+
+        exec('php ' . base_path('vendor/bin/phpcbf') . ' ' . base_path($file));
     }
 
     public static function appendExistingContentAfterWarningMessage($file, $content) {
@@ -366,7 +369,11 @@ class AbstractService
 
         foreach ($lines as $line) {
             if(Str::contains($line, 'function')) {
-                if(Str::contains($line, $method)) {
+                if(Str::contains($line, $methodName)) {
+                    Log::info('[Generator\Abstract@isMethodExists] This line: ' . PHP_EOL .
+                    $line . PHP_EOL .
+                    ' contains: ' . PHP_EOL .
+                        $methodName );
                     return true;
                 }
             }
@@ -383,6 +390,8 @@ class AbstractService
         }
 
         file_put_contents(base_path($rootPath), $fileContent);
+
+        exec('php ' . base_path('vendor/bin/phpcbf') . ' ' . base_path($rootPath));
 
         return true;
     }

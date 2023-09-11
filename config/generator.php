@@ -114,28 +114,28 @@ return [
             'prefix'    =>  'common',
             'tables'    =>  'common_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false
+            'generate'  =>  true
         ],
         [
             'name'      =>  'IAM',
             'prefix'    =>  'iam',
             'tables'    =>  'iam_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'Marketplace',
             'prefix'    =>  'marketplace',
             'tables'    =>  'marketplace_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'CRM',
             'prefix'    =>  'crm',
             'tables'    =>  'crm_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'IAAS',
