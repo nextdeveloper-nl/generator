@@ -1,4 +1,4 @@
-public function {{ Str::camel($model) }}()
+public function {{ Str::camel($model) }}() : \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany({{$class}}::class);
     }

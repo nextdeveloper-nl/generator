@@ -33,7 +33,7 @@ class AbstractService
     }
 
     public static function getColumns($model) {
-        return DB::select( DB::raw("SHOW COLUMNS FROM " . $model));
+        return DB::select( DB::raw("SHOW FULL COLUMNS FROM " . $model));
     }
 
     public static function hasColumn($column, $model) {

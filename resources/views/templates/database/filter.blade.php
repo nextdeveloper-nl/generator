@@ -75,17 +75,21 @@ public function {{$fieldName}}Start($date)
 @endforeach
 @foreach( $idRefFields as $field )
     @php
-    $functionName = Str::camel($field);
+    $functionName = Str::camel($field['1']);
     $fieldName = substr($functionName, 0, -2);
     $modelName = ucfirst($fieldName);
     @endphp
 public function {{$functionName}}($value)
     {
-        ${{$fieldName}} = {{$modelName}}::where('uuid', $value)->first();
+    @if(!$field[3])
+        ${{$fieldName}} = {{$field[0]}}::where('uuid', $value)->first();
 
         if(${{$fieldName}}) {
-            return $this->builder->where('{{$field}}', '=', ${{$fieldName}}->id);
+            return $this->builder->where('{{$field[1]}}', '=', ${{$fieldName}}->id);
         }
+    @else
+        return $this->builder->where('{{$field[1]}}', '=', $value);
+    @endif
     }
 
 @endforeach

@@ -4,6 +4,7 @@ namespace NextDeveloper\Generator\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use NextDeveloper\Generator\Services\AbstractService;
 use NextDeveloper\Generator\Common\AbstractController;
@@ -47,9 +48,13 @@ class AllController extends AbstractController
             AbstractService::backupModule($rootPath, $namespace, $moduleName, true);
             StructureService::generateStructure($rootPath);
 
+            Log::info('[Generator] Generating composer file');
             StructureService::generateComposerFile($namespace, $moduleName, $rootPath, $forceOverwrite);
+            Log::info('[Generator] Generating service provider');
             StructureService::generateServiceProviderFile($rootPath, $namespace, $moduleName, $forceOverwrite);
+            Log::info('[Generator] Generating api routes file');
             StructureService::generateApiRoutesFile($rootPath, $namespace, $moduleName, $forceOverwrite);
+            Log::info('[Generator] Generating configuration files');
             StructureService::generateConfigurationFiles($rootPath, $moduleName, $forceOverwrite);
 
             ControllerService::generateAbstractFile($rootPath, $namespace, $moduleName, $forceOverwrite);

@@ -19,7 +19,7 @@ class FilterService extends AbstractService
         $filterNumberFields = self::generateFilterNumberFields($columns);
         $filterBooleanFields = self::generateFilterBooleanFields($columns);
         $filterDateFields = self::generateFilterDateFields($columns);
-        $idRefFields = self::generateIdRefFields($columns);
+        $idRefFields = ModelService::getIdFields($namespace, $module, $model);
 
         $render = view('Generator::templates/database/filter', [
             'namespace'           =>  $namespace,
@@ -163,6 +163,7 @@ class FilterService extends AbstractService
                 $idRefFields[] = $column->Field;             
             }     
         }
+
         return $idRefFields;
     }
 }

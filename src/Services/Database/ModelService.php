@@ -293,7 +293,8 @@ class ModelService extends AbstractService
                 $idFields[] = [
                     '\\' . $namespace . '\\' . $classModule . '\\Database\\Models\\' . $modelWithoutModule,
                     $column->Field,
-                    Str::camel($column->Field)
+                    Str::camel($column->Field),
+                    Str::contains($column->Comment, '[!model]') ? 1 : 0
                 ];
             }
         }

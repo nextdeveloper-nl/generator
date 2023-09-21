@@ -13,6 +13,7 @@ class ApiRoutesService extends AbstractService
      */
     public static function generate($namespace, $module, $model) {
         //$columns = self::getColumns($model);
+        $prefix = $model;
 
         $controller = Str::camel($model);
         $controller = Str::ucfirst($controller);
@@ -34,7 +35,6 @@ class ApiRoutesService extends AbstractService
             $model = str_replace('_', '-', $model);
         }
 
-        $prefix = $model;
         $prefix = Str::lower($prefix);
 
         if(Str::startsWith($prefix, $module)) {
@@ -45,9 +45,11 @@ class ApiRoutesService extends AbstractService
             $prefix = substr($prefix, strlen($module));
         }
 
-        if(Str::startsWith($prefix, '-')) {
+        if(Str::startsWith($prefix, '_')) {
             $prefix = substr($prefix, 1);
         }
+
+        $prefix = str_replace('_', '-', $prefix);
 
         $render = view('Generator::templates/http/apiroutesmodel', [
             'namespace'          =>  $namespace,

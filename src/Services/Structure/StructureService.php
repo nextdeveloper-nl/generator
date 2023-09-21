@@ -31,7 +31,16 @@ class StructureService extends AbstractService
         $folder = Str::ucfirst($folder);
         $folder = Str::singular($folder);
 
-        $modelWithoutModule = self::getModelName($model, $module);
+        $singularModule = Str::singular($module);
+
+        if(ctype_upper($module)) {
+            //  If all letters are upper case, this means that this is short version of something.
+            //  That is why we dont make it singular.
+            $singularModule = $module;
+        }
+
+        $modelWithoutModule = Str::remove(strtolower($singularModule), $model);
+        $modelWithoutModule = Str::ucfirst(Str::camel($modelWithoutModule));
 
         self::createDirectory(base_path($root . '/src/Events/' . $modelWithoutModule));
         self::createDirectory(base_path($root . '/src/EventHandlers/' . $modelWithoutModule));

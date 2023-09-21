@@ -15,11 +15,21 @@ class HandlersService extends AbstractService
     public static function generate($namespace, $module, $model, $handler) {
         $modelWithoutModule = self::getModelName($model, $module);
 
+        $singularModule = Str::singular($module);
+
+        if (ctype_upper($module)) {
+            //  If all letters are upper case, this means that this is short version of something.
+            //  That is why we dont make it singular.
+            $singularModule = $module;
+        }
+
+        $modelWithoutModule = Str::remove(Str::ucfirst(strtolower($singularModule)), $handler);
+
         $render = view('Generator::templates/events/handlers', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
             'model'         =>  $modelWithoutModule,
-            'handler'       =>  $handler
+            'handler'       =>  $modelWithoutModule
         ])->render();
 
         return $render;
@@ -37,8 +47,17 @@ class HandlersService extends AbstractService
 
             StructureService::createEventFolderForModel($rootPath, $model, $module);
 
-        $modelWithoutModule = self::getModelName($model, $module);
-            $eventWithoutModule = Str::remove(Str::singular($module), $handler);
+            $modelWithoutModule = self::getModelName($model, $module);
+
+            $singularModule = Str::singular($module);
+
+            if (ctype_upper($module)) {
+                //  If all letters are upper case, this means that this is short version of something.
+                //  That is why we dont make it singular.
+                $singularModule = $module;
+            }
+
+            $eventWithoutModule = Str::remove(Str::ucfirst(strtolower($singularModule)), $handler);
 
             $file = $rootPath . '/src/EventHandlers/' . $modelWithoutModule . '/' . $eventWithoutModule . '.php';
             if(!file_exists(base_path($file)) || $forceOverwrite) {

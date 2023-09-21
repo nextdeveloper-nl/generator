@@ -12,23 +12,25 @@ class EventsService extends AbstractService
     /**
      * @throws TemplateNotFoundException
      */
-    public static function generate($namespace, $module, $model, $event) {
+    public static function generate($namespace, $module, $model, $event)
+    {
         $columns = self::getColumns($model);
 
         $modelWithoutModule = self::getModelName($model, $module);
         $eventWithoutModule = Str::remove(Str::ucfirst(strtolower(Str::singular($module))), $event);
 
         $render = view('Generator::templates/events/event', [
-            'namespace'     =>  $namespace,
-            'module'        =>  $module,
-            'model'         =>  $modelWithoutModule,
-            'event'         =>  $eventWithoutModule
+            'namespace' => $namespace,
+            'module' => $module,
+            'model' => $modelWithoutModule,
+            'event' => $eventWithoutModule
         ])->render();
 
         return $render;
     }
 
-    public static function generateFiles($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
+    public static function generateFiles($rootPath, $namespace, $module, $model, $forceOverwrite): bool
+    {
         $events = config('generator.action-events.events');
 
         $modelName = Str::camel($model);
@@ -41,10 +43,19 @@ class EventsService extends AbstractService
             StructureService::createEventFolderForModel($rootPath, $model, $module);
 
             $modelWithoutModule = self::getModelName($model, $module);
-            $eventWithoutModule = Str::remove(Str::ucfirst(strtolower(Str::singular($module))), $event);
+
+            $singularModule = Str::singular($module);
+
+            if (ctype_upper($module)) {
+                //  If all letters are upper case, this means that this is short version of something.
+                //  That is why we dont make it singular.
+                $singularModule = $module;
+            }
+
+            $eventWithoutModule = Str::remove(Str::ucfirst(strtolower($singularModule)), $event);
 
             $file = $rootPath . '/src/Events/' . $modelWithoutModule . '/' . $eventWithoutModule . '.php';
-            if(!file_exists(base_path($file)) || $forceOverwrite) {
+            if (!file_exists(base_path($file)) || $forceOverwrite) {
                 self::writeToFile($forceOverwrite, $file, $content);
             }
         }
