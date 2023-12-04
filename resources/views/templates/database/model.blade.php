@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Database\Traits\Filterable;
 use {{ $namespace }}\{{ $module }}\Database\Observers\{{ $model }}Observer;
 use NextDeveloper\Commons\Database\Traits\UuidId;
+use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
+use NextDeveloper\Commons\Database\Traits\Taggable;
 
 /**
 * Class {{ $model }}.
@@ -16,7 +18,7 @@ use NextDeveloper\Commons\Database\Traits\UuidId;
 */
 class {{ $model }} extends Model
 {
-use Filterable, UuidId;
+use Filterable, UuidId, CleanCache, Taggable;
 @if($has_deleted)
 	use SoftDeletes;
 @endif

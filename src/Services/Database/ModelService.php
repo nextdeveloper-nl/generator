@@ -273,6 +273,8 @@ class ModelService extends AbstractService
         $idFields = [];
 
         foreach ($columns as $column) {
+            if($column->Field == 'object_id') continue;
+
             $foreignModel = Str::remove('_id', $column->Field);
 
             if (Str::endsWith($column->Field, '_id')) {

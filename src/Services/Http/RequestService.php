@@ -9,7 +9,7 @@ use NextDeveloper\Generator\Exceptions\TemplateNotFoundException;
 
 class RequestService extends AbstractService
 {
-    
+
     /**
      * @throws TemplateNotFoundException
      */
@@ -50,7 +50,7 @@ class RequestService extends AbstractService
         $discardedFields = ['created_at', 'deleted_at', 'updated_at', 'id', 'uuid'];
 
         foreach ($columns as $column) {
-            $columnType = self::cleanColumnType($column->Type); 
+            $columnType = self::cleanColumnType($column->Type);
             $columnDefaultValue = $column->Default;
             $nullable = $column->Null === 'YES';
 
@@ -108,7 +108,10 @@ class RequestService extends AbstractService
                         }
                 }
 
-                if(Str::endsWith($fieldName, '_id')) {
+                if(
+                    Str::endsWith($fieldName, '_id') &&
+                    $fieldName != 'object_id'
+                ) {
                     $rules[$fieldName] .= self::getTableRelationRule($fieldName) . '|';
                 }
 
@@ -116,7 +119,7 @@ class RequestService extends AbstractService
                     $rules[$fieldName] = substr($rules[$fieldName], 0, -1);
                 }
             }
-            
+
         }
 
         return $rules;

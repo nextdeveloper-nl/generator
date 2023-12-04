@@ -38,6 +38,7 @@ class AllController extends AbstractController
         }
 
         foreach ($modules as $module) {
+            dump($module);
             if(!$module['generate'])
                 continue;
 
@@ -64,7 +65,11 @@ class AllController extends AbstractController
             if(Str::contains($module['tables'], '*')) {
                 $modelsArray = TableService::getTables($module['tables']);
             } else {
-                $modelsArray = explode(',', $request->query('models'));
+                if($module['tables'] == '') {
+                    $modelsArray = [];
+                } else {
+                    $modelsArray = explode(',', $request->query('models'));
+                }
             }
 
             foreach ($modelsArray as $model) {
@@ -75,10 +80,14 @@ class AllController extends AbstractController
                 $this->generateModelRelations($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
             }
 
-            if(Str::contains($module['tables'], '*')) {
-                $viewsArray = TableService::getViews($module['tables']);
+            if(Str::contains($module['views'], '*')) {
+                $viewsArray = TableService::getViews($module['views']);
             } else {
-                $viewsArray = explode(',', $request->query('models'));
+                if($module['views'] == '') {
+                    $viewsArray = [];
+                } else {
+                    $viewsArray = explode(',', $request->query('views'));
+                }
             }
 
             foreach ($viewsArray as $model) {

@@ -5,11 +5,28 @@ use {{ $namespace }}\{{ $module }}\Http\Controllers\AbstractController;
 use NextDeveloper\Generator\Http\Traits\ResponsableFactory;
 use {{ $namespace }}\{{ $module }}\Http\Requests\{{ $model }}\{{ $model }}UpdateRequest;
 use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}QueryFilter;
+use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};
 use {{ $namespace }}\{{ $module }}\Services\{{ $model }}Service;
 use {{ $namespace }}\{{ $module }}\Http\Requests\{{ $model }}\{{ $model }}CreateRequest;
+@php
+if($traits) {
+    foreach ($traits as $trait) {
+        echo 'use ' . $trait['class'] . ';';
+    }
+}
+@endphp
 
 class {{ $model }}Controller extends AbstractController
 {
+    private $model = {{ $model }}::class;
+
+@php
+    if($traits) {
+        foreach ($traits as $trait) {
+            echo 'use ' . $trait['name'] . ';' . PHP_EOL;
+        }
+    }
+@endphp
     /**
     * This method returns the list of {{ str::plural(strtolower($model)) }}.
     *
@@ -39,6 +56,22 @@ class {{ $model }}Controller extends AbstractController
         $model = {{ $model }}Service::getByRef($ref);
 
         return ResponsableFactory::makeResponse($this, $model);
+    }
+
+    /**
+    * This method returns the list of sub objects the related object. Sub object means an object which is preowned by
+    * this object.
+    *
+    * It can be tags, addresses, states etc.
+    *
+    * @param $ref
+    * @param $subObject
+    * @return void
+    */
+    public function relatedObjects($ref, $subObject) {
+        $objects = {{ $model }}Service::relatedObjects($ref, $subObject);
+
+        return ResponsableFactory::makeResponse($this, $objects);
     }
 
     /**
@@ -79,7 +112,7 @@ class {{ $model }}Controller extends AbstractController
     public function destroy(${{ Str::camel($model) }}Id) {
         $model = {{ $model }}Service::delete(${{ Str::camel($model) }}Id);
 
-        return ResponsableFactory::makeResponse($this, $model);
+        return $this->noContent();
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

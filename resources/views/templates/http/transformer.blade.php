@@ -33,6 +33,6 @@ class {{ $model }}Transformer extends Abstract{{ $model }}Transformer {
             $transformed
         );
 
-        return parent::transform($model);
+        return $transformed;
     }
 }

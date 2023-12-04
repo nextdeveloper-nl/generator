@@ -62,7 +62,7 @@ class AbstractService
             e.g: varchar(30) to varchar
                 decimal(13,4) to decimal
                 bigint unsigned to bigint
-        */ 
+        */
         $type = preg_replace('/\(\s*\d+((\s*,\s*)\d+)?\s*\)|\s+[a-zA-Z]+/i', '', $columnType);
         return $type;
     }
@@ -86,7 +86,7 @@ class AbstractService
         if (!$array) {
             return '';
         }
-    
+
         $result = '';
         $isFirstElement = true;
         $maxKeyLength = self::getMaxKeyLength($array);
@@ -94,14 +94,17 @@ class AbstractService
         $tabs = Str::repeat("\t", $tabAmount);
 
         foreach ($array as $key => $value) {
+            if($key == 'iam_account_id')    continue;
+            if($key == 'iam_user_id')   continue;
+
             $key_padding = str_repeat(' ',  $maxKeyLength - strlen($key));
             if($isFirstElement == true){
                 $result .= sprintf("'%s'%s => '%s',\n", $key, $key_padding, $value);
             }
             else{
                 $result .= sprintf($tabs."'%s'%s => '%s',\n", $key, $key_padding, $value);
-            }   
-            $isFirstElement = false;  
+            }
+            $isFirstElement = false;
         }
 
         return rtrim($result, "\n");
@@ -111,19 +114,19 @@ class AbstractService
         if (!$array) {
             return '';
         }
-        
+
         $result = "";
         $isFirstElement = true;
 
         foreach ($array as $value) {
             if($isFirstElement == true){
-                $result .= sprintf("'%s',\n", $value);  
+                $result .= sprintf("'%s',\n", $value);
             }
- 
+
             else{
                 $result .= sprintf("%s'%s',\n", "\t\t", $value);
-            }    
-            $isFirstElement = false; 
+            }
+            $isFirstElement = false;
 
         }
 
@@ -155,12 +158,15 @@ class AbstractService
     public static function appendExistingContentAfterWarningMessage($file, $content) {
         if (file_exists(base_path($file))) {
             $existingContent = file_get_contents(base_path($file));
-        } 
+        }
         else { // If the file does not exist, regenerate the whole file
             return $content;
         }
 
         $existingContent = htmlspecialchars_decode($existingContent);
+
+        if(Str::contains($file, 'api.routes.php'))
+            dump($existingContent);
 
         $warningString = "// EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE";
         $pos = strpos($existingContent, $warningString);
@@ -170,7 +176,10 @@ class AbstractService
             $afterWarningString = substr($existingContent, $pos + strlen($warningString));
             $afterWarningString = self::removeLastBracket($afterWarningString);
 
-            $afterWarningString = $warningString . '\n\n' . $afterWarningString;
+            $afterWarningString = $warningString . $afterWarningString;
+
+            if(Str::contains($file, 'api.routes.php'))
+                dump($afterWarningString);
 
             $content = str_replace($warningString, $afterWarningString, $content);
 

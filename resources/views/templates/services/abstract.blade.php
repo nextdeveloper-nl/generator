@@ -9,7 +9,7 @@ use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
 use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};
 use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}QueryFilter;
-
+use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
 use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}CreatedEvent;
 use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}CreatingEvent;
 use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}UpdatedEvent;
@@ -86,6 +86,28 @@ class Abstract{{ $model }}Service {
     }
 
     /**
+    * This method returns the sub objects of the related models
+    *
+    * @param $uuid
+    * @param $object
+    * @return void
+    * @throws \Laravel\Octane\Exceptions\DdException
+    */
+    public static function relatedObjects($uuid, $object) {
+        try {
+            $obj = {{ $model }}::where('uuid', $uuid)->first();
+
+            if(!$obj)
+                throw new ModelNotFoundException('Cannot find the related model');
+
+            if($obj)
+                return $obj->$object;
+        } catch (\Exception $e) {
+            dd($e);
+        }
+    }
+
+    /**
     * This method created the model from an array.
     *
     * Throws an exception if stuck with any problem.
@@ -95,7 +117,7 @@ class Abstract{{ $model }}Service {
     * @throw Exception
     */
     public static function create(array $data) {
-        event( new {{ $model }}CreatingEvent() );
+        event( new {{ Str::plural($model) }}CreatingEvent() );
 
         @foreach($idFields as $field)
         if (array_key_exists('{{$field[1]}}', $data))
@@ -104,14 +126,14 @@ class Abstract{{ $model }}Service {
                 $data['{{$field[1]}}']
             );
 	@endforeach
-        
+
         try {
             $model = {{ $model }}::create($data);
         } catch(\Exception $e) {
             throw $e;
         }
 
-        event( new {{ $model }}CreatedEvent($model) );
+        event( new {{ Str::plural($model) }}CreatedEvent($model) );
 
         return $model->fresh();
     }
@@ -176,7 +198,7 @@ return null;
     * @return mixed
     * @throw Exception
     */
-    public static function delete($id, array $data) {
+    public static function delete($id) {
         $model = {{ $model }}::where('uuid', $id)->first();
 
         event( new {{ $model }}DeletingEvent() );
@@ -186,8 +208,6 @@ return null;
         } catch(\Exception $e) {
             throw $e;
         }
-
-        event( new {{ $model }}DeletedEvent($model) );
 
         return $model;
     }

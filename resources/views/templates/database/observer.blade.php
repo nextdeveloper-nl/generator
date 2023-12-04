@@ -2,6 +2,7 @@ namespace {{ $namespace }}\{{ $module }}\Database\Observers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use NextDeveloper\IAM\Helpers\UserHelper;
 
 /**
  * Class {{ $model }}Observer
@@ -25,6 +26,7 @@ class {{ $model }}Observer
      */
     public function creating(Model $model)
     {
+        return UserHelper::applyUserFields($model);
     }
 
     /**

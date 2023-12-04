@@ -57,6 +57,7 @@ class ApiRoutesService extends AbstractService
             'model'              =>  $model,
             'prefix'             => $prefix,
             'controller'        =>  $controller,
+            'traits'             =>  config('generator.traits.controller')
             //'columns'            =>  $columns
         ])->render();
 

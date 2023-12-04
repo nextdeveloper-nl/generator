@@ -100,6 +100,12 @@ class TransformerService extends AbstractService
                         'return'    =>  $column->Field . ' == 1 ? true : false'
                     ];
                     break;
+                case 'timestamp':
+                    $data[] =   [
+                        'field'     =>  $column->Field,
+                        'return'    =>  $column->Field . ' ? $model->' . $column->Field . '->toIso8601String() : null'
+                    ];
+                    break;
                 default:
                     $data[] =   [
                         'field'     =>  $column->Field,

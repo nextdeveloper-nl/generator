@@ -20,7 +20,8 @@ class ControllerService extends AbstractService
             'namespace'          =>  $namespace,
             'module'             =>  $module,
             'model'              =>  $modelWithoutModule,
-            'columns'            =>  $columns
+            'columns'            =>  $columns,
+            'traits'             =>  config('generator.traits.controller')
         ])->render();
 
         return $render;
