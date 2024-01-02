@@ -193,7 +193,10 @@ class ModelService extends AbstractService
     {
         $fullTextFields = [];
 
-        $indexes = DB::select(DB::raw("SHOW INDEX FROM " . $model . " WHERE Index_type = 'FULLTEXT'"));
+        $expression = DB::raw("SHOW INDEX FROM " . $model . " WHERE Index_type = 'FULLTEXT'");
+        $query = $expression->getValue( DB::connection()->getQueryGrammar() );
+
+        $indexes = DB::select($query);
         foreach ($indexes as $index) {
             $fullTextFields[] = $index->Column_name;
         }
