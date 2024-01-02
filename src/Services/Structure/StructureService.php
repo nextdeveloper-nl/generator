@@ -26,12 +26,24 @@ class StructureService extends AbstractService
         return true;
     }
 
-    public static function createEventFolderForModel($root, $model) {
+    public static function createEventFolderForModel($root, $model, $module) {
         $folder = Str::camel($model);
         $folder = Str::ucfirst($folder);
+        $folder = Str::singular($folder);
 
-        self::createDirectory(base_path($root . '/src/Events/' . $folder));
-        self::createDirectory(base_path($root . '/src/EventHandlers/' . $folder));
+        $singularModule = Str::singular($module);
+
+        if(ctype_upper($module)) {
+            //  If all letters are upper case, this means that this is short version of something.
+            //  That is why we dont make it singular.
+            $singularModule = $module;
+        }
+
+        $modelWithoutModule = Str::remove(strtolower($singularModule), $model);
+        $modelWithoutModule = Str::ucfirst(Str::camel($modelWithoutModule));
+
+        self::createDirectory(base_path($root . '/src/Events/' . $modelWithoutModule));
+        self::createDirectory(base_path($root . '/src/EventHandlers/' . $modelWithoutModule));
     }
 
     public static function generateComposer($namespace, $module) {
@@ -43,10 +55,12 @@ class StructureService extends AbstractService
         return $render;
     }
 
-    public static function generateComposerFile($namespace, $module, $root) {
+    public static function generateComposerFile($namespace, $module, $root, $forceOverwrite) {
         $content = self::generateComposer($namespace, $module);
 
-        self::writeToFile($root . '/composer.json', $content, 'json');
+        if(!file_exists(base_path('composer.json')) || $forceOverwrite) {
+            self::writeToFile($forceOverwrite ,$root . '/composer.json', $content, 'json');
+        }
 
         return true;
     }
@@ -60,42 +74,30 @@ class StructureService extends AbstractService
         return $render;
     }
 
-    public static function generateServiceProviderFile($rootPath, $namespace, $module): bool {
+    public static function generateServiceProviderFile($rootPath, $namespace, $module, $forceOverwrite): bool {
         $content = self::generateServiceProvider($namespace, $module);
 
-        self::writeToFile($rootPath . '/src/' . ucfirst($module) . 'ServiceProvider.php', $content);
+        $file = $rootPath . '/src/' . ucfirst($module) . 'ServiceProvider.php';
+
+        if(!file_exists(base_path($file)) || $forceOverwrite) {
+            self::writeToFile($forceOverwrite, $file, $content);
+        }
 
         return true;
     }
 
-    public static function generateAbstractServiceProvider($namespace, $module) {
-        $render = view('Generator::templates/abstractprovider', [
-            'namespace'     =>  $namespace,
-            'module'        =>  $module
+    public static function generateApiRoutes($moduleName) {
+        $render = view('Generator::templates/http/apiroutescommon', [
+            'module'    =>  $moduleName
         ])->render();
 
         return $render;
     }
 
-    public static function generateAbstractServiceProviderFile($rootPath, $namespace, $module): bool {
-        $content = self::generateAbstractServiceProvider($namespace, $module);
+    public static function generateApiRoutesFile($rootPath, $namespace, $moduleName, $forceOverwrite): bool {
+        $content = self::generateApiRoutes($moduleName);
 
-        self::writeToFile($rootPath . '/src/AbstractServiceProvider.php', $content);
-
-        return true;
-    }
-
-    public static function generateApiRoutes() {
-        $render = view('Generator::templates/http/apiroutes', [
-        ])->render();
-
-        return $render;
-    }
-
-    public static function generateApiRoutesFile($rootPath): bool {
-        $content = self::generateApiRoutes();
-
-        self::writeToFile($rootPath . '/src/Http/api.routes.php', $content);
+        self::writeToFile($forceOverwrite, $rootPath . '/src/Http/api.routes.php', $content);
 
         return true;
     }
@@ -108,7 +110,7 @@ class StructureService extends AbstractService
     }
 
     public static function generateModelBindingConfig() {
-        $render = view('Generator::templates/configs/config', [
+        $render = view('Generator::templates/configs/modelbinding', [
         ])->render();
 
         return $render;
@@ -121,12 +123,20 @@ class StructureService extends AbstractService
         return $render;
     }
 
-    public static function generateConfigurationFiles($rootPath, $module): bool {
-        self::writeToFile($rootPath . '/config/' . strtolower($module) . '.php', self::generateConfig());
-        self::writeToFile($rootPath . '/config/model-binding.php', self::generateModelBindingConfig());
-        self::writeToFile($rootPath . '/config/relation.php', self::generateRelationConfig());
+    public static function generateConfigurationFiles($rootPath, $module, $forceOverwrite): bool {
+        if(!file_exists(base_path($rootPath) . '/config/' . strtolower($module) . '.php')) {
+            self::writeToFile($forceOverwrite, $rootPath . '/config/' . strtolower($module) . '.php', self::generateConfig());
+        }
 
-        return false;
+        if(!file_exists(base_path($rootPath) . '/config/model-binding.php')) {
+            self::writeToFile($forceOverwrite, $rootPath . '/config/model-binding.php', self::generateModelBindingConfig());
+        }
+
+        if(!file_exists(base_path($rootPath) . '/config/relation.php')) {
+            self::writeToFile($forceOverwrite, $rootPath . '/config/relation.php', self::generateRelationConfig());
+        }
+
+        return true;
     }
 
     private static function generateDirectories($directory, $currentPath, $paths = []) {
@@ -140,21 +150,5 @@ class StructureService extends AbstractService
         }
 
         return $paths;
-    }
-
-    private static function createDirectory($directory) : ?bool {
-        try {
-            mkdir($directory, 0777, true);
-        } catch (\ErrorException $exception) {
-            //  We are not throwing exception here because the user may forget
-            //  to add a new directory while generating it and may need to
-            //  regenerate again.
-
-            //  @TODO: Maybe later we can create a warning.
-            if($exception->getMessage() == 'mkdir(): File exists')
-                return false;
-        }
-
-        return true;
     }
 }

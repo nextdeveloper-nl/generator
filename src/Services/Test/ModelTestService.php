@@ -3,8 +3,8 @@
 namespace NextDeveloper\Generator\Services\Test;
 
 use Illuminate\Support\Str;
-use NextDeveloper\Generator\Exceptions\TemplateNotFoundException;
 use NextDeveloper\Generator\Services\AbstractService;
+use NextDeveloper\Generator\Services\Database\FilterService;
 
 class ModelTestService extends AbstractService
 {
@@ -14,17 +14,17 @@ class ModelTestService extends AbstractService
         $render = view('Generator::tests/test', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::singular($model)),
+            'model'         =>  ucfirst(Str::camel(Str::singular($model))),
             'columns'       =>  $columns
         ])->render();
 
         return $render;
     }
 
-    public static function generateFile($rootPath, $namespace, $module, $model) : bool{
+    public static function generateFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generate($namespace, $module, $model);
 
-        self::writeToFile('tests/Unit/GeneratedModel' . Str::ucfirst(Str::singular($model)) . 'Test.php', $content);
+        self::writeToFile($forceOverwrite, 'tests/Unit/GeneratedModel' . Str::ucfirst(Str::camel(Str::singular($model))) . 'Test.php', $content);
 
         return true;
     }
@@ -35,8 +35,11 @@ class ModelTestService extends AbstractService
         $render = view('Generator::tests/trait', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  ucfirst(Str::singular($model)),
+            'model'         =>  ucfirst(Str::camel(Str::singular($model))),
             'columns'       =>  $columns,
+            'filterTextFields'   =>  FilterService::generateFilterTextFields($columns),
+            'filterNumberFields' =>  FilterService::generateFilterNumberFields($columns),
+            'filterDateFields'   =>  FilterService::generateFilterDateFields($columns),
             'events'        =>  config('generator.action-events.events'),
             'handlers'      =>  config('generator.action-events.handlers')
         ])->render();
@@ -44,10 +47,10 @@ class ModelTestService extends AbstractService
         return $render;
     }
 
-    public static function generateTraitFile($rootPath, $namespace, $module, $model) : bool{
+    public static function generateTraitFile($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generateTrait($namespace, $module, $model);
 
-        self::writeToFile($rootPath . '/tests/Database/Models/' . ucfirst(Str::singular($model)) . 'TestTraits.php', $content);
+        self::writeToFile($forceOverwrite, $rootPath . '/tests/Database/Models/' . ucfirst(Str::camel(Str::singular($model))) . 'TestTraits.php', $content);
 
         return true;
     }

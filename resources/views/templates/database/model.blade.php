@@ -1,74 +1,117 @@
 namespace {{ $namespace }}\{{ $module }}\Database\Models;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
+@if($has_deleted)
+	use Illuminate\Database\Eloquent\SoftDeletes;
+@endif
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
+use NextDeveloper\Commons\Database\Traits\Filterable;
 use {{ $namespace }}\{{ $module }}\Database\Observers\{{ $model }}Observer;
+use NextDeveloper\Commons\Database\Traits\UuidId;
+use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
+use NextDeveloper\Commons\Database\Traits\Taggable;
 
 /**
- * Class {{ $model }}.
- *
- * @package {{ $namespace }}\{{ $module }}\Database\Models
- */
+* Class {{ $model }}.
+*
+* @package {{ $namespace }}\{{ $module }}\Database\Models
+*/
 class {{ $model }} extends Model
 {
-    use SoftDeletes;
+use Filterable, UuidId, CleanCache, Taggable;
+@if($has_deleted)
+	use SoftDeletes;
+@endif
 
-    /**
-     * @var array
-     */
-    protected $guarded = [];
 
-    /**
-     *  Here we have the fulltext fields. We can use these for fulltext search if enabled.
-     */
-    protected $fullTextFields = [
-        {{ $fullTextFields ?? '' }}
-    ];
+@if($hasTimestamps)
+	public $timestamps = true;
+@else
+	public $timestamps = false;
+@endif
 
-    /**
-     * @var array
-     */
-    protected $appends = [
-        {{ $appends ?? '' }}
-    ];
+protected $table = '{{$table}}';
 
-    /**
-     * We are casting fields to objects so that we can work on them better
-     * @var array
-     */
-    protected $casts = [
-        {{ $casts ?? '' }}
-    ];
 
-    /**
-     * We are casting data fields.
-     * @var array
-     */
-    protected $dates = [
+/**
+* @var array
+*/
+protected $guarded = [];
 
-    ];
+/**
+*  Here we have the fulltext fields. We can use these for fulltext search if enabled.
+*/
+protected $fullTextFields = [
+{{ $fullTextFields ?? '' }}
+];
 
-    /**
-     * @var array
-     */
-    protected $with = [
+/**
+* @var array
+*/
+protected $appends = [
+{{ $appends ?? '' }}
+];
 
-    ];
+/**
+* We are casting fields to objects so that we can work on them better
+* @var array
+*/
+protected $casts = [
+{{ $casts ?? '' }}
+];
 
-    /**
-     * @var int
-     */
-    protected $perPage = {{ $perPage }};
+/**
+* We are casting data fields.
+* @var array
+*/
+protected $dates = [
+{{ $dates ?? '' }}
+];
 
-    /**
-     * @return void
-     */
-    public static function boot()
-    {
-        parent::boot();
+/**
+* @var array
+*/
+protected $with = [
 
-        //  We create and add Observer even if we wont use it.
-        parent::observe({{ $model }}Observer::class);
-    }
+];
+
+/**
+* @var int
+*/
+protected $perPage = {{ $perPage }};
+
+/**
+* @return void
+*/
+public static function boot()
+{
+parent::boot();
+
+//  We create and add Observer even if we wont use it.
+parent::observe({{ $model }}Observer::class);
+
+self::registerScopes();
+}
+
+public static function registerScopes()
+{
+$globalScopes = config('{{$lcModule}}.scopes.global');
+$modelScopes = config('{{$lcModule}}.scopes.{{$table}}');
+
+if(!$modelScopes) $modelScopes = [];
+if (!$globalScopes) $globalScopes = [];
+
+$scopes = array_merge(
+$globalScopes,
+$modelScopes
+);
+
+if($scopes) {
+foreach ($scopes as $scope) {
+static::addGlobalScope(app($scope));
+}
+}
+}
+
+// EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }
