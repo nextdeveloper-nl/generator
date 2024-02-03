@@ -156,7 +156,7 @@ return [
             'tables'    =>  'iam_*',
             'views'     =>  'iam_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'Marketplace',
@@ -164,7 +164,7 @@ return [
             'tables'    =>  'marketplace_*',
             'views'     =>  'marketplace_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'CRM',
@@ -172,7 +172,7 @@ return [
             'tables'    =>  'crm_*',
             'views'     =>  'crm_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'IAAS',
@@ -180,7 +180,7 @@ return [
             'tables'    =>  'iaas_*',
             'views'     =>  'iaas_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'Options',
@@ -188,7 +188,7 @@ return [
             'tables'    =>  'option_*',
             'views'     =>  'option_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'Golf',
@@ -196,7 +196,7 @@ return [
             'tables'    =>  'golf_*',
             'views'     =>  'golf_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'Stay',
@@ -204,7 +204,7 @@ return [
             'tables'    =>  'stay_*',
             'views'     =>  'stay_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'Communication',
@@ -212,7 +212,7 @@ return [
             'tables'    =>  'communication_*',
             'views'     =>  'communication_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'LMS',
@@ -220,7 +220,7 @@ return [
             'tables'    =>  'lms_*',
             'views'     =>  'lms_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
     ],
 ];

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use NextDeveloper\Generator\Services\AbstractService;
-use NextDeveloper\Generator\Common\AbstractController;
+use NextDeveloper\Commons\Http\Controllers\AbstractController;
 use NextDeveloper\Generator\Services\Database\TableService;
 use NextDeveloper\Generator\Services\Events\EventsService;
 use NextDeveloper\Generator\Services\Database\ModelService;
@@ -38,7 +38,7 @@ class AllController extends AbstractController
         }
 
         foreach ($modules as $module) {
-            dump($module);
+            dump($module['name']);
             if(!$module['generate'])
                 continue;
 
@@ -49,16 +49,16 @@ class AllController extends AbstractController
             AbstractService::backupModule($rootPath, $namespace, $moduleName, true);
             StructureService::generateStructure($rootPath);
 
-            Log::info('[Generator] Generating composer file');
-            StructureService::generateComposerFile($namespace, $moduleName, $rootPath, $forceOverwrite);
-            Log::info('[Generator] Generating service provider');
-            StructureService::generateServiceProviderFile($rootPath, $namespace, $moduleName, $forceOverwrite);
-            Log::info('[Generator] Generating api routes file');
-            StructureService::generateApiRoutesFile($rootPath, $namespace, $moduleName, $forceOverwrite);
-            Log::info('[Generator] Generating configuration files');
-            StructureService::generateConfigurationFiles($rootPath, $moduleName, $forceOverwrite);
-
-            ControllerService::generateAbstractFile($rootPath, $namespace, $moduleName, $forceOverwrite);
+//            Log::info('[Generator] Generating composer file');
+//            StructureService::generateComposerFile($namespace, $moduleName, $rootPath, $forceOverwrite);
+//            Log::info('[Generator] Generating service provider');
+//            StructureService::generateServiceProviderFile($rootPath, $namespace, $moduleName, $forceOverwrite);
+//            Log::info('[Generator] Generating api routes file');
+//            StructureService::generateApiRoutesFile($rootPath, $namespace, $moduleName, $forceOverwrite);
+//            Log::info('[Generator] Generating configuration files');
+//            StructureService::generateConfigurationFiles($rootPath, $moduleName, $forceOverwrite);
+//
+//            ControllerService::generateAbstractFile($rootPath, $namespace, $moduleName, $forceOverwrite);
 
             $modelsArray = [];
 
@@ -77,7 +77,7 @@ class AllController extends AbstractController
             }
 
             foreach ($modelsArray as $model) {
-                $this->generateModelRelations($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+//                $this->generateModelRelations($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
             }
 
             if(Str::contains($module['views'], '*')) {
@@ -135,6 +135,11 @@ class AllController extends AbstractController
         ModelService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
         //  We will remove this because view do not need to have observer
         ObserverService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+
+        ServiceService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+
+        // Abstract file should always be overwritten, so sending true directly!
+        ServiceService::generateAbstractFile($rootPath, $namespace, $moduleName, $model, true);
 
         FilterService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 

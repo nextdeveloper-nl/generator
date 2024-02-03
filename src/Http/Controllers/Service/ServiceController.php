@@ -2,7 +2,7 @@
 
 namespace NextDeveloper\Generator\Http\Controllers\Service;
 
-use NextDeveloper\Generator\Common\AbstractController;
+use NextDeveloper\Commons\Http\Controllers\AbstractController;
 use NextDeveloper\Generator\Services\Services\ServiceService;
 
 class ServiceController extends AbstractController

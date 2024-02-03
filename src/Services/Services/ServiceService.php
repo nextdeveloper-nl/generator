@@ -76,7 +76,7 @@ class ServiceService extends AbstractService
         return true;
     }
 
-    private static function buildData($columns, $model) {
+    private static function buildDataMySQL($columns, $model) {
         $data = [];
 
         foreach ($columns as $column) {
@@ -100,5 +100,45 @@ class ServiceService extends AbstractService
         }
 
         return $data;
+    }
+
+    private static function buildDataPostgreSQL($columns, $model) {
+        $data = [];
+
+        foreach ($columns as $column) {
+            if($column->column_name == 'id' || $column->column_name == 'uuid')
+                continue;
+
+            switch ($column->data_type) {
+                case 'boolean':
+                    $data[] =   [
+                        'field'     =>  $column->column_name,
+                        'return'    =>  $column->column_name . ' == 1 ? true : false'
+                    ];
+                    break;
+                case 'tinyint':
+                    $data[] =   [
+                        'field'     =>  $column->column_name,
+                        'return'    =>  $column->column_name . ' == 1 ? true : false'
+                    ];
+                    break;
+                default:
+                    $data[] =   [
+                        'field'     =>  $column->column_name,
+                        'return'    =>  "\$data['" . $column->column_name . "']"
+                    ];
+                    break;
+            }
+        }
+
+        return $data;
+    }
+
+    private static function buildData($columns, $model) {
+        if(config('database.default') == 'mysql') {
+            return self::buildDataMySQL($columns, $model);
+        } else {
+            return self::buildDataPostgreSQL($columns, $model);
+        }
     }
 }

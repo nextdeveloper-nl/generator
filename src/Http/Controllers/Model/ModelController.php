@@ -2,7 +2,7 @@
 
 namespace NextDeveloper\Generator\Http\Controllers\Model;
 
-use NextDeveloper\Generator\Common\AbstractController;
+use NextDeveloper\Commons\Http\Controllers\AbstractController;
 use NextDeveloper\Generator\Services\Database\FilterService;
 use NextDeveloper\Generator\Services\Database\ModelService;
 use NextDeveloper\Generator\Services\Database\ObserverService;

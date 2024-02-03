@@ -74,7 +74,51 @@ class TransformerService extends AbstractService
         return true;
     }
 
-    private static function buildData($columns, $model) {
+    private static function buildDataPostgresql($columns, $model) {
+        $data = [];
+
+        if(self::isColumnExists('uuid', $columns)) {
+            $data[] =   [
+                'field'     =>  'id',
+                'return'    =>  'uuid'
+            ];
+        } else {
+            $data[] =   [
+                'field'     =>  'id',
+                'return'    =>  'id'
+            ];
+        }
+
+        foreach ($columns as $column) {
+            if($column->column_name == 'id' || $column->column_name == 'uuid')
+                continue;
+
+            switch ($column->data_type) {
+                case 'tinyint':
+                    $data[] =   [
+                        'field'     =>  $column->column_name,
+                        'return'    =>  $column->column_name . ' == 1 ? true : false'
+                    ];
+                    break;
+                case 'timestamp':
+                    $data[] =   [
+                        'field'     =>  $column->column_name,
+                        'return'    =>  $column->column_name . ' ? $model->' . $column->column_name . '->toIso8601String() : null'
+                    ];
+                    break;
+                default:
+                    $data[] =   [
+                        'field'     =>  $column->column_name,
+                        'return'    =>  $column->column_name
+                    ];
+                    break;
+            }
+        }
+
+        return $data;
+    }
+
+    private static function buildDataMySQL($columns, $model) {
         $data = [];
 
         if(self::isColumnExists('uuid', $columns)) {
@@ -118,5 +162,11 @@ class TransformerService extends AbstractService
         return $data;
     }
 
-
+    private static function buildData($columns, $model) {
+        if(config('database.default') == 'mysql') {
+            return self::buildDataMySQL($columns, $model);
+        } else {
+            return self::buildDataPostgresql($columns, $model);
+        }
+    }
 }

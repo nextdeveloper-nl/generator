@@ -26,24 +26,49 @@ class AbstractService
         $singularModule = Str::ucfirst(strtolower($singularModule));
         $modelWithoutModule = ucfirst(Str::camel(Str::singular($model)));
         $modelWithoutModule = Str::remove($singularModule, $modelWithoutModule);
-        $modelWithoutModule = Str::plural($modelWithoutModule);
+
+        if(!Str::endsWith($modelWithoutModule, 'Perspective'))
+            $modelWithoutModule = Str::plural($modelWithoutModule);
 
 
         return $modelWithoutModule;
     }
 
-    public static function getColumns($model) {
+    public static function getColumnsFromMySQL($model) {
         $expression = DB::raw("SHOW FULL COLUMNS FROM " . $model);
         $query = $expression->getValue( DB::connection()->getQueryGrammar() );
         return DB::select( $query );
     }
 
+    public static function getColumnsFromPostgreSQL($model) {
+        $expression = DB::raw('SELECT * FROM information_schema.columns WHERE table_schema = \'public\' AND table_name   = \'' . $model . '\';');
+        $query = $expression->getValue( DB::connection()->getQueryGrammar() );
+        return DB::select( $query );
+    }
+
+    public static function getColumns($model) {
+     if(config('database.default') == 'mysql') {
+            return self::getColumnsFromMySQL($model);
+        }
+        else if(config('database.default') == 'pgsql') {
+            return self::getColumnsFromPostgreSQL($model);
+        }
+    }
+
     public static function hasColumn($column, $model) {
         $columns = self::getColumns($model);
 
-        foreach ($columns as $col) {
-            if($col->Field == $column)
-                return true;
+        if(config('database.default') == 'mysql') {
+            foreach ($columns as $col) {
+                if($col->Field == $column)
+                    return true;
+            }
+        }
+        else if(config('database.default') == 'pgsql') {
+            foreach ($columns as $col) {
+                if($col->column_name == $column)
+                    return true;
+            }
         }
 
         return false;
@@ -70,9 +95,17 @@ class AbstractService
     }
 
     public static function isColumnExists($column, $columns) : bool {
-        foreach ($columns as $col) {
-            if($col->Field == $column)
-                return true;
+        if(config('database.default') == 'mysql') {
+            foreach ($columns as $col) {
+                if($col->Field == $column)
+                    return true;
+            }
+        }
+        else if(config('database.default') == 'pgsql') {
+            foreach ($columns as $col) {
+                if($col->column_name == $column)
+                    return true;
+            }
         }
 
         return false;
@@ -99,14 +132,21 @@ class AbstractService
             if($key == 'iam_account_id')    continue;
             if($key == 'iam_user_id')   continue;
 
-            $key_padding = str_repeat(' ',  $maxKeyLength - strlen($key));
-            if($isFirstElement == true){
-                $result .= sprintf("'%s'%s => '%s',\n", $key, $key_padding, $value);
+            if(Str::contains($value, 'NextDeveloper')) {
+                $result .= '\'' . $key . '\' => ' . $value . ',' . PHP_EOL;
+            } else {
+                $result .= '\'' . $key . '\' => \'' . $value . '\',' . PHP_EOL; //  This is for the case when the value is a string
             }
-            else{
-                $result .= sprintf($tabs."'%s'%s => '%s',\n", $key, $key_padding, $value);
-            }
-            $isFirstElement = false;
+//
+//
+//            $key_padding = str_repeat(' ',  $maxKeyLength - strlen($key));
+//            if($isFirstElement == true){
+//                $result .= sprintf("'%s'%s => '%s',\n", $key, $key_padding, $value);
+//            }
+//            else{
+//                $result .= sprintf($tabs."'%s'%s => '%s',\n", $key, $key_padding, $value);
+//            }
+//            $isFirstElement = false;
         }
 
         return rtrim($result, "\n");
@@ -121,14 +161,15 @@ class AbstractService
         $isFirstElement = true;
 
         foreach ($array as $value) {
-            if($isFirstElement == true){
-                $result .= sprintf("'%s',\n", $value);
-            }
-
-            else{
-                $result .= sprintf("%s'%s',\n", "\t\t", $value);
-            }
-            $isFirstElement = false;
+            $result .= '\'' . $value . '\',' . PHP_EOL;
+//            if($isFirstElement == true){
+//                $result .= sprintf("'%',\n", $value);
+//            }
+//
+//            else{
+//                $result .= sprintf("%s'%s',\n", "\t\t", $value);
+//            }
+//            $isFirstElement = false;
 
         }
 
@@ -167,8 +208,8 @@ class AbstractService
 
         $existingContent = htmlspecialchars_decode($existingContent);
 
-        if(Str::contains($file, 'api.routes.php'))
-            dump($existingContent);
+//        if(Str::contains($file, 'api.routes.php'))
+//            dump($existingContent);
 
         $warningString = "// EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE";
         $pos = strpos($existingContent, $warningString);
@@ -180,8 +221,8 @@ class AbstractService
 
             $afterWarningString = $warningString . $afterWarningString;
 
-            if(Str::contains($file, 'api.routes.php'))
-                dump($afterWarningString);
+//            if(Str::contains($file, 'api.routes.php'))
+//                dump($afterWarningString);
 
             $content = str_replace($warningString, $afterWarningString, $content);
 
