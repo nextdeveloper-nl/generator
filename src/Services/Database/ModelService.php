@@ -26,9 +26,16 @@ class ModelService extends AbstractService
         $hasTimestamps = false;
 
         foreach ($columns as $column) {
-            if ($column->Field == 'created_at') {
-                $hasTimestamps = true;
-                break;
+            if(config('database.default') == 'mysql') {
+                if ($column->Field == 'created_at') {
+                    $hasTimestamps = true;
+                    break;
+                }
+            } else if(config('database.default') == 'pgsql') {
+                if ($column->column_name == 'created_at') {
+                    $hasTimestamps = true;
+                    break;
+                }
             }
         }
 
@@ -124,7 +131,7 @@ class ModelService extends AbstractService
         return true;
     }
 
-    public static function generateCastsArray($columns)
+    public static function generateCastsArrayMySQL($columns)
     {
         $casts = [];
 
@@ -169,7 +176,83 @@ class ModelService extends AbstractService
         return $casts;
     }
 
-    public static function generateDatesArray($columns)
+    public static function generateCastsArrayPostgreSQL($columns)
+    {
+        $casts = [];
+
+        foreach ($columns as $column) {
+            $columnType = self::cleanColumnType($column->data_type);
+            switch ($columnType) {
+                case 'boolean':
+                case 'tinyint':
+                    $casts[$column->column_name] = 'boolean';
+                    break;
+                case 'decimal':
+                case 'float':
+                case 'double':
+                case 'real':
+                    $casts[$column->column_name] = 'double';
+                    break;
+                case 'int':
+                case 'integer':
+                case 'bigint':
+                case 'mediumint':
+                case 'smallint':
+                    $casts[$column->column_name] = 'integer';
+                    break;
+                case 'date':
+                case 'datetime':
+                case 'timestamp':
+                case 'timestamp with time zone':
+                case 'immutable_date':
+                case 'immutable_datetime':
+                    $casts[$column->column_name] = 'datetime';
+                    break;
+                case 'text':
+                case 'mediumtext':
+                case 'longtext':
+                case 'varchar':
+                case 'char':
+                    $casts[$column->column_name] = 'string';
+                    break;
+                case 'json':
+                    $casts[$column->column_name] = 'array';
+                    break;
+                case 'ARRAY':
+                    switch ($column->udt_name) {
+                        case '_int2':
+                        case '_int4':
+                        case '_int8':
+                            $casts[$column->column_name] = 'array:integer';
+                            break;
+                        case '_float4':
+                        case '_float8':
+                            $casts[$column->column_name] = 'array:double';
+                            break;
+                        case '_bool':
+                            $casts[$column->column_name] = 'array:boolean';
+                            break;
+                        case '_varchar':
+                        case '_text':
+                            $casts[$column->column_name] = '\NextDeveloper\Commons\Database\Casts\TextArray::class';
+                            break;
+                    }
+            }
+        }
+
+        return $casts;
+    }
+
+    public static function generateCastsArray($columns)
+    {
+        if(config('database.default') == 'mysql') {
+            return self::generateCastsArrayMySQL($columns);
+        } else if(config('database.default') == 'pgsql') {
+            return self::generateCastsArrayPostgreSQL($columns);
+        }
+    }
+
+    public static function generateDatesArrayMySQL($columns)
     {
         $dates = [];
 
@@ -189,17 +272,47 @@ class ModelService extends AbstractService
         return $dates;
     }
 
+    public static function generateDatesArrayPostgreSQL($columns)
+    {
+        $dates = [];
+
+        foreach ($columns as $column) {
+            $columnType = self::cleanColumnType($column->data_type);
+            switch ($columnType) {
+                case 'date':
+                case 'datetime':
+                case 'timestamp':
+                case 'timestamp with time zone':
+                case 'immutable_date':
+                case 'immutable_datetime':
+                    $dates[] = $column->column_name;
+                    break;
+            }
+        }
+
+        return $dates;
+    }
+
+    public static function generateDatesArray($columns)
+    {
+        if(config('database.default') == 'mysql') {
+            return self::generateDatesArrayMySQL($columns);
+        } else if(config('database.default') == 'pgsql') {
+            return self::generateDatesArrayPostgreSQL($columns);
+        }
+    }
+
     public static function generateFullTextFieldsArray($model)
     {
         $fullTextFields = [];
 
-        $expression = DB::raw("SHOW INDEX FROM " . $model . " WHERE Index_type = 'FULLTEXT'");
-        $query = $expression->getValue( DB::connection()->getQueryGrammar() );
-
-        $indexes = DB::select($query);
-        foreach ($indexes as $index) {
-            $fullTextFields[] = $index->Column_name;
-        }
+//        $expression = DB::raw("SHOW INDEX FROM " . $model . " WHERE Index_type = 'FULLTEXT'");
+//        $query = $expression->getValue( DB::connection()->getQueryGrammar() );
+//
+//        $indexes = DB::select($query);
+//        foreach ($indexes as $index) {
+//            $fullTextFields[] = $index->Column_name;
+//        }
         return $fullTextFields;
     }
 
@@ -269,7 +382,7 @@ class ModelService extends AbstractService
         }
     }
 
-    public static function getIdFields($namespace, $module, $model): array
+    public static function getIdFieldsMySQL($namespace, $module, $model): array
     {
         $columns = self::getColumns($model);
 
@@ -307,4 +420,108 @@ class ModelService extends AbstractService
         return $idFields;
     }
 
+    public static function getIdFieldsPostgreSQL($namespace, $module, $model): array
+    {
+        $columns = self::getColumns($model);
+
+        $idFields = [];
+
+        foreach ($columns as $column) {
+            if($column->column_name == 'object_id') continue;
+
+            $foreignModel = Str::remove('_id', $column->column_name);
+
+            if (Str::endsWith($column->column_name, '_id')) {
+                $configModules = config('generator.modules');
+
+                $classModule = '';
+                foreach ($configModules as $configModule) {
+                    if (Str::startsWith($column->column_name, $configModule['prefix'] . '_')) {
+                        $classModule = $configModule['name'];
+                        break;
+                    }
+                }
+
+                $module = strtolower(Str::singular($module));
+                $foreignModel = ucfirst(Str::camel(Str::singular($foreignModel)));
+                $modelWithoutModule = self::getModelName($foreignModel, $classModule);
+
+                $idFields[] = [
+                    '\\' . $namespace . '\\' . $classModule . '\\Database\\Models\\' . $modelWithoutModule,
+                    $column->column_name,
+                    Str::camel($column->column_name),
+                    self::columnHasComment($model, $column, '[!model]') ? 1 : 0
+                ];
+            }
+        }
+
+        return $idFields;
+    }
+
+    public static function getIdFields($namespace, $module, $model): array
+    {
+        if(config('database.default') == 'mysql') {
+            return self::getIdFieldsMySQL($namespace, $module, $model);
+        } else if(config('database.default') == 'pgsql') {
+            return self::getIdFieldsPostgreSQL($namespace, $module, $model);
+        }
+
+        return [];
+    }
+
+    public static function columnHasComment($model, $column, $comment) {
+        if(config('database.default') == 'mysql') {
+            return Str::contains($column->Comment, $comment);
+        } else if(config('database.default') == 'pgsql') {
+            $columnComment = self::getCommentsOfPostgreSQL($model, $column->column_name);
+            foreach ($columnComment as $value) {
+                if(Str::contains($value, $comment))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static function getCommentsOfPostgreSQL($model, $column)
+    {
+        $postgreComments = DB::select("select
+            c.table_schema,
+            c.table_name,
+            c.column_name,
+            pgd.description
+        from pg_catalog.pg_statio_all_tables as st
+                 inner join pg_catalog.pg_description pgd on (
+            pgd.objoid = st.relid
+            )
+                 inner join information_schema.columns c on (
+            pgd.objsubid   = c.ordinal_position and
+            c.table_schema = st.schemaname and
+            c.table_name   = st.relname
+            )
+        where c.table_schema = 'public'
+          AND c.table_name   = '" . $model . "'
+          AND c.column_name = '" . $column . "';");
+
+        $comments = [];
+
+        foreach ($postgreComments as $comment) {
+            $comments[$comment->column_name] = $comment->description;
+        }
+
+        return $comments;
+    }
+
+    public static function getCommentsOfMySQL($model)
+    {
+        $columns = self::getColumns($model);
+
+        $comments = [];
+
+        foreach ($columns as $column) {
+            $comments[$column->Field] = $column->Comment;
+        }
+
+        return $comments;
+    }
 }

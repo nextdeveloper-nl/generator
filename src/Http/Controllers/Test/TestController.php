@@ -2,7 +2,7 @@
 
 namespace NextDeveloper\Generator\Http\Controllers\Test;
 
-use NextDeveloper\Generator\Common\AbstractController;
+use NextDeveloper\Commons\Http\Controllers\AbstractController;
 use NextDeveloper\Generator\Services\Test\ModelTestService;
 
 class TestController extends AbstractController

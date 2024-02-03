@@ -10,12 +10,7 @@ use NextDeveloper\Commons\Helpers\DatabaseHelper;
 use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};
 use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}QueryFilter;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
-use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}CreatedEvent;
-use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}CreatingEvent;
-use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}UpdatedEvent;
-use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}UpdatingEvent;
-use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}DeletedEvent;
-use {{ $namespace }}\{{ $module }}\Events\{{ $model }}\{{ $model }}DeletingEvent;
+use NextDeveloper\Events\Services\Events;
 
 /**
 * This class is responsible from managing the data for {{ $model }}
@@ -117,8 +112,6 @@ class Abstract{{ $model }}Service {
     * @throw Exception
     */
     public static function create(array $data) {
-        event( new {{ Str::plural($model) }}CreatingEvent() );
-
         @foreach($idFields as $field)
         if (array_key_exists('{{$field[1]}}', $data))
             $data['{{$field[1]}}'] = DatabaseHelper::uuidToId(
@@ -133,25 +126,25 @@ class Abstract{{ $model }}Service {
             throw $e;
         }
 
-        event( new {{ Str::plural($model) }}CreatedEvent($model) );
+        Events::fire('created:{{$namespace}}\{{$module}}\{{$model}}', $model);
 
         return $model->fresh();
     }
 
-/**
-* This function expects the ID inside the object.
-*
-* @param array $data
-* @return {{ $model }}
-*/
-public static function updateRaw(array $data) : ?{{ $model }}
-{
-if(array_key_exists('id', $data)) {
-return self::update($data['id'], $data);
-}
+    /**
+    * This function expects the ID inside the object.
+    *
+    * @param array $data
+    * @return {{ $model }}
+    */
+    public static function updateRaw(array $data) : ?{{ $model }}
+    {
+        if(array_key_exists('id', $data)) {
+            return self::update($data['id'], $data);
+        }
 
-return null;
-}
+        return null;
+    }
 
     /**
     * This method updated the model from an array.
@@ -183,7 +176,7 @@ return null;
            throw $e;
         }
 
-        event( new {{ $model }}UpdatedEvent($model) );
+        Events::fire('updated:{{$namespace}}\{{$module}}\{{$model}}', $model);
 
         return $model->fresh();
     }
@@ -201,7 +194,7 @@ return null;
     public static function delete($id) {
         $model = {{ $model }}::where('uuid', $id)->first();
 
-        event( new {{ $model }}DeletingEvent() );
+        Events::fire('deleted:{{$namespace}}\{{$module}}\{{$model}}', $model);
 
         try {
             $model = $model->delete();

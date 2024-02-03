@@ -2,7 +2,7 @@ namespace {{ $namespace }}\{{ $module }}\Http\Controllers\{{ $model }};
 
 use Illuminate\Http\Request;
 use {{ $namespace }}\{{ $module }}\Http\Controllers\AbstractController;
-use NextDeveloper\Generator\Http\Traits\ResponsableFactory;
+use NextDeveloper\Commons\Http\Response\ResponsableFactory;
 use {{ $namespace }}\{{ $module }}\Http\Requests\{{ $model }}\{{ $model }}UpdateRequest;
 use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}QueryFilter;
 use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};

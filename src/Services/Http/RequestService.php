@@ -46,6 +46,14 @@ class RequestService extends AbstractService
     }
 
     public static function generateRulesArray($columns, $isUpdate = false) {
+        if(config('database.default') == 'mysql') {
+            return self::generateRulesArrayMySQL($columns, $isUpdate);
+        } else {
+            return self::generateRulesArrayPostgresql($columns, $isUpdate);
+        }
+    }
+
+    public static function generateRulesArrayMySQL($columns, $isUpdate = false) {
         $rules = [];
         $discardedFields = ['created_at', 'deleted_at', 'updated_at', 'id', 'uuid'];
 
@@ -62,6 +70,86 @@ class RequestService extends AbstractService
             $fieldName = $column->Field;
 
             $type = $column->Type;
+
+            if (!in_array($fieldName, $discardedFields) && stripos($fieldName, 'uuid') === false){
+                $rules[$fieldName] = '';
+                if($columnDefaultValue == null){
+                    $rules[$fieldName] = $required;
+                }
+
+                switch ($columnType) {
+                    case 'boolean':
+                    case 'tinyint':
+                        $rules[$fieldName] .= 'boolean|';
+                        break;
+                    case 'decimal':
+                    case 'float':
+                    case 'double':
+                    case 'real':
+                        $rules[$fieldName] .= 'numeric|';
+                        break;
+                    case 'int':
+                    case 'integer':
+                    case 'bigint':
+                    case 'mediumint':
+                    case 'smallint':
+                        if(!Str::endsWith($fieldName, '_id')) $rules[$fieldName] .= 'integer|';
+                        break;
+                    case 'date':
+                    case 'datetime':
+                    case 'timestamp':
+                    case 'immutable_date':
+                    case 'immutable_datetime':
+                        $rules[$fieldName] .= 'date|';
+                        break;
+                    case 'text':
+                    case 'mediumtext':
+                    case 'longtext':
+                    case 'varchar':
+                    case 'char':
+                        $lengthRegex = '/\((?<max>\d+)\)/';
+                        preg_match($lengthRegex, $type, $matches);
+
+                        $rules[$fieldName] .= 'string|'; // Is this necessary when we have the max rule?
+                        if (isset($matches['max'])) {
+                            $rules[$fieldName] .= 'max:' . $matches['max'].'|';
+                        }
+                }
+
+                if(
+                    Str::endsWith($fieldName, '_id') &&
+                    $fieldName != 'object_id'
+                ) {
+                    $rules[$fieldName] .= self::getTableRelationRule($fieldName) . '|';
+                }
+
+                if (Str::endsWith($rules[$fieldName], '|')) {
+                    $rules[$fieldName] = substr($rules[$fieldName], 0, -1);
+                }
+            }
+
+        }
+
+        return $rules;
+    }
+
+    public static function generateRulesArrayPostgresql($columns, $isUpdate = false) {
+        $rules = [];
+        $discardedFields = ['created_at', 'deleted_at', 'updated_at', 'id', 'uuid'];
+
+        foreach ($columns as $column) {
+            $columnType = self::cleanColumnType($column->data_type);
+            $columnDefaultValue = $column->column_default;
+            $nullable = $column->is_nullable === 'YES';
+
+            if($isUpdate)
+                $required = 'nullable|';
+            else
+                $required = $nullable ? 'nullable|' : 'required|';
+
+            $fieldName = $column->column_name;
+
+            $type = $column->data_type;
 
             if (!in_array($fieldName, $discardedFields) && stripos($fieldName, 'uuid') === false){
                 $rules[$fieldName] = '';
