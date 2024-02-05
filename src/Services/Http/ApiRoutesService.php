@@ -2,6 +2,7 @@
 
 namespace NextDeveloper\Generator\Services\Http;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use NextDeveloper\Generator\Exceptions\TemplateNotFoundException;
 use NextDeveloper\Generator\Services\AbstractService;
@@ -67,6 +68,8 @@ class ApiRoutesService extends AbstractService
     public static function appendToRoutes($rootPath, $namespace, $module, $model, $forceOverwrite) : bool{
         $content = self::generate($namespace, $module, $model);
         $rootPath .= '/src/Http/api.routes.php';
+
+        Log::info('[RouteAppend] Appending route for ' . $model . ' to ' . $rootPath . '.');
 
         return self::appendToFile($rootPath, $content, $forceOverwrite);
     }

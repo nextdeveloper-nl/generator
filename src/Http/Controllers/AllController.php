@@ -53,8 +53,8 @@ class AllController extends AbstractController
 //            StructureService::generateComposerFile($namespace, $moduleName, $rootPath, $forceOverwrite);
 //            Log::info('[Generator] Generating service provider');
 //            StructureService::generateServiceProviderFile($rootPath, $namespace, $moduleName, $forceOverwrite);
-//            Log::info('[Generator] Generating api routes file');
-//            StructureService::generateApiRoutesFile($rootPath, $namespace, $moduleName, $forceOverwrite);
+            Log::info('[Generator] Generating api routes file');
+            StructureService::generateApiRoutesFile($rootPath, $namespace, $moduleName, $forceOverwrite);
 //            Log::info('[Generator] Generating configuration files');
 //            StructureService::generateConfigurationFiles($rootPath, $moduleName, $forceOverwrite);
 //
@@ -73,6 +73,7 @@ class AllController extends AbstractController
             }
 
             foreach ($modelsArray as $model) {
+                dump('Generating model: ' . $model);
                 $this->generateModels($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
             }
 
@@ -91,6 +92,7 @@ class AllController extends AbstractController
             }
 
             foreach ($viewsArray as $model) {
+                dump('Generating view: ' . $model);
                 $this->generateViews($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
             }
         }
@@ -121,7 +123,7 @@ class AllController extends AbstractController
         ControllerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
         ApiRoutesService::appendToRoutes($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
-        //HttpConfigurationService::appendToModelBinding($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+        HttpConfigurationService::appendToModelBinding($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
         //  Not writing over the file
         TransformerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
         TransformerService::generateAbstractFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
@@ -146,7 +148,7 @@ class AllController extends AbstractController
         ControllerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
         ApiRoutesService::appendToRoutes($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
-        //HttpConfigurationService::appendToModelBinding($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+        HttpConfigurationService::appendToModelBinding($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
         //  Not writing over the file
         TransformerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
         TransformerService::generateAbstractFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
