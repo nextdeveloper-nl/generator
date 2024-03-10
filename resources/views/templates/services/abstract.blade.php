@@ -120,6 +120,12 @@ class Abstract{{ $model }}Service {
             );
 	@endforeach
 
+        if(!array_key_exists('iam_account_id', $data))
+            $data['iam_account_id'] = UserHelper::currentAccount()->id;
+
+        if(!array_key_exists('iam_user_id', $data))
+            $data['iam_user_id']    = UserHelper::me()->id;
+
         try {
             $model = {{ $model }}::create($data);
         } catch(\Exception $e) {
@@ -167,7 +173,7 @@ class Abstract{{ $model }}Service {
             );
 	@endforeach
 
-        event( new {{ $model }}UpdatingEvent($model) );
+        Events::fire('updating:{{$namespace}}\{{$module}}\{{$model}}', $model);
 
         try {
            $isUpdated = $model->update($data);

@@ -26,6 +26,7 @@ class FilterService extends AbstractService
             'module'              =>  $module,
             'model'               =>  $modelWithoutModule,
             'columns'             =>  $columns,
+            'hasTagsField'        =>  self::hasColumn('tags', $model),
             'filterTextFields'    =>  $filterTextFields,
             'filterNumberFields'  =>  $filterNumberFields,
             'filterBooleanFields' =>  $filterBooleanFields,

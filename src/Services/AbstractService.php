@@ -34,6 +34,69 @@ class AbstractService
         return $modelWithoutModule;
     }
 
+    public static function columnHasComment($model, $column, $comment) {
+        if(config('database.default') == 'mysql') {
+            return Str::contains($column->Comment, $comment);
+        } else if(config('database.default') == 'pgsql') {
+            $columnComment = self::getCommentsOfPostgreSQL($model, $column);
+            $key = $model . '_' . $column;
+            if(array_key_exists($key, $columnComment)){
+                if(Str::contains($columnComment[$key], $comment))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static function getAliasModel($model, $column) {
+        $comments = self::getCommentsOfPostgreSQL($model, $column);
+
+        if(array_key_exists($model . '_' . $column, $comments)) {
+            if(Str::contains($comments[$model . '_' . $column], '[alias:')) {
+                $aliasModel =  $comments[$model . '_' . $column];
+
+                $start = strpos($aliasModel, '[alias:');
+                $end = strpos($aliasModel, ']', $start + 1);
+                return substr($aliasModel, $start + 7, $end - $start - 7);
+            }
+        }
+    }
+
+    public static function getCommentsOfPostgreSQL($model, $column)
+    {
+        if(session()->has('postgreComments')) {
+            return session()->get('postgreComments');
+        }
+
+        $postgreComments = DB::select("select
+            c.table_schema,
+            c.table_name,
+            c.column_name,
+            pgd.description
+        from pg_catalog.pg_statio_all_tables as st
+                 inner join pg_catalog.pg_description pgd on (
+            pgd.objoid = st.relid
+            )
+                 inner join information_schema.columns c on (
+            pgd.objsubid   = c.ordinal_position and
+            c.table_schema = st.schemaname and
+            c.table_name   = st.relname
+            )
+        where c.table_schema = 'public';");
+
+        $comments = [];
+
+        foreach ($postgreComments as $comment) {
+            $key = $comment->table_name . '_' . $comment->column_name;
+            $comments[$key] = $comment->description;
+        }
+
+        session()->put('postgreComments', $comments);
+
+        return $comments;
+    }
+
     public static function getColumnsFromMySQL($model) {
         $expression = DB::raw("SHOW FULL COLUMNS FROM " . $model);
         $query = $expression->getValue( DB::connection()->getQueryGrammar() );

@@ -19,6 +19,9 @@ return [
         ],
         'schemas',
         'src'   =>  [
+            'Authorization' =>  [
+                'Roles'
+            ],
             'Broadcasts',
             'Common'    =>  [
                 'Cache',
@@ -102,7 +105,7 @@ return [
         [
         'representative' => 'user'
         ]*/
-    'enableBroadcast'   =>  true,
+    'enableBroadcast'   =>  false,
 
     'extend'    =>  [
         'model' => '\NextDeveloper\IAM\Database\Abstract\AuthorizationModel'
@@ -148,7 +151,7 @@ return [
             'tables'    =>  'common_*',
             'views'     =>  'common_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true
+            'generate'  =>  false
         ],
         [
             'name'      =>  'IAM',
@@ -156,7 +159,7 @@ return [
             'tables'    =>  'iam_*',
             'views'     =>  'iam_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
+            'generate'  =>  false,
         ],
         [
             'name'      =>  'Marketplace',
@@ -164,7 +167,7 @@ return [
             'tables'    =>  'marketplace_*',
             'views'     =>  'marketplace_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
+            'generate'  =>  false,
         ],
         [
             'name'      =>  'CRM',
@@ -172,7 +175,7 @@ return [
             'tables'    =>  'crm_*',
             'views'     =>  'crm_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
+            'generate'  =>  false,
         ],
         [
             'name'      =>  'IAAS',
@@ -180,7 +183,7 @@ return [
             'tables'    =>  'iaas_*',
             'views'     =>  'iaas_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
+            'generate'  =>  false,
         ],
         [
             'name'      =>  'Options',
@@ -188,7 +191,7 @@ return [
             'tables'    =>  'option_*',
             'views'     =>  'option_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
+            'generate'  =>  false,
         ],
         [
             'name'      =>  'Golf',
@@ -204,7 +207,7 @@ return [
             'tables'    =>  'stay_*',
             'views'     =>  'stay_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
+            'generate'  =>  false,
         ],
         [
             'name'      =>  'Communication',
@@ -212,7 +215,7 @@ return [
             'tables'    =>  'communication_*',
             'views'     =>  'communication_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
+            'generate'  =>  false,
         ],
         [
             'name'      =>  'LMS',
@@ -221,6 +224,46 @@ return [
             'views'     =>  'lms_*',
             'namespace' =>  'NextDeveloper',
             'generate'  =>  true,
+        ],
+        [
+            'name'      =>  'Events',
+            'prefix'    =>  'events',
+            'tables'    =>  'event_*',
+            'views'     =>  'event_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
+        ],
+        [
+            'name'      =>  'Blogs',
+            'prefix'    =>  'blog',
+            'tables'    =>  'blog_*',
+            'views'     =>  'blog_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
+        ],
+        [
+            'name'      =>  'Support',
+            'prefix'    =>  'support',
+            'tables'    =>  'support_*',
+            'views'     =>  'support_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
+        ],
+        [
+            'name'      =>  'Partnership',
+            'prefix'    =>  'partnership',
+            'tables'    =>  'partnership_*',
+            'views'     =>  'partnership_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
+        ],
+        [
+            'name'      =>  'Agenda',
+            'prefix'    =>  'agenda',
+            'tables'    =>  'agenda_*',
+            'views'     =>  'agenda_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
         ],
     ],
 ];

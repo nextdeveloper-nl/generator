@@ -12,9 +12,12 @@ use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 
 /**
-* Class {{ $model }}.
+* {{ $model }} model.
 *
 * @package {{ $namespace }}\{{ $module }}\Database\Models
+@foreach($documentation as $doc)
+* {{ $doc }}
+@endforeach
 */
 class {{ $model }} extends Model
 {
@@ -37,6 +40,12 @@ protected $table = '{{$table}}';
 * @var array
 */
 protected $guarded = [];
+
+protected $fillable = [
+    @foreach($fillable as $item)
+        '{{ $item }}',
+    @endforeach
+];
 
 /**
 *  Here we have the fulltext fields. We can use these for fulltext search if enabled.

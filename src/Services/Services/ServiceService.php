@@ -69,6 +69,7 @@ class ServiceService extends AbstractService
         $modelWithoutModule = self::getModelName($model, $module);
 
         $file = $rootPath . '/src/Services/' . $modelWithoutModule . 'Service.php';
+
         if(!file_exists(base_path($file)) || $forceOverwrite) {
             self::writeToFile($forceOverwrite, $file, $content);
         }

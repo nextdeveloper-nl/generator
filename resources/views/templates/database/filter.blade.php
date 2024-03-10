@@ -15,6 +15,28 @@ use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
  */
 class {{ $model }}QueryFilter extends AbstractQueryFilter
 {
+@if($hasTagsField)
+    /**
+     * Filter by tags
+     *
+     * @param $values
+     * @return Builder
+     */
+    public function tags($values) {
+        $tags = explode(',', $values);
+
+        $search = '';
+
+        for($i = 0; $i < count($tags); $i++) {
+            $search .= "'" . trim($tags[$i]) . "',";
+        }
+
+        $search = substr($search, 0, -1);
+
+        return $this->builder->whereRaw('tags @> ARRAY[' . $search . ']');
+    }
+@endif
+
     /**
     * @var Builder
     */
@@ -46,7 +68,7 @@ public function {{ $fieldName }}($value)
 
         return $this->builder->where('{{$field}}', $operator, $value);
     }
-    
+
 @endforeach
 @foreach( $filterBooleanFields as $field )
     @php
@@ -56,18 +78,18 @@ public function {{ $fieldName }}()
     {
         return $this->builder->where('{{$field}}', true);
     }
-    
+
 @endforeach
 @foreach( $filterDateFields as $field )
     @php
     $fieldName = Str::camel($field);
     @endphp
-public function {{$fieldName}}Start($date) 
+public function {{$fieldName}}Start($date)
     {
         return $this->builder->where( '{{$field}}', '>=', $date );
     }
 
-    public function {{$fieldName}}End($date) 
+    public function {{$fieldName}}End($date)
     {
         return $this->builder->where( '{{$field}}', '<=', $date );
     }

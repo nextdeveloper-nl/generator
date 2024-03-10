@@ -21,18 +21,20 @@ class ModelService extends AbstractService
         $casts = self::generateCastsArray($columns);
         $dates = self::generateDatesArray($columns);
         $fullTextFields = self::generateFullTextFieldsArray($model);
+        $fillable = self::generateFillable($columns);
+        $documentation = self::generateIdeDocumentation($columns);
         $tabAmount = 2;
 
         $hasTimestamps = false;
 
         foreach ($columns as $column) {
             if(config('database.default') == 'mysql') {
-                if ($column->Field == 'created_at') {
+                if ($column->Field == 'updated_at') {
                     $hasTimestamps = true;
                     break;
                 }
             } else if(config('database.default') == 'pgsql') {
-                if ($column->column_name == 'created_at') {
+                if ($column->column_name == 'updated_at') {
                     $hasTimestamps = true;
                     break;
                 }
@@ -54,10 +56,79 @@ class ModelService extends AbstractService
             'dates' => self::arrayToString($dates),
             'fullTextFields' => self::arrayToString($fullTextFields),
             'perPage' => config('generator.pagination.perPage'),
-            'hasTimestamps' => $hasTimestamps
+            'hasTimestamps' => $hasTimestamps,
+            'fillable' => $fillable,
+            'documentation' => $documentation
         ])->render();
 
         return $render;
+    }
+
+    public static function generateIdeDocumentation($columns) {
+        $documentation = [];
+
+        foreach ($columns as $column) {
+            if(config('database.default') == 'mysql') {
+                $columnType = self::cleanColumnType($column->Type);
+                $columnType = self::changeColumnTypeToPhpObject($columnType);
+                $documentation[] = '@property ' . $columnType . ' $' . $column->Field;
+            } else if(config('database.default') == 'pgsql') {
+                $columnType = self::cleanColumnType($column->data_type);
+                $columnType = self::changeColumnTypeToPhpObject($columnType);
+                $documentation[] = '@property ' . $columnType . ' $' . $column->column_name;
+            }
+        }
+
+        return $documentation;
+    }
+
+    public static function changeColumnTypeToPhpObject($columnType) {
+        switch ($columnType) {
+            case 'text':
+            case 'char':
+            case 'mediumtext':
+            case 'longtext':
+            case 'varchar':
+                return 'string';
+            case 'integer':
+            case 'bigint':
+            case 'mediumint':
+            case 'smallint':
+            case 'float':
+                return 'integer';
+            case 'tinyint':
+            case 'boolean':
+                return 'boolean';
+            case 'ARRAY':
+                return 'array';
+            case 'timestamp':
+            case 'datetime':
+            case 'immutable_date':
+            case 'immutable_datetime':
+            case 'date':
+            case 'timestamp with time zone':
+                return '\Carbon\Carbon';
+            case 'uuid':
+                return 'string';
+        }
+    }
+
+    public static function generateFillable($columns) {
+        $fillable = [];
+
+        foreach ($columns as $column) {
+            if(config('database.default') == 'mysql') {
+                if ($column->Field != 'id' && $column->Field != 'uuid' && $column->Field != 'created_at' && $column->Field != 'updated_at' && $column->Field != 'deleted_at') {
+                    $fillable[] = $column->Field;
+                }
+            } else if(config('database.default') == 'pgsql') {
+                if ($column->column_name != 'id' && $column->column_name != 'uuid' && $column->column_name != 'created_at' && $column->column_name != 'updated_at' && $column->column_name != 'deleted_at') {
+                    $fillable[] = $column->column_name;
+                }
+            }
+        }
+
+        return $fillable;
     }
 
     /**
@@ -220,6 +291,9 @@ class ModelService extends AbstractService
                     break;
                 case 'ARRAY':
                     switch ($column->udt_name) {
+                        case '_integer':
+                            $casts[$column->column_name] = '\Tpetry\PostgresqlEnhanced\Eloquent\Casts\IntegerArrayCast::class';
+                            break;
                         case '_int2':
                         case '_int4':
                         case '_int8':
@@ -427,18 +501,37 @@ class ModelService extends AbstractService
         $idFields = [];
 
         foreach ($columns as $column) {
+            $aliasColumn = null;
+
             if($column->column_name == 'object_id') continue;
 
+            //  Checking if we have an alias. Because this may be an another column.
+            if(AbstractService::columnHasComment($model,  $column->column_name, '[alias:')) {
+                $aliasColumn = AbstractService::getAliasModel($model, $column->column_name);
+            }
+
             $foreignModel = Str::remove('_id', $column->column_name);
+
+            if($aliasColumn) {
+                $foreignModel = $aliasColumn;
+                $foreignModel = Str::remove('_id', $foreignModel);
+            }
 
             if (Str::endsWith($column->column_name, '_id')) {
                 $configModules = config('generator.modules');
 
                 $classModule = '';
                 foreach ($configModules as $configModule) {
-                    if (Str::startsWith($column->column_name, $configModule['prefix'] . '_')) {
-                        $classModule = $configModule['name'];
-                        break;
+                    if($aliasColumn) {
+                        if (Str::startsWith($aliasColumn, $configModule['prefix'] . '_')) {
+                            $classModule = $configModule['name'];
+                            break;
+                        }
+                    } else {
+                        if (Str::startsWith($column->column_name, $configModule['prefix'] . '_')) {
+                            $classModule = $configModule['name'];
+                            break;
+                        }
                     }
                 }
 

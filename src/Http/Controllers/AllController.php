@@ -103,13 +103,15 @@ class AllController extends AbstractController
     private function generateModels($rootPath, $namespace, $moduleName, $model, $forceOverwrite) {
         StructureService::createEventFolderForModel($rootPath, $model, $moduleName);
 
+        //ServiceService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
         ServiceService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
         // Abstract file should always be overwritten, so sending true directly!
         ServiceService::generateAbstractFile($rootPath, $namespace, $moduleName, $model, true);
 
-        EventsService::generateFiles($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
-        HandlersService::generateFiles($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+        //We removed events from generation because we will be using our own events from now on.
+        //EventsService::generateFiles($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+        //HandlersService::generateFiles($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
         ModelService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
         ModelTestService::generateTraitFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);

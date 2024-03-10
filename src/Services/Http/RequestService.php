@@ -15,7 +15,7 @@ class RequestService extends AbstractService
      */
     public static function generate($namespace, $module, $model, $requestType) {
         $columns = self::getColumns($model);
-        $rules = self::generateRulesArray($columns, ($requestType == 'Update'));
+        $rules = self::generateRulesArray($model, $columns, ($requestType == 'Update'));
         $tabAmount = 3;
 
         $modelWithoutModule = self::getModelName($model, $module);
@@ -45,11 +45,11 @@ class RequestService extends AbstractService
         return true;
     }
 
-    public static function generateRulesArray($columns, $isUpdate = false) {
+    public static function generateRulesArray($model, $columns, $isUpdate = false) {
         if(config('database.default') == 'mysql') {
-            return self::generateRulesArrayMySQL($columns, $isUpdate);
+            return self::generateRulesArrayMySQL($model, $columns, $isUpdate);
         } else {
-            return self::generateRulesArrayPostgresql($columns, $isUpdate);
+            return self::generateRulesArrayPostgresql($model, $columns, $isUpdate);
         }
     }
 
@@ -133,11 +133,13 @@ class RequestService extends AbstractService
         return $rules;
     }
 
-    public static function generateRulesArrayPostgresql($columns, $isUpdate = false) {
+    public static function generateRulesArrayPostgresql($model, $columns, $isUpdate = false) {
         $rules = [];
         $discardedFields = ['created_at', 'deleted_at', 'updated_at', 'id', 'uuid'];
 
         foreach ($columns as $column) {
+            $aliasColumn = AbstractService::getAliasModel($model, $column->column_name);
+
             $columnType = self::cleanColumnType($column->data_type);
             $columnDefaultValue = $column->column_default;
             $nullable = $column->is_nullable === 'YES';
@@ -200,7 +202,10 @@ class RequestService extends AbstractService
                     Str::endsWith($fieldName, '_id') &&
                     $fieldName != 'object_id'
                 ) {
-                    $rules[$fieldName] .= self::getTableRelationRule($fieldName) . '|';
+                    if($aliasColumn)
+                        $rules[$fieldName] .= self::getTableRelationRule($aliasColumn) . '|';
+                    else
+                        $rules[$fieldName] .= self::getTableRelationRule($fieldName) . '|';
                 }
 
                 if (Str::endsWith($rules[$fieldName], '|')) {
