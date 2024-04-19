@@ -138,6 +138,11 @@ class RequestService extends AbstractService
         $discardedFields = ['created_at', 'deleted_at', 'updated_at', 'id', 'uuid'];
 
         foreach ($columns as $column) {
+            $isReadonly = AbstractService::columnHasComment($model, $column->column_name, '[ro]');
+
+            if($isReadonly)
+                continue;
+
             $aliasColumn = AbstractService::getAliasModel($model, $column->column_name);
 
             $columnType = self::cleanColumnType($column->data_type);

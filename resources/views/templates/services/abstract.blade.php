@@ -70,6 +70,11 @@ class Abstract{{ $model }}Service {
         return {{ $model }}::findByRef($ref);
     }
 
+    public static function getActions()
+    {
+        return config('{{ $config }}.actions');
+    }
+
     /**
     * This method returns the model by lookint at its id
     *
@@ -113,18 +118,25 @@ class Abstract{{ $model }}Service {
     */
     public static function create(array $data) {
         @foreach($idFields as $field)
-        if (array_key_exists('{{$field[1]}}', $data))
+        if (array_key_exists('{{$field[1]}}', $data)) {
             $data['{{$field[1]}}'] = DatabaseHelper::uuidToId(
                 '{{$field[0]}}',
                 $data['{{$field[1]}}']
             );
-	@endforeach
+        }
+            @if($field[1] == 'iam_account_id')
 
-        if(!array_key_exists('iam_account_id', $data))
-            $data['iam_account_id'] = UserHelper::currentAccount()->id;
+                if(!array_key_exists('iam_account_id', $data)) {
+                $data['iam_account_id'] = UserHelper::currentAccount()->id;
+                }
+            @endif
+        @if($field[1] == 'iam_user_id')
 
-        if(!array_key_exists('iam_user_id', $data))
+            if(!array_key_exists('iam_user_id', $data)) {
             $data['iam_user_id']    = UserHelper::me()->id;
+            }
+        @endif
+	@endforeach
 
         try {
             $model = {{ $model }}::create($data);

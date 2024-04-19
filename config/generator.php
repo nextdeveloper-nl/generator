@@ -20,7 +20,8 @@ return [
         'schemas',
         'src'   =>  [
             'Authorization' =>  [
-                'Roles'
+                'Roles',
+                'Rules'
             ],
             'Broadcasts',
             'Common'    =>  [
@@ -54,7 +55,10 @@ return [
             'Initiators',
             'Jobs',
             'Notifications',
-            'Policies',
+            'Policies'  =>  [
+                'Database',
+                'Actions'
+            ],
             'Services' => [
                 'AbstractServices'
             ],
@@ -199,7 +203,7 @@ return [
             'tables'    =>  'golf_*',
             'views'     =>  'golf_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
+            'generate'  =>  false,
         ],
         [
             'name'      =>  'Stay',
@@ -223,7 +227,7 @@ return [
             'tables'    =>  'lms_*',
             'views'     =>  'lms_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
+            'generate'  =>  false,
         ],
         [
             'name'      =>  'Events',
@@ -264,6 +268,14 @@ return [
             'views'     =>  'agenda_*',
             'namespace' =>  'NextDeveloper',
             'generate'  =>  false,
+        ],
+        [
+            'name'      =>  'Accounting',
+            'prefix'    =>  'accounting',
+            'tables'    =>  'accounting_*',
+            'views'     =>  'accounting_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  true,
         ],
     ],
 ];

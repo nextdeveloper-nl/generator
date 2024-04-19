@@ -2,6 +2,7 @@
 Route::prefix('{{ strtolower($prefix) }}')->group(function () {
 @endif
         Route::get('/', '{{ $controller }}\{{ $controller }}Controller@index');
+        Route::get('/actions', '{{ $controller }}\{{ $controller }}Controller@getActions');
 
 @php
     if($traits) {
@@ -17,6 +18,8 @@ Route::prefix('{{ strtolower($prefix) }}')->group(function () {
         Route::get('/{@php echo str_replace('-', '_', strtolower($model))@endphp}', '{{ $controller }}\{{ $controller }}Controller@show');
 
         Route::post('/', '{{ $controller }}\{{ $controller }}Controller@store');
+        Route::post('/{@php echo str_replace('-', '_', strtolower($model))@endphp}/do/{action}', '{{ $controller }}\{{ $controller }}Controller@doAction');
+
         Route::patch('/{@php echo str_replace('-', '_', strtolower($model))@endphp}', '{{ $controller }}\{{ $controller }}Controller@update');
         Route::delete('/{@php echo str_replace('-', '_', strtolower($model))@endphp}', '{{ $controller }}\{{ $controller }}Controller@destroy');
 @if($prefix != '/')

@@ -20,7 +20,8 @@ class ServiceService extends AbstractService
         $render = view('Generator::templates/services/service', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
-            'model'         =>  $modelWithoutModule
+            'model'         =>  $modelWithoutModule,
+            'config'        =>  Str::lower($module)
         ])->render();
 
         return $render;
@@ -38,12 +39,15 @@ class ServiceService extends AbstractService
 
         $modelWithoutModule = self::getModelName($model, $module);
 
+        dump($idFields);
+
         $render = view('Generator::templates/services/abstract', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
             'createData'         =>  self::buildData($columns, $model),
             'idFields'      =>  $idFields,
-            'model'      =>  $modelWithoutModule
+            'model'      =>  $modelWithoutModule,
+            'config'        =>  Str::lower($module)
         ])->render();
 
         return $render;
