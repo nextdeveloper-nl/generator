@@ -39,8 +39,6 @@ class ServiceService extends AbstractService
 
         $modelWithoutModule = self::getModelName($model, $module);
 
-        dump($idFields);
-
         $render = view('Generator::templates/services/abstract', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,

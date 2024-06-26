@@ -34,6 +34,7 @@ class ControllerService extends AbstractService
         $modelWithoutModule = self::getModelName($model, $module);
 
         $file = $rootPath . '/src/Http/Controllers/' . $modelWithoutModule . '/' . $modelWithoutModule . 'Controller.php';
+
         if(!file_exists(base_path($file)) || $forceOverwrite){
             self::writeToFile($forceOverwrite, $file, $content);
         }

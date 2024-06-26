@@ -74,9 +74,12 @@ public function {{ $fieldName }}($value)
     @php
     $fieldName = Str::camel($field);
     @endphp
-public function {{ $fieldName }}()
+public function {{ $fieldName }}($value)
     {
-        return $this->builder->where('{{$field}}', true);
+        if(!is_bool($value))
+            $value = false;
+
+        return $this->builder->where('{{$field}}', $value);
     }
 
 @endforeach

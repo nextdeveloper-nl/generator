@@ -7,21 +7,21 @@ Route::prefix('{{ strtolower($prefix) }}')->group(function () {
 @php
     if($traits) {
         foreach ($traits as $trait) {
-            echo 'Route::get(\'{' . str_replace('-', '_', strtolower($model)) . '}/' . $trait['suffix'] . ' \', \'' . $controller . '\\' . $controller . 'Controller@' . $trait['get_method'] . '\');' . PHP_EOL;
-            echo 'Route::post(\'{' . str_replace('-', '_', strtolower($model)) . '}/' . $trait['suffix'] . ' \', \'' . $controller . '\\' . $controller . 'Controller@' . $trait['post_method'] . '\');';
+            echo 'Route::get(\'{' . str_replace('-', '_', strtolower($model_identifier)) . '}/' . $trait['suffix'] . ' \', \'' . $controller . '\\' . $controller . 'Controller@' . $trait['get_method'] . '\');' . PHP_EOL;
+            echo 'Route::post(\'{' . str_replace('-', '_', strtolower($model_identifier)) . '}/' . $trait['suffix'] . ' \', \'' . $controller . '\\' . $controller . 'Controller@' . $trait['post_method'] . '\');';
             echo PHP_EOL;
         }
     }
 @endphp
 
-        Route::get('/{@php echo str_replace('-', '_', strtolower($model))@endphp}/{subObjects}', '{{ $controller }}\{{ $controller }}Controller@relatedObjects');
-        Route::get('/{@php echo str_replace('-', '_', strtolower($model))@endphp}', '{{ $controller }}\{{ $controller }}Controller@show');
+        Route::get('/{@php echo str_replace('-', '_', strtolower($model_identifier))@endphp}/{subObjects}', '{{ $controller }}\{{ $controller }}Controller@relatedObjects');
+        Route::get('/{@php echo str_replace('-', '_', strtolower($model_identifier))@endphp}', '{{ $controller }}\{{ $controller }}Controller@show');
 
         Route::post('/', '{{ $controller }}\{{ $controller }}Controller@store');
-        Route::post('/{@php echo str_replace('-', '_', strtolower($model))@endphp}/do/{action}', '{{ $controller }}\{{ $controller }}Controller@doAction');
+        Route::post('/{@php echo str_replace('-', '_', strtolower($model_identifier))@endphp}/do/{action}', '{{ $controller }}\{{ $controller }}Controller@doAction');
 
-        Route::patch('/{@php echo str_replace('-', '_', strtolower($model))@endphp}', '{{ $controller }}\{{ $controller }}Controller@update');
-        Route::delete('/{@php echo str_replace('-', '_', strtolower($model))@endphp}', '{{ $controller }}\{{ $controller }}Controller@destroy');
+        Route::patch('/{@php echo str_replace('-', '_', strtolower($model_identifier))@endphp}', '{{ $controller }}\{{ $controller }}Controller@update');
+        Route::delete('/{@php echo str_replace('-', '_', strtolower($model_identifier))@endphp}', '{{ $controller }}\{{ $controller }}Controller@destroy');
 @if($prefix != '/')
     });
 @endif

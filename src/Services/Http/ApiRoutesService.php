@@ -56,6 +56,7 @@ class ApiRoutesService extends AbstractService
             'namespace'          =>  $namespace,
             'module'             =>  $module,
             'model'              =>  $model,
+            'model_identifier'            =>  strlen($model) > 32 ? Str::acronym($model) : $model,
             'prefix'             => $prefix,
             'controller'        =>  $controller,
             'traits'             =>  config('generator.traits.controller')

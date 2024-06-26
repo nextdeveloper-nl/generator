@@ -7,10 +7,12 @@ use Illuminate\Support\Str;
 use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
+use NextDeveloper\Commons\Database\Models\AvailableActions;
 use {{ $namespace }}\{{ $module }}\Database\Models\{{ $model }};
 use {{ $namespace }}\{{ $module }}\Database\Filters\{{ $model }}QueryFilter;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
 use NextDeveloper\Events\Services\Events;
+use NextDeveloper\Commons\Exceptions\NotAllowedException;
 
 /**
 * This class is responsible from managing the data for {{ $model }}
@@ -23,6 +25,8 @@ class Abstract{{ $model }}Service {
     public static function get({{ $model }}QueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator {
         $enablePaginate = array_key_exists('paginate', $params);
 
+        $request = new Request();
+
         /**
         * Here we are adding null request since if filter is null, this means that this function is called from
         * non http application. This is actually not I think its a correct way to handle this problem but it's a workaround.
@@ -30,7 +34,7 @@ class Abstract{{ $model }}Service {
         * Please let me know if you have any other idea about this; baris.bulut@nextdeveloper.com
         */
         if($filter == null)
-            $filter = new {{ $model }}QueryFilter(new Request());
+            $filter = new {{ $model }}QueryFilter($request);
 
         $perPage = config('commons.pagination.per_page');
 
@@ -50,10 +54,18 @@ class Abstract{{ $model }}Service {
 
         $model = {{ $model }}::filter($filter);
 
-        if($model && $enablePaginate)
-            return $model->paginate($perPage);
-        else
-            return $model->get();
+        if($enablePaginate) {
+            //  We are using this because we have been experiencing huge security problem when we use the paginate method.
+            //  The reason was, when the pagination method was using, somehow paginate was discarding all the filters.
+            return new \Illuminate\Pagination\LengthAwarePaginator(
+                $model->skip(($request->get('page', 1) - 1) * $perPage)->take($perPage)->get(),
+                $model->count(),
+                $perPage,
+                $request->get('page', 1)
+            );
+        }
+
+        return $model->get();
     }
 
     public static function getAll() {
@@ -72,7 +84,34 @@ class Abstract{{ $model }}Service {
 
     public static function getActions()
     {
-        return config('{{ $config }}.actions');
+        $model = {{ $model }}::class;
+
+        $model = Str::remove('Database\\Models\\', $model);
+
+        $actions = AvailableActions::where('input', $model)
+            ->get();
+
+        return $actions;
+    }
+
+    /**
+    * This method initiates the related action with the given parameters.
+    */
+    public static function doAction($objectId, $action, ...$params)
+    {
+        $object = {{ $model }}::where('uuid', $objectId)->first();
+
+        $action = AvailableActions::where('name', $action)->first();
+        $class = $action->class;
+
+        if(class_exists($class)) {
+            $action = new $class($object, $params);
+            dispatch($action);
+
+            return $action->getActionId();
+        }
+
+        return null;
     }
 
     /**
@@ -177,6 +216,10 @@ class Abstract{{ $model }}Service {
     public static function update($id, array $data) {
         $model = {{ $model }}::where('uuid', $id)->first();
 
+        if(!$model)
+            throw new NotAllowedException('We cannot find the related object to update. ' .
+                'Maybe you dont have the permission to update this object?');
+
         @foreach($idFields as $field)
         if (array_key_exists('{{$field[1]}}', $data))
             $data['{{$field[1]}}'] = DatabaseHelper::uuidToId(
@@ -211,6 +254,10 @@ class Abstract{{ $model }}Service {
     */
     public static function delete($id) {
         $model = {{ $model }}::where('uuid', $id)->first();
+
+        if(!$model)
+            throw new NotAllowedException('We cannot find the related object to delete. ' .
+                'Maybe you dont have the permission to update this object?');
 
         Events::fire('deleted:{{$namespace}}\{{$module}}\{{$model}}', $model);
 

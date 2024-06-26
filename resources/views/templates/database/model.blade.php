@@ -3,6 +3,10 @@ namespace {{ $namespace }}\{{ $module }}\Database\Models;
 @if($has_deleted)
 	use Illuminate\Database\Eloquent\SoftDeletes;
 @endif
+@if($has_sshable)
+    use NextDeveloper\Commons\Database\Traits\SSHable;
+    use NextDeveloper\IAAS\Database\Traits\Agentable;
+@endif
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Database\Traits\Filterable;
@@ -24,6 +28,9 @@ class {{ $model }} extends Model
 use Filterable, UuidId, CleanCache, Taggable;
 @if($has_deleted)
 	use SoftDeletes;
+@endif
+@if($has_sshable)
+    use SSHable, Agentable;
 @endif
 
 

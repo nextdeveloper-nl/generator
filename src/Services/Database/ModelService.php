@@ -47,6 +47,7 @@ class ModelService extends AbstractService
             'namespace' => $namespace,
             'module' => $module,
             'lcModule' => strtolower($module),
+            'has_sshable'   =>  self::hasColumn('ssh_port', $model),
             'has_created' => self::hasColumn('created_at', $model),
             'has_updated' => self::hasColumn('updated_at', $model),
             'has_deleted' => self::hasColumn('deleted_at', $model),

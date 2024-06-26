@@ -50,15 +50,9 @@ class {{ $model }}Controller extends AbstractController
     */
     public function getActions()
     {
-        $actions = {{ $model }}Service::getActions();
+        $data = {{ $model }}Service::getActions();
 
-        if($actions) {
-            if(array_key_exists($this->model, $actions)) {
-                return $this->withArray($actions[$this->model]);
-            }
-        }
-
-        return $this->noContent();
+        return ResponsableFactory::makeResponse($this, $data);
     }
 
     /**
@@ -69,7 +63,7 @@ class {{ $model }}Controller extends AbstractController
     * @return array
     */
     public function doAction($objectId, $action) {
-        $actionId = {{ $model }}Service::doAction($objectId, $action);
+        $actionId = {{ $model }}Service::doAction($objectId, $action, request()->all());
 
         return $this->withArray([
             'action_id' =>  $actionId
@@ -115,6 +109,12 @@ class {{ $model }}Controller extends AbstractController
     * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
     */
     public function store({{ $model }}CreateRequest $request) {
+        if($request->has('validateOnly') && $request->get('validateOnly') == true) {
+            return [
+                'validation'    =>  'success'
+            ];
+        }
+
         $model = {{ $model }}Service::create($request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
@@ -124,11 +124,17 @@ class {{ $model }}Controller extends AbstractController
     * This method updates {{ $model }} object on database.
     *
     * @param ${{ Str::camel($model) }}Id
-    * @param CountryCreateRequest $request
+    * @param {{ $model }}UpdateRequest $request
     * @return mixed|null
     * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
     */
     public function update(${{ Str::camel($model) }}Id, {{ $model }}UpdateRequest $request) {
+        if($request->has('validateOnly') && $request->get('validateOnly') == true) {
+            return [
+                'validation'    =>  'success'
+            ];
+        }
+
         $model = {{ $model }}Service::update(${{ Str::camel($model) }}Id, $request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
@@ -138,7 +144,6 @@ class {{ $model }}Controller extends AbstractController
     * This method updates {{ $model }} object on database.
     *
     * @param ${{ Str::camel($model) }}Id
-    * @param CountryCreateRequest $request
     * @return mixed|null
     * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
     */

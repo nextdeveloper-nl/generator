@@ -187,7 +187,7 @@ return [
             'tables'    =>  'iaas_*',
             'views'     =>  'iaas_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'Options',
@@ -275,7 +275,7 @@ return [
             'tables'    =>  'accounting_*',
             'views'     =>  'accounting_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
-        ],
+            'generate'  =>  false,
+        ]
     ],
 ];
