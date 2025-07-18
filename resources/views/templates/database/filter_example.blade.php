@@ -12,7 +12,7 @@ class {{ $model }}QueryFilter
 
     public function name($name)
     {
-        return $this->builder->where('name', 'like', '%'.$name.'%');
+        return $this->builder->where('name', 'ilike', '%'.$name.'%');
     }
 
     /**
@@ -25,22 +25,22 @@ class {{ $model }}QueryFilter
 
     public function id($id)
     {
-       return $this->builder->where('uuid', 'like', '%'.$id.'%');
+       return $this->builder->where('uuid', 'ilike', '%'.$id.'%');
     }
 
     public function phone($value)
     {
-       return $this->builder->where('phone', 'like', '%' . $value . '%');
+       return $this->builder->where('phone', 'ilike', '%' . $value . '%');
     }
 
     public function email($value)
     {
-      return $this->builder->where('user_email', 'like', '%' . $value . '%');
+      return $this->builder->where('user_email', 'ilike', '%' . $value . '%');
     }
 
     public function phoneNumber($value)
     {
-      return $this->builder->where('phone_number', 'like', '%' . $value . '%');
+      return $this->builder->where('phone_number', 'ilike', '%' . $value . '%');
     }
 
     public function balance($value)
@@ -84,17 +84,17 @@ class {{ $model }}QueryFilter
 
     public function accountType($value)
     {
-    return $this->builder->where('account_type', 'like', '%' . $value . '%');
+    return $this->builder->where('account_type', 'ilike', '%' . $value . '%');
     }
 
     public function representativeUserName($value)
     {
-    return $this->builder->where('representative_user_name', 'like', '%' . $value . '%');
+    return $this->builder->where('representative_user_name', 'ilike', '%' . $value . '%');
     }
 
     public function representativeAccountName($value)
     {
-    return $this->builder->where('representative_account_name', 'like', '%' . $value . '%');
+    return $this->builder->where('representative_account_name', 'ilike', '%' . $value . '%');
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

@@ -2,12 +2,11 @@
 
 namespace NextDeveloper\Generator\Services\Database;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use NextDeveloper\Generator\Services\AbstractService;
 use NextDeveloper\Generator\Exceptions\TemplateNotFoundException;
+use NextDeveloper\Generator\Services\AbstractService;
 
 class ModelService extends AbstractService
 {
@@ -391,6 +390,29 @@ class ModelService extends AbstractService
         return $fullTextFields;
     }
 
+    public static function postgresqlForeignKeys($table)
+    {
+        $query = 'SELECT
+                    tc.table_schema,
+                    tc.constraint_name,
+                    tc.table_name,
+                    kcu.column_name,
+                    ccu.table_schema AS foreign_table_schema,
+                    ccu.table_name AS foreign_table_name,
+                    ccu.column_name AS foreign_column_name
+                FROM information_schema.table_constraints AS tc
+                JOIN information_schema.key_column_usage AS kcu
+                    ON tc.constraint_name = kcu.constraint_name
+                    AND tc.table_schema = kcu.table_schema
+                JOIN information_schema.constraint_column_usage AS ccu
+                    ON ccu.constraint_name = tc.constraint_name
+                WHERE tc.constraint_type = \'FOREIGN KEY\'
+                    AND tc.table_schema=\'public\'
+                    AND tc.table_name=\'' . $table . '\';';
+
+        return DB::select($query);
+    }
+
     public static function foreignKeys($table)
     {
         $query = "
@@ -410,7 +432,7 @@ class ModelService extends AbstractService
 
     public static function generateOneToManyRelations($rootPath, $namespace, $module, $model, $forceOverwrite)
     {
-        $foreignKeys = self::foreignKeys($model);
+        $foreignKeys = self::postgresqlForeignKeys($model);
 
         $modelFile = self::getModelName($model, $module);
 
@@ -421,7 +443,7 @@ class ModelService extends AbstractService
         foreach ($foreignKeys as $foreignKey) {
             $classModule = '';
             foreach ($configModules as $configModule) {
-                if (Str::startsWith($foreignKey->COLUMN_NAME, $configModule['prefix'] . '_')) {
+                if (Str::startsWith($foreignKey->column_name, $configModule['prefix'] . '_')) {
                     $classModule = $configModule;
                     break;
                 }
@@ -429,20 +451,24 @@ class ModelService extends AbstractService
 
             if(!$classModule) {
                 Log::error('Found an ID field but cannot find which module is that. Which is: ' .
-                    $foreignKey->REFERENCED_TABLE_NAME . '. In table: ' . $model . '. Dont forget to add module name' .
-                    ' in front of the column.');
+                    $foreignKey->foreign_table_name . '. In table: ' . $model . '. Dont forget to add module name' .
+                    ' in front of the column. Foreign key name is: ' . print_r($foreignKey, true));
 
-                throw new \Exception('Found an ID field but cannot find which module is that. Please look ' .
-                    'at the logs.');
+                continue;
+//                throw new \Exception('Found an ID field but cannot find which module is that. Please look ' .
+//                    'at the logs.');
             }
 
-            $foreignModel = self::getModelName($foreignKey->REFERENCED_TABLE_NAME, $classModule['name']);
+            $foreignModel = self::getModelName($foreignKey->foreign_table_name, $classModule['name']);
             $foreignModelRootPath = $rootPath . '/../' . $classModule['name'] . '/src/Database/Models/' . $foreignModel . '.php';
 
             if(file_exists(base_path($currentModelRootpath))) {
-                $currentModelContent = self::generateBelongsToContent($namespace, $module, $foreignKey->REFERENCED_TABLE_NAME);
+                $currentModelContent = self::generateBelongsToContent($namespace, $module, $foreignKey->foreign_table_name);
 
-                if (!self::isMethodExists($foreignModelRootPath, $currentModelContent)) {
+                logger()->info('Belongs to: ' . $foreignKey->foreign_table_name);
+
+                if (!self::isMethodExists($currentModelRootpath, $currentModelContent)) {
+                    logger()->info('Appending belongs to to: ' . $currentModelRootpath);
                     self::appendToFile($currentModelRootpath, $currentModelContent, $forceOverwrite);
                 }
             }
@@ -451,6 +477,7 @@ class ModelService extends AbstractService
                 $foreignModelContent = self::generateHasManyContent($namespace, $module, $model);
 
                 if (!self::isMethodExists($foreignModelRootPath, $foreignModelContent)) {
+                    logger()->info('Appending has many to: ' . $currentModelRootpath);
                     self::appendToFile($foreignModelRootPath, $foreignModelContent, $forceOverwrite);
                 }
             }

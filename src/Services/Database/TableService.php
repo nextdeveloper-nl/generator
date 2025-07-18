@@ -2,11 +2,9 @@
 
 namespace NextDeveloper\Generator\Services\Database;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use NextDeveloper\Generator\Services\AbstractService;
-use NextDeveloper\Generator\Exceptions\TemplateNotFoundException;
 
 class TableService extends AbstractService
 {

@@ -2,7 +2,6 @@
 
 namespace NextDeveloper\Generator\Services\Http;
 
-use Illuminate\Support\Str;
 use NextDeveloper\Generator\Exceptions\TemplateNotFoundException;
 use NextDeveloper\Generator\Services\AbstractService;
 use NextDeveloper\Generator\Services\Database\ModelService;

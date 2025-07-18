@@ -2,26 +2,23 @@
 
 namespace NextDeveloper\Generator\Http\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use NextDeveloper\Generator\Services\AbstractService;
 use NextDeveloper\Commons\Http\Controllers\AbstractController;
-use NextDeveloper\Generator\Services\Database\TableService;
-use NextDeveloper\Generator\Services\Events\EventsService;
-use NextDeveloper\Generator\Services\Database\ModelService;
-use NextDeveloper\Generator\Services\Http\ApiRoutesService;
-use NextDeveloper\Generator\Services\Test\ModelTestService;
+use NextDeveloper\Generator\Services\AbstractService;
 use NextDeveloper\Generator\Services\Database\FilterService;
-use NextDeveloper\Generator\Services\Events\HandlersService;
+use NextDeveloper\Generator\Services\Database\ModelService;
+use NextDeveloper\Generator\Services\Database\ObserverService;
+use NextDeveloper\Generator\Services\Database\TableService;
+use NextDeveloper\Generator\Services\Http\ApiRoutesService;
 use NextDeveloper\Generator\Services\Http\ControllerService;
 use NextDeveloper\Generator\Services\Http\HttpConfigurationService;
 use NextDeveloper\Generator\Services\Http\RequestService;
 use NextDeveloper\Generator\Services\Http\TransformerService;
 use NextDeveloper\Generator\Services\Services\ServiceService;
-use NextDeveloper\Generator\Services\Database\ObserverService;
 use NextDeveloper\Generator\Services\Structure\StructureService;
+use NextDeveloper\Generator\Services\Test\ModelTestService;
 
 class AllController extends AbstractController
 {
@@ -53,8 +50,10 @@ class AllController extends AbstractController
 //            StructureService::generateComposerFile($namespace, $moduleName, $rootPath, $forceOverwrite);
 //            Log::info('[Generator] Generating service provider');
 //            StructureService::generateServiceProviderFile($rootPath, $namespace, $moduleName, $forceOverwrite);
+
             Log::info('[Generator] Generating api routes file');
             StructureService::generateApiRoutesFile($rootPath, $namespace, $moduleName, $forceOverwrite);
+
 //            Log::info('[Generator] Generating configuration files');
 //            StructureService::generateConfigurationFiles($rootPath, $moduleName, $forceOverwrite);
 //
@@ -75,10 +74,11 @@ class AllController extends AbstractController
             foreach ($modelsArray as $model) {
                 dump('Generating model: ' . $model);
                 $this->generateModels($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+                ApiRoutesService::appendToRoutes($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
             }
 
             foreach ($modelsArray as $model) {
-//                $this->generateModelRelations($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+                $this->generateModelRelations($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
             }
 
             if(Str::contains($module['views'], '*')) {
@@ -90,10 +90,12 @@ class AllController extends AbstractController
                     $viewsArray = explode(',', $request->query('views'));
                 }
             }
-
+//
             foreach ($viewsArray as $model) {
                 dump('Generating view: ' . $model);
                 $this->generateViews($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+                dump('Generating routes: ' . $model);
+                ApiRoutesService::appendToRoutes($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
             }
         }
 
@@ -123,7 +125,6 @@ class AllController extends AbstractController
         RequestService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
         ControllerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
-        ApiRoutesService::appendToRoutes($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
         HttpConfigurationService::appendToModelBinding($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
         //  Not writing over the file
@@ -148,7 +149,6 @@ class AllController extends AbstractController
         FilterService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
         ControllerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
-        ApiRoutesService::appendToRoutes($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
         HttpConfigurationService::appendToModelBinding($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
         //  Not writing over the file

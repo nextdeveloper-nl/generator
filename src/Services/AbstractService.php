@@ -3,14 +3,8 @@
 namespace NextDeveloper\Generator\Services;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
-use PHP_CodeSniffer\Exceptions\DeepExitException;
-use RecursiveIteratorIterator;
-use RecursiveDirectoryIterator;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AbstractService
 {
@@ -480,19 +474,22 @@ class AbstractService
             }
         }
 
+        $methodName = explode(':', $methodName);
+        $methodName = trim($methodName[0]);
+
         $lines = explode(PHP_EOL, $contents);
 
         foreach ($lines as $line) {
             if(Str::contains($line, 'function')) {
+                logger()->info('Line: ' . $line . ' || Method: ' . $methodName . ' || File: ' . $file);
                 if(Str::contains($line, $methodName)) {
-                    Log::info('[Generator\Abstract@isMethodExists] This line: ' . PHP_EOL .
-                    $line . PHP_EOL .
-                    ' contains: ' . PHP_EOL .
-                        $methodName );
+                    logger()->info('File: ' . $file . ' has method: ' . $methodName);
                     return true;
                 }
             }
         }
+
+        logger()->info('File: ' . $file . ' does not have method: ' . $methodName);
 
         return false;
     }

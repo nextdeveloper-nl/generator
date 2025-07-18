@@ -57,11 +57,15 @@ class Abstract{{ $model }}Service {
         if($enablePaginate) {
             //  We are using this because we have been experiencing huge security problem when we use the paginate method.
             //  The reason was, when the pagination method was using, somehow paginate was discarding all the filters.
+            $modelCount = $model->count();
+            $page = array_key_exists('page', $params) ? $params['page'] : 1;
+            $items = $model->skip(($page - 1) * $perPage)->take($perPage)->get();
+
             return new \Illuminate\Pagination\LengthAwarePaginator(
-                $model->skip(($request->get('page', 1) - 1) * $perPage)->take($perPage)->get(),
-                $model->count(),
+                $items,
+                $modelCount,
                 $perPage,
-                $request->get('page', 1)
+                $page
             );
         }
 
@@ -101,14 +105,24 @@ class Abstract{{ $model }}Service {
     {
         $object = {{ $model }}::where('uuid', $objectId)->first();
 
-        $action = AvailableActions::where('name', $action)->first();
+        $action = AvailableActions::where('name', $action)
+            ->where('input', '{{ $namespace }}\{{ $module }}\{{ $model }}')
+            ->first();
+
         $class = $action->class;
 
         if(class_exists($class)) {
             $action = new $class($object, $params);
+            $actionId = $action->getActionId();
+
+            if(request()->get('fg') == 'true') {
+                $action->handle();
+                return $actionId;
+            }
+
             dispatch($action);
 
-            return $action->getActionId();
+            return $actionId;
         }
 
         return null;
@@ -183,8 +197,6 @@ class Abstract{{ $model }}Service {
             throw $e;
         }
 
-        Events::fire('created:{{$namespace}}\{{$module}}\{{$model}}', $model);
-
         return $model->fresh();
     }
 
@@ -228,16 +240,12 @@ class Abstract{{ $model }}Service {
             );
 	@endforeach
 
-        Events::fire('updating:{{$namespace}}\{{$module}}\{{$model}}', $model);
-
         try {
            $isUpdated = $model->update($data);
            $model = $model->fresh();
         } catch(\Exception $e) {
            throw $e;
         }
-
-        Events::fire('updated:{{$namespace}}\{{$module}}\{{$model}}', $model);
 
         return $model->fresh();
     }
@@ -258,8 +266,6 @@ class Abstract{{ $model }}Service {
         if(!$model)
             throw new NotAllowedException('We cannot find the related object to delete. ' .
                 'Maybe you dont have the permission to update this object?');
-
-        Events::fire('deleted:{{$namespace}}\{{$module}}\{{$model}}', $model);
 
         try {
             $model = $model->delete();

@@ -11,7 +11,7 @@ use {{ $namespace }}\{{ $module }}\Http\Requests\{{ $model }}\{{ $model }}Create
 @php
 if($traits) {
     foreach ($traits as $trait) {
-        echo 'use ' . $trait['class'] . ';';
+        echo 'use ' . $trait['class'] . ' as ' . $trait['name'] . 'Trait;';
     }
 }
 @endphp
@@ -23,7 +23,7 @@ class {{ $model }}Controller extends AbstractController
 @php
     if($traits) {
         foreach ($traits as $trait) {
-            echo 'use ' . $trait['name'] . ';' . PHP_EOL;
+            echo 'use ' . $trait['name'] . 'Trait;' . PHP_EOL;
         }
     }
 @endphp

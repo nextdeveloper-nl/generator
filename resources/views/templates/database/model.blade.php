@@ -7,13 +7,16 @@ namespace {{ $namespace }}\{{ $module }}\Database\Models;
     use NextDeveloper\Commons\Database\Traits\SSHable;
     use NextDeveloper\IAAS\Database\Traits\Agentable;
 @endif
+use NextDeveloper\Commons\Database\Traits\HasStates;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Database\Traits\Filterable;
+use NextDeveloper\Commons\Database\Traits\HasStates;
 use {{ $namespace }}\{{ $module }}\Database\Observers\{{ $model }}Observer;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
+use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 
 /**
 * {{ $model }} model.
@@ -25,14 +28,13 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
 */
 class {{ $model }} extends Model
 {
-use Filterable, UuidId, CleanCache, Taggable;
+use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
 @if($has_deleted)
 	use SoftDeletes;
 @endif
 @if($has_sshable)
     use SSHable, Agentable;
 @endif
-
 
 @if($hasTimestamps)
 	public $timestamps = true;

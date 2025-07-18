@@ -48,8 +48,16 @@ class {{ $model }}QueryFilter extends AbstractQueryFilter
 
     public function {{ $fieldName }}($value)
     {
-        return $this->builder->where('{{$field}}', 'like', '%' . $value . '%');
+        return $this->builder->where('{{$field}}', 'ilike', '%' . $value . '%');
     }
+
+    @if($field != $fieldName)
+    //  This is an alias function of {{ $fieldName }}
+    public function {{ $field }}($value)
+    {
+    return $this->{{ $fieldName }}($value);
+    }
+    @endif
 @endforeach
 
 @foreach( $filterNumberFields as $field )
@@ -69,6 +77,14 @@ public function {{ $fieldName }}($value)
         return $this->builder->where('{{$field}}', $operator, $value);
     }
 
+    @if($field != $fieldName)
+    //  This is an alias function of {{ $fieldName }}
+    public function {{ $field }}($value)
+    {
+    return $this->{{ $fieldName }}($value);
+    }
+    @endif
+
 @endforeach
 @foreach( $filterBooleanFields as $field )
     @php
@@ -76,11 +92,16 @@ public function {{ $fieldName }}($value)
     @endphp
 public function {{ $fieldName }}($value)
     {
-        if(!is_bool($value))
-            $value = false;
-
         return $this->builder->where('{{$field}}', $value);
     }
+
+    @if($field != $fieldName)
+    //  This is an alias function of {{ $fieldName }}
+    public function {{ $field }}($value)
+    {
+    return $this->{{ $fieldName }}($value);
+    }
+     @endif
 
 @endforeach
 @foreach( $filterDateFields as $field )
@@ -97,10 +118,23 @@ public function {{$fieldName}}Start($date)
         return $this->builder->where( '{{$field}}', '<=', $date );
     }
 
+    //  This is an alias function of {{ $fieldName }}
+    public function {{ $field }}_start($value)
+    {
+    return $this->{{ $fieldName }}Start($value);
+    }
+
+    //  This is an alias function of {{ $fieldName }}
+    public function {{ $field }}_end($value)
+    {
+    return $this->{{ $fieldName }}End($value);
+    }
+
 @endforeach
 @foreach( $idRefFields as $field )
     @php
     $functionName = Str::camel($field['1']);
+    $snakeFunctionName = Str::snake($functionName);
     $fieldName = substr($functionName, 0, -2);
     $modelName = ucfirst($fieldName);
     @endphp
@@ -116,6 +150,14 @@ public function {{$functionName}}($value)
         return $this->builder->where('{{$field[1]}}', '=', $value);
     @endif
     }
+
+    @if(!($snakeFunctionName == 'iam_user_id' || $snakeFunctionName == 'iam_account_id'))
+    //  This is an alias function of {{ $fieldName }}
+    public function {{ $snakeFunctionName }}($value)
+    {
+    return $this->{{ $fieldName }}($value);
+    }
+    @endif
 
 @endforeach
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

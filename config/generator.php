@@ -105,10 +105,7 @@ return [
             'deleted'
         ]
     ],
-        /* Relations diye açıp representative in user olduğunu ekle
-        [
-        'representative' => 'user'
-        ]*/
+
     'enableBroadcast'   =>  false,
 
     'extend'    =>  [
@@ -171,7 +168,7 @@ return [
             'tables'    =>  'marketplace_*',
             'views'     =>  'marketplace_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'CRM',
@@ -187,7 +184,7 @@ return [
             'tables'    =>  'iaas_*',
             'views'     =>  'iaas_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
+            'generate'  =>  false,
         ],
         [
             'name'      =>  'Options',
@@ -274,6 +271,22 @@ return [
             'prefix'    =>  'accounting',
             'tables'    =>  'accounting_*',
             'views'     =>  'accounting_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
+        ],
+        [
+            'name'      =>  'Data',
+            'prefix'    =>  'data',
+            'tables'    =>  'data_*',
+            'views'     =>  'data_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
+        ],
+        [
+            'name'      =>  'Intelligence',
+            'prefix'    =>  'intelligence',
+            'tables'    =>  'intelligence_*',
+            'views'     =>  'intelligence_*',
             'namespace' =>  'NextDeveloper',
             'generate'  =>  false,
         ]

@@ -3,7 +3,6 @@
 namespace NextDeveloper\Generator\Http\Controllers\Structure;
 
 use NextDeveloper\Commons\Http\Controllers\AbstractController;
-use NextDeveloper\Generator\Services\Services\ServiceService;
 use NextDeveloper\Generator\Services\Structure\StructureService;
 
 class StructureController extends AbstractController

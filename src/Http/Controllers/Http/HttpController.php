@@ -3,9 +3,6 @@
 namespace NextDeveloper\Generator\Http\Controllers\Http;
 
 use NextDeveloper\Commons\Http\Controllers\AbstractController;
-use NextDeveloper\Generator\Services\Database\FilterService;
-use NextDeveloper\Generator\Services\Database\ModelService;
-use NextDeveloper\Generator\Services\Database\ObserverService;
 
 class HttpController extends AbstractController
 {

@@ -3,9 +3,8 @@
 namespace NextDeveloper\Generator\Services\Http;
 
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use NextDeveloper\Generator\Services\AbstractService;
 use NextDeveloper\Generator\Exceptions\TemplateNotFoundException;
+use NextDeveloper\Generator\Services\AbstractService;
 
 class RequestService extends AbstractService
 {

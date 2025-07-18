@@ -18,7 +18,6 @@ use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use Symfony\Component\HttpFoundation\Response;
-use function PHPUnit\Framework\isInstanceOf;
 
 /**
  * Trait Responsable
