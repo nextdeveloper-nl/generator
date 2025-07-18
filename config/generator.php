@@ -155,7 +155,7 @@ return [
             'tables'    =>  'common_*',
             'views'     =>  'common_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false
+            'generate'  =>  false,
         ],
         [
             'name'      =>  'IAM',
@@ -171,7 +171,7 @@ return [
             'tables'    =>  'marketplace_*',
             'views'     =>  'marketplace_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'CRM',
@@ -187,7 +187,7 @@ return [
             'tables'    =>  'iaas_*',
             'views'     =>  'iaas_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
+            'generate'  =>  false,
         ],
         [
             'name'      =>  'Options',
@@ -276,6 +276,30 @@ return [
             'views'     =>  'accounting_*',
             'namespace' =>  'NextDeveloper',
             'generate'  =>  false,
-        ]
+        ],
+        [
+            'name'      =>  'Intelligence',
+            'prefix'     =>  'intelligence',
+            'tables'    =>  'intelligence_*',
+            'views'     =>  'intelligence_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
+        ],
+        [
+            'name'      =>  'Agreement',
+            'prefix'     =>  'agreement',
+            'tables'    =>  'agreement_*',
+            'views'     =>  'agreement_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
+        ],
+        [
+            'name'      =>  'Dine',
+            'prefix'    =>  'dine',
+            'tables'    =>  'dine_*',
+            'views'     =>  'dine_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
+        ],
     ],
 ];

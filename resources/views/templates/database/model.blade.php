@@ -25,7 +25,10 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
 */
 class {{ $model }} extends Model
 {
-use Filterable, UuidId, CleanCache, Taggable;
+use Filterable, CleanCache, Taggable;
+@if($hasUuid)
+    use UuidId;
+@endif
 @if($has_deleted)
 	use SoftDeletes;
 @endif
@@ -39,6 +42,12 @@ use Filterable, UuidId, CleanCache, Taggable;
 @else
 	public $timestamps = false;
 @endif
+
+@if(!$hasId)
+    public $incrementing = false;
+@endif
+
+
 
 protected $table = '{{$table}}';
 

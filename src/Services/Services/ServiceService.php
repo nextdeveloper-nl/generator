@@ -39,13 +39,17 @@ class ServiceService extends AbstractService
 
         $modelWithoutModule = self::getModelName($model, $module);
 
+        // Check if the model has external id
+        $hasExternalId = ModelService::hasExternalId($namespace, $module, $model);
+
         $render = view('Generator::templates/services/abstract', [
             'namespace'     =>  $namespace,
             'module'        =>  $module,
             'createData'         =>  self::buildData($columns, $model),
             'idFields'      =>  $idFields,
             'model'      =>  $modelWithoutModule,
-            'config'        =>  Str::lower($module)
+            'config'        =>  Str::lower($module),
+            'hasExternalId' =>  $hasExternalId
         ])->render();
 
         return $render;

@@ -12,6 +12,16 @@ use NextDeveloper\Generator\Exceptions\TemplateNotFoundException;
 class ModelService extends AbstractService
 {
 
+
+    const SKIP_COLUMNS = [
+        'object_id',
+        'external_id',
+        'external_order_id',
+        'external_line_id',
+        'external_product_id',
+        'external_catalog_id'
+    ];
+
     /**
      * @throws TemplateNotFoundException
      */
@@ -24,6 +34,8 @@ class ModelService extends AbstractService
         $fillable = self::generateFillable($columns);
         $documentation = self::generateIdeDocumentation($columns);
         $tabAmount = 2;
+        $hasId = self::hasColumn('id', $model);
+        $hasUuid = self::hasColumn('uuid', $model);
 
         $hasTimestamps = false;
 
@@ -59,7 +71,9 @@ class ModelService extends AbstractService
             'perPage' => config('generator.pagination.perPage'),
             'hasTimestamps' => $hasTimestamps,
             'fillable' => $fillable,
-            'documentation' => $documentation
+            'documentation' => $documentation,
+            'hasId' => $hasId,
+            'hasUuid' => $hasUuid,
         ])->render();
 
         return $render;
@@ -464,7 +478,8 @@ class ModelService extends AbstractService
         $idFields = [];
 
         foreach ($columns as $column) {
-            if($column->Field == 'object_id') continue;
+
+            if(!isset($column->Field) || in_array($column->Field, self::SKIP_COLUMNS)) continue;
 
             $foreignModel = Str::remove('_id', $column->Field);
 
@@ -487,7 +502,7 @@ class ModelService extends AbstractService
                     '\\' . $namespace . '\\' . $classModule . '\\Database\\Models\\' . $modelWithoutModule,
                     $column->Field,
                     Str::camel($column->Field),
-                    Str::contains($column->Comment, '[!model]') ? 1 : 0
+                    Str::contains($column->Comment, '[!model]') ? 1 : 0,
                 ];
             }
         }
@@ -504,7 +519,7 @@ class ModelService extends AbstractService
         foreach ($columns as $column) {
             $aliasColumn = null;
 
-            if($column->column_name == 'object_id') continue;
+            if(!isset($column->column_name) || in_array($column->column_name, self::SKIP_COLUMNS)) continue;
 
             //  Checking if we have an alias. Because this may be an another column.
             if(AbstractService::columnHasComment($model,  $column->column_name, '[alias:')) {
@@ -544,7 +559,7 @@ class ModelService extends AbstractService
                     '\\' . $namespace . '\\' . $classModule . '\\Database\\Models\\' . $modelWithoutModule,
                     $column->column_name,
                     Str::camel($column->column_name),
-                    self::columnHasComment($model, $column, '[!model]') ? 1 : 0
+                    self::columnHasComment($model, $column, '[!model]') ? 1 : 0,
                 ];
             }
         }
@@ -617,5 +632,18 @@ class ModelService extends AbstractService
         }
 
         return $comments;
+    }
+
+    public static function hasExternalId($namespace, $module, $model) {
+        $columns = self::getColumns($model);
+
+        foreach ($columns as $column) {
+            $columnName = isset($column->Field) ? $column->Field : $column->column_name;
+            if ($columnName === 'external_id') {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

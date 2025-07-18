@@ -124,6 +124,18 @@ class Abstract{{ $model }}Service {
         return {{ $model }}::where('id', $id)->first();
     }
 
+    @if($hasExternalId)
+    /**
+    * This method returns the model by looking at its external id
+    *
+    * @param $externalId
+    * @return {{ $model }}|null
+    */
+    public static function getByExternalId($externalId) : ?{{ $model }} {
+        return {{ $model }}::where('external_id', $externalId)->first();
+    }
+    @endif
+
     /**
     * This method returns the sub objects of the related models
     *
