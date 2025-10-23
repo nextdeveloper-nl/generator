@@ -168,7 +168,7 @@ return [
             'tables'    =>  'marketplace_*',
             'views'     =>  'marketplace_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
+            'generate'  =>  false,
         ],
         [
             'name'      =>  'CRM',
@@ -184,7 +184,7 @@ return [
             'tables'    =>  'iaas_*',
             'views'     =>  'iaas_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'Options',

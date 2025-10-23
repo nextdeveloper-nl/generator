@@ -4,6 +4,7 @@ namespace NextDeveloper\Generator\Services;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class AbstractService
@@ -21,9 +22,18 @@ class AbstractService
         $modelWithoutModule = ucfirst(Str::camel(Str::singular($model)));
         $modelWithoutModule = Str::remove($singularModule, $modelWithoutModule);
 
-        if(!Str::endsWith($modelWithoutModule, 'Perspective'))
-            $modelWithoutModule = Str::plural($modelWithoutModule);
+        Log::info('Model name was: ' . $modelWithoutModule);
 
+        if(
+            !(
+                Str::endsWith($modelWithoutModule, 'Perspective') ||
+                Str::endsWith($modelWithoutModule, 'Performance')
+            )
+        ) {
+            $modelWithoutModule = Str::plural($modelWithoutModule);
+        }
+
+        Log::info('Model name is: ' . $modelWithoutModule);
 
         return $modelWithoutModule;
     }
