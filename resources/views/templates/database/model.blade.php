@@ -14,6 +14,7 @@ use NextDeveloper\Commons\Database\Traits\Filterable;
 use NextDeveloper\Commons\Database\Traits\HasStates;
 use {{ $namespace }}\{{ $module }}\Database\Observers\{{ $model }}Observer;
 use NextDeveloper\Commons\Database\Traits\UuidId;
+use NextDeveloper\Commons\Database\Traits\HasObject;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
@@ -28,7 +29,7 @@ use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 */
 class {{ $model }} extends Model
 {
-use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
+use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
 @if($has_deleted)
 	use SoftDeletes;
 @endif
