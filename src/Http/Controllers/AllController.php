@@ -90,7 +90,7 @@ class AllController extends AbstractController
                     $viewsArray = explode(',', $request->query('views'));
                 }
             }
-//
+
             foreach ($viewsArray as $model) {
                 dump('Generating view: ' . $model);
                 $this->generateViews($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
@@ -147,6 +147,8 @@ class AllController extends AbstractController
         ServiceService::generateAbstractFile($rootPath, $namespace, $moduleName, $model, true);
 
         FilterService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
+
+        RequestService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 
         ControllerService::generateFile($rootPath, $namespace, $moduleName, $model, $forceOverwrite);
 

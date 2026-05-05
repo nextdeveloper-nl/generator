@@ -33,7 +33,7 @@ class StructureService extends AbstractService
 
         $singularModule = Str::singular($module);
 
-        if(ctype_upper($module)) {
+        if(ctype_upper($module) || $module == 'GoogleAds') {
             //  If all letters are upper case, this means that this is short version of something.
             //  That is why we dont make it singular.
             $singularModule = $module;
