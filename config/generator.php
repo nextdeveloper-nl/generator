@@ -232,7 +232,7 @@ return [
             'tables'    =>  'event_*',
             'views'     =>  'event_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'Blogs',
@@ -296,7 +296,7 @@ return [
             'tables'    =>  'ipaas_*',
             'views'     =>  'ipaas_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  false,
+            'generate'  =>  true,
         ],
         [
             'name'      =>  'AutoQuill',
@@ -322,13 +322,21 @@ return [
             'namespace' =>  'PlusClouds',
             'generate'  =>  false,
         ],
-                [
+        [
             'name'      =>  'Flow',
             'prefix'    =>  'flow',
             'tables'    =>  'flow_*',
             'views'     =>  'flow_*',
             'namespace' =>  'NextDeveloper',
-            'generate'  =>  true,
+            'generate'  =>  false,
+        ],
+        [
+            'name'      =>  'S3',
+            'prefix'    =>  's3',
+            'tables'    =>  's3_*',
+            'views'     =>  's3_*',
+            'namespace' =>  'NextDeveloper',
+            'generate'  =>  false,
         ]
     ],
 ];

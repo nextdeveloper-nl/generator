@@ -533,6 +533,10 @@ class ModelService extends AbstractService
 
             if($column->column_name == 'object_id') continue;
 
+            if(AbstractService::columnHasComment($model,  $column->column_name, '[!model]')) {
+                continue;
+            }
+
             //  Checking if we have an alias. Because this may be an another column.
             if(AbstractService::columnHasComment($model,  $column->column_name, '[alias:')) {
                 $aliasColumn = AbstractService::getAliasModel($model, $column->column_name);
