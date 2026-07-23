@@ -119,7 +119,7 @@ trait Responsable
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function withCollection($data, $transformer = null, $resourceKey = null, Cursor $cursor = null, array $meta = [], array $headers = []) {
+    public function withCollection($data, $transformer = null, $resourceKey = null, ?Cursor $cursor = null, array $meta = [], array $headers = []) {
         if($transformer == null) {
             dd(class_basename($data));
         }
@@ -436,7 +436,7 @@ class ResponsableFactory {
         $data,
         $transformer = null,
         $resourceKey = null,
-        Cursor $cursor = null,
+        ?Cursor $cursor = null,
         array $meta = [],
         array $headers = []
     ) {
