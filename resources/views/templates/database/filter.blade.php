@@ -23,17 +23,17 @@ class {{ $model }}QueryFilter extends AbstractQueryFilter
      * @return Builder
      */
     public function tags($values) {
-        $tags = explode(',', $values);
+        //  SECURITY: values are bound, never concatenated into SQL (the old template allowed SQL injection
+        //  and bypassed AuthorizationScope through "tags=x'] OR 1=1 --").
+        $tags = array_values(array_filter(array_map('trim', explode(',', $values)), fn($t) => $t !== ''));
 
-        $search = '';
-
-        for($i = 0; $i < count($tags); $i++) {
-            $search .= "'" . trim($tags[$i]) . "',";
+        if(count($tags) === 0) {
+            return $this->builder;
         }
 
-        $search = substr($search, 0, -1);
+        $placeholders = implode(',', array_fill(0, count($tags), '?'));
 
-        return $this->builder->whereRaw('tags @> ARRAY[' . $search . ']');
+        return $this->builder->whereRaw('tags @> ARRAY[' . $placeholders . ']::text[]', $tags);
     }
 @endif
 
